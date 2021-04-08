@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="450.0" prefWidth="800.0" spacing="16.0" style="-fx-background-color: #f9f9f9;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.GroupPopController">
+   <children>
+      <TitledPane prefHeight="372.0" prefWidth="720.0" text="Info" textFill="#fefefe" VBox.vgrow="ALWAYS">
+        <content>
+            <VBox spacing="16.0" style="-fx-background-color: #fdfdfd;">
+               <children>
+                  <VBox spacing="8.0">
+                     <children>
+                        <StackPane alignment="CENTER_LEFT">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="labels" text="Location" textFill="#07255eed">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label fx:id="browseInfo" onMouseClicked="#browseLoc">
+                                       <graphic>
+                                          <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../images/info.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                                 <StackPane.margin>
+                                    <Insets left="64.0" />
+                                 </StackPane.margin>
+                              </HBox>
+                           </children>
+                        </StackPane>
+                        <Label fx:id="location" style="-fx-text-fill: black;" text="-" textFill="#07255eed">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" top="8.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Collection" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="collection" style="-fx-text-fill: black;" text="-" textFill="#07255eed">
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Total" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="total" style="-fx-text-fill: black;" text="0" textFill="#07255eed">
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Non-Feeder Total" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="nonfeederTotal" style="-fx-text-fill: black;" text="0" textFill="#07255eed">
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Started On" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="startedOn" style="-fx-text-fill: black;" text="-" textFill="#07255eed">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Completed On" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="compOn" style="-fx-text-fill: black;" text="-" textFill="#07255eed">
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="8.0" left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+            </VBox>
+        </content>
+      </TitledPane>
+   </children>
+   <padding>
+      <Insets bottom="40.0" left="40.0" right="40.0" top="32.0" />
+   </padding>
+</VBox>

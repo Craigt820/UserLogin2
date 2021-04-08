@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import com.idi.userlogin.Main;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +25,7 @@ public class ForgotPwdController implements Initializable {
     @FXML
     void resetPwd() {
         if (!email.getText().isEmpty()) {
-            Main.fadeIn(sentLbl, Duration.seconds(1));
+            ControllerHandler.fadeIn(sentLbl, Duration.seconds(1));
         }
     }
 

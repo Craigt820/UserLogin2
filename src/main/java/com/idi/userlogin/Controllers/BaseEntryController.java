@@ -198,7 +198,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldVal, Boolean newVal) {
                     if (newVal) {
-                        updateSelected(item);
+                        Platform.runLater(() -> {
+                            updateSelected(item);
+                        });
                     }
                 }
             });
@@ -239,24 +241,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             this.type.setGraphic(view);
             this.type.setTooltip(new Tooltip(type));
             this.type.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-//            this.comments.set(comments);
-//            if (type.equals("Root")) {
-//                this.completed.selectedProperty().addListener(e -> {
-//                    ObservableList<TreeItem<EntryItem>> parent = tree.getRoot().getChildren();
-//
-//                    if (this.completed.isSelected()) {
-//                        parent.forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
-//                        for (TreeItem<EntryItem> children : parent) {
-//                            children.getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
-//                        }
-//                    } else {
-//                        parent.forEach(e2 -> e2.getValue().getCompleted().setSelected(false));
-//                        for (TreeItem<EntryItem> children : parent) {
-//                            children.getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(false));
-//                        }
-//                    }
-//                });
-//            }
         }
 
 
@@ -464,7 +448,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error updating a non-feeder field!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating a non-feeder field!", e);
 
         } finally {
             DbUtils.closeQuietly(ps);
@@ -916,7 +900,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                         return o1.nameProperty().get().compareTo(o2.getName());
                                     }
                                 });
-                                groupCombo.getSelectionModel().select(index);
+                                Platform.runLater(() -> {
+                                    groupCombo.getSelectionModel().select(index);
+                                });
 
                                 fxTrayIcon.showInfoMessage("Group '" + group.getName() + "' Has Been Created");
                             } else {
@@ -1013,7 +999,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
         } catch (SQLException | ParseException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new group!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new group!", e);
 
         } finally {
             try {
@@ -1023,7 +1009,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
                 group.IDProperty().set(key);
             } catch (SQLException e) {
-                Main.LOGGER.log(Level.SEVERE, "There was an error generating a new key!", e.getMessage());
+                Main.LOGGER.log(Level.SEVERE, "There was an error generating a new key!", e);
             }
             DbUtils.closeQuietly(set);
             DbUtils.closeQuietly(ps);
@@ -1093,7 +1079,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
         } catch (SQLException | ParseException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error updating a group!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating a group!", e);
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(connection);

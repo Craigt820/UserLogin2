@@ -176,7 +176,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new item!", e.getMessage());
+                Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new item!", e);
 
             }
             DbUtils.closeQuietly(set);
@@ -212,7 +212,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e);
 
         } finally {
             DbUtils.closeQuietly(set);

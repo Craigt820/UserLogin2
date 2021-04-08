@@ -2,16 +2,13 @@ package com.idi.userlogin.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import com.idi.userlogin.JsonHandler;
-import com.idi.userlogin.Main;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +49,7 @@ public class SettingsController implements Initializable {
             JsonHandler.hostName = JsonHandler.property.get("HostName").toString();
             JsonHandler.user = JsonHandler.property.get("User").toString();
             JsonHandler.pass = JsonHandler.property.get("Pass").toString();
-            Main.fadeIn(savedLbl, Duration.seconds(1));
+            ControllerHandler.fadeIn(savedLbl, Duration.seconds(1));
         }
     }
 

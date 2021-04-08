@@ -3,12 +3,16 @@ package com.idi.userlogin.Controllers;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import org.controlsfx.control.PopOver;
 import org.controlsfx.control.tableview2.TableColumn2;
 import org.controlsfx.control.tableview2.TableView2;
 import org.controlsfx.control.textfield.CustomTextField;
@@ -21,6 +25,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.idi.userlogin.Main.devices;
 import static com.idi.userlogin.utils.Utils.DATE_FORMAT;
 
 public class CheckListController extends BaseEntryController<BaseEntryController.EntryItem> implements Initializable {
@@ -85,9 +90,9 @@ public class CheckListController extends BaseEntryController<BaseEntryController
     }
 
 
-    public class Wrapper{
-            private JIBController.JIBEntryItem jibItem;
-            private EntryItem entryItem;
+    public class Wrapper {
+        private JIBController.JIBEntryItem jibItem;
+        private EntryItem entryItem;
 
 
     }
@@ -154,6 +159,7 @@ public class CheckListController extends BaseEntryController<BaseEntryController
                         final Hyperlink link = new Hyperlink(item.getName());
                         link.setOnAction(e -> {
                             System.out.println("Link Clicked!");
+                            setupGroupPop(item);
                         });
                         setGraphic(link);
                         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
@@ -266,6 +272,108 @@ public class CheckListController extends BaseEntryController<BaseEntryController
         sortedData = new SortedList<EntryItem>(filteredData);
         sortedData.comparatorProperty().bind(clAllTable.comparatorProperty());
 //        clTable.setItems(sortedData);
+    }
+
+    //Read-Only Scene
+    //TODO: This scene needs to be planned
+//    public void setupColPop(Group group) {
+//
+//        final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ColPop.fxml"));
+//        Parent root = null;
+//        try {
+//            root = loader.load();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//
+//        final ColPopController detailPopCont = loader.getController();
+//        final PopOver popOver = new PopOver(root);
+//        popOver.setDetached(true);
+//        popOver.setTitle(group.getName());
+//
+//        popOver.setOnHiding(e2 -> {
+//            getOpaqueOverlay().setVisible(popOver.isShowing());
+//            opaquePOS();
+//        });
+//
+//        popOver.showingProperty().addListener(e2 -> {
+//            getOpaqueOverlay().setVisible(popOver.isShowing());
+//            opaquePOS();
+//        });
+//
+//        popOver.show(clAllTable.getScene().getWindow());
+//
+////        if (group.getLocation() != null) {
+////            detailPopCont.location.setText(item.getLocation().toString());
+////        }
+//
+//        if (group.getCompleted_On() != null && !group.getCompleted_On().isEmpty()) {
+//            detailPopCont.compOn.setText(LocalDateTime.parse(group.getCompleted_On().replace(" ", "T")).format(DATE_FORMAT));
+//        }
+//
+//        if (group.getStarted_On() != null && !group.getStarted_On().isEmpty()) {
+//            detailPopCont.startedOn.setText(LocalDateTime.parse(group.getStarted_On().replace(" ", "T")).format(DATE_FORMAT));
+//        }
+//
+//        if (group.getCollection().getName() != null && !group.getCollection().getName().isEmpty()) {
+//            detailPopCont.collection.setText(group.getCollection().getName());
+//        }
+//
+//        int sum = group.getItemList().stream().map(Item::getTotal).mapToInt(e -> e).sum();
+//        if (sum > 0) {
+//            detailPopCont.total.setText(String.valueOf(sum));
+//        }
+//    }
+
+
+    //Read-Only Scene
+    public void setupGroupPop(Group group) {
+
+        final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GroupPop.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        final GroupPopController detailPopCont = loader.getController();
+        final PopOver popOver = new PopOver(root);
+        popOver.setDetached(true);
+        popOver.setTitle(group.getName());
+
+        popOver.setOnHiding(e2 -> {
+            getOpaqueOverlay().setVisible(popOver.isShowing());
+            opaquePOS();
+        });
+
+        popOver.showingProperty().addListener(e2 -> {
+            getOpaqueOverlay().setVisible(popOver.isShowing());
+            opaquePOS();
+        });
+
+        popOver.show(clAllTable.getScene().getWindow());
+
+//        if (group.getLocation() != null) {
+//            detailPopCont.location.setText(item.getLocation().toString());
+//        }
+
+        if (group.getCompleted_On() != null && !group.getCompleted_On().isEmpty()) {
+            detailPopCont.compOn.setText(LocalDateTime.parse(group.getCompleted_On().replace(" ", "T")).format(DATE_FORMAT));
+        }
+
+        if (group.getStarted_On() != null && !group.getStarted_On().isEmpty()) {
+            detailPopCont.startedOn.setText(LocalDateTime.parse(group.getStarted_On().replace(" ", "T")).format(DATE_FORMAT));
+        }
+
+        if (group.getCollection().getName() != null && !group.getCollection().getName().isEmpty()) {
+            detailPopCont.collection.setText(group.getCollection().getName());
+        }
+
+        int sum = group.getItemList().stream().map(Item::getTotal).mapToInt(e -> e).sum();
+        if (sum > 0) {
+            detailPopCont.total.setText(String.valueOf(sum));
+        }
     }
 
     public class TimeDateCell extends TableCell<EntryItem, String> {

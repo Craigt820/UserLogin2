@@ -4,10 +4,13 @@ import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.itextpdf.text.pdf.PdfReader;
 import com.jfoenix.controls.JFXTreeTableView;
+import javafx.animation.FadeTransition;
+import javafx.animation.SequentialTransition;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -64,7 +67,7 @@ public abstract class ControllerHandler {
             settingsRoot = (Parent) loader.load();
         } catch (IOException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error loading the 'LoggedInMenu' Scene!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error loading the 'LoggedInMenu' Scene!", e);
 
         }
         mainMenuPop = new PopOver(settingsRoot);
@@ -100,7 +103,7 @@ public abstract class ControllerHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error getting the folder struct. from the db!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the folder struct. from the db!", e);
 
         } finally {
             DbUtils.closeQuietly(connection);
@@ -131,7 +134,7 @@ public abstract class ControllerHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error getting the columns from the db!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the columns from the db!", e);
 
         } finally {
             DbUtils.close(connection);
@@ -181,7 +184,7 @@ public abstract class ControllerHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error building the folder structure!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error building the folder structure!", e);
 
         }
         return builder.toString();
@@ -204,7 +207,7 @@ public abstract class ControllerHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error getting the data of a column from the db!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the data of a column from the db!", e);
 
         } finally {
             DbUtils.closeQuietly(set);
@@ -213,6 +216,28 @@ public abstract class ControllerHandler {
 
         }
         return data;
+    }
+
+    public static void fadeIn(Node node, Duration duration) {
+        FadeTransition ft = new FadeTransition();
+        ft.setNode(node);
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+        ft.setRate(1.0);
+        ft.setDuration(duration);
+        SequentialTransition s = new SequentialTransition(ft);
+        s.play();
+    }
+
+    public static void fadeOut(Node node, Duration duration) {
+        FadeTransition ft = new FadeTransition();
+        ft.setNode(node);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+        ft.setRate(1.0);
+        ft.setDuration(duration);
+        SequentialTransition s = new SequentialTransition(ft);
+        s.play();
     }
 
     public abstract int insertHelper(Item<? extends Item> item);
@@ -248,7 +273,7 @@ public abstract class ControllerHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error updating an items properties!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating an items properties!", e);
 
         } finally {
             DbUtils.closeQuietly(ps);
@@ -302,7 +327,7 @@ public abstract class ControllerHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error with counting a file/folder!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error with counting a file/folder!", e);
 
         }
         return pages;
@@ -403,7 +428,7 @@ public abstract class ControllerHandler {
 
         } catch (SQLException | ParseException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error updating an item!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating an item!", e);
 
         } finally {
             DbUtils.closeQuietly(ps);
@@ -422,7 +447,7 @@ public abstract class ControllerHandler {
 
         } catch (IOException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error reading a pdf file!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error reading a pdf file!", e);
 
         }
         return numPages;
@@ -456,7 +481,7 @@ public abstract class ControllerHandler {
                 image.close();
             }
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error reading a tiff file!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error reading a tiff file!", e);
 
         } finally {
             if (read != null) {
@@ -480,11 +505,11 @@ public abstract class ControllerHandler {
 
         } catch (IOException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error loading a scene!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error loading a scene!", e);
 
         }
-        Main.fadeOut(root, Duration.seconds(.5));
-        Main.fadeIn(root, Duration.seconds(.5));
+        fadeOut(root, Duration.seconds(.5));
+        fadeIn(root, Duration.seconds(.5));
     }
 
     public abstract void legalTextTest(boolean isLegal, CustomTextField node);

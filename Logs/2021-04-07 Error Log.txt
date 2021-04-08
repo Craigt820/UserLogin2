@@ -1,2 +1,0 @@
-Apr 07, 2021 3:32:51 PM com.idi.userlogin.Controllers.ControllerHandler buildFolderStruct
-SEVERE: There was an error building the folder structure!

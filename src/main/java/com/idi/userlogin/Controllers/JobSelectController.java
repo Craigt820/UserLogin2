@@ -109,7 +109,7 @@ public class JobSelectController implements Initializable {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error getting the jobs from the db!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the jobs from the db!", e);
 
         } finally {
             DbUtils.closeQuietly(set);

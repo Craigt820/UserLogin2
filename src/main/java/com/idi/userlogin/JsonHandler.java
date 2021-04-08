@@ -57,7 +57,7 @@ public class JsonHandler {
                 Files.createDirectory(trackPath);
             } catch (IOException e) {
                 e.printStackTrace();
-                Main.LOGGER.log(Level.SEVERE, "There was an error creating the main track root!", e.getMessage());
+                Main.LOGGER.log(Level.SEVERE, "There was an error creating the main track root!", e);
             }
         }
     }
@@ -69,7 +69,7 @@ public class JsonHandler {
             obj = new JSONParser().parse(new FileReader(userDir + "\\properties.json"));
         } catch (ParseException | IOException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error reading the properties file!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error reading the properties file!", e);
 
         }
 
@@ -84,7 +84,7 @@ public class JsonHandler {
             pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.WARNING, "There was an error writing to the properties file!", e.getMessage());
+            Main.LOGGER.log(Level.WARNING, "There was an error writing to the properties file!", e);
 
         }
     }

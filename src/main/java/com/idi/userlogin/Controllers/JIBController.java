@@ -149,7 +149,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e);
 
         } finally {
             DbUtils.closeQuietly(set);
@@ -453,7 +453,11 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 //        firstField.setText("");
 //        middleField.setText("");
 //        lastField.setText("");
-        dtCombo.getSelectionModel().clearSelection();
+
+        Platform.runLater(() -> {
+            //Only 'Doc Type' should be clear when inserting new item
+            dtCombo.getSelectionModel().clearSelection();
+        });
 //        statusCombo.getSelectionModel().clearSelection();
 //        ss.clear();
 //        conditCombo.getCheckModel().clearChecks();
@@ -525,7 +529,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
         } catch (SQLException | ParseException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new JIB item!", e.getMessage());
+            Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new JIB item!", e);
 
         } finally {
             try {
@@ -535,7 +539,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
                 }
                 item.id.set(key);
             } catch (SQLException e) {
-                Main.LOGGER.log(Level.SEVERE, "There was an error trying to generating a key!", e.getMessage());
+                Main.LOGGER.log(Level.SEVERE, "There was an error trying to generating a key!", e);
             }
             DbUtils.closeQuietly(set);
             DbUtils.closeQuietly(ps);

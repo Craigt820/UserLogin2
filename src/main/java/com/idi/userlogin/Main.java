@@ -32,45 +32,7 @@ public class Main extends Application {
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static SimpleFormatter formatter;
 
-//    public static void fadeIn(Node node) {
-//        DoubleProperty opacity = node.opacityProperty();
-//        Timeline fadeIn = new Timeline(
-//                new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-//                new KeyFrame(new Duration(300), new KeyValue(opacity, 1.0))
-//        );
-//        fadeIn.play();
-//    }
 
-    public static void fadeIn(Node node, Duration duration) {
-        FadeTransition ft = new FadeTransition();
-        ft.setNode(node);
-        ft.setFromValue(0.0);
-        ft.setToValue(1.0);
-        ft.setRate(1.0);
-        ft.setDuration(duration);
-        SequentialTransition s = new SequentialTransition(ft);
-        s.play();
-    }
-
-    public static void fadeOut(Node node, Duration duration) {
-        FadeTransition ft = new FadeTransition();
-        ft.setNode(node);
-        ft.setFromValue(1.0);
-        ft.setToValue(0.0);
-        ft.setRate(1.0);
-        ft.setDuration(duration);
-        SequentialTransition s = new SequentialTransition(ft);
-        s.play();
-    }
-
-//    public static void fadeOut(Node node) {
-//        DoubleProperty opacity = node.opacityProperty();
-//        Timeline fadeIn = new Timeline(
-//                new KeyFrame(Duration.ZERO, new KeyValue(opacity, 1.0)),
-//                new KeyFrame(new Duration(300), new KeyValue(opacity, 0.0))
-//        );
-//        fadeIn.play();
-//    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
