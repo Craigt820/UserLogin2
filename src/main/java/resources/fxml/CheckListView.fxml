@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.tableview2.TableColumn2?>
+<?import org.controlsfx.control.tableview2.TableView2?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+
+<HBox stylesheets="@../css/ProjectSpecs_.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.CheckListController">
+   <children>
+      <VBox style="-fx-background-color: #efefef;" HBox.hgrow="ALWAYS">
+         <children>
+            <TabPane>
+               <tabs>
+                  <Tab closable="false" text="Checklist">
+                     <content>
+                        <VBox spacing="8.0">
+                           <children>
+                              <TitledPane expanded="false" styleClass="inner-titled-pane" text="Search" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets bottom="8.0" left="16.0" right="16.0" top="16.0" />
+                                 </VBox.margin>
+                                 <content>
+                                    <HBox maxWidth="1.7976931348623157E308" minHeight="100.0" spacing="24.0">
+                                       <children>
+                                          <CustomTextField fx:id="search" maxWidth="1000.0" minHeight="50.0" prefHeight="50.0" prefWidth="623.0" promptText="Search" style="-fx-background-color: #f8f8f8;" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets left="8.0" />
+                                             </HBox.margin>
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </CustomTextField>
+                                          <AnchorPane prefWidth="1.0" style="-fx-background-color: #a0a0a066;">
+                                             <HBox.margin>
+                                                <Insets bottom="32.0" />
+                                             </HBox.margin>
+                                          </AnchorPane>
+                                          <ComboBox fx:id="clFilter" minHeight="50.0" prefWidth="150.0" promptText="Filter By" />
+                                          <AnchorPane prefWidth="1.0" style="-fx-background-color: #a0a0a066;">
+                                             <HBox.margin>
+                                                <Insets bottom="32.0" />
+                                             </HBox.margin>
+                                          </AnchorPane>
+                                          <ComboBox fx:id="clFilterKey" minHeight="50.0" prefWidth="150.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="32.0" right="24.0" top="16.0" />
+                                       </padding>
+                                    </HBox>
+                                 </content>
+                              </TitledPane>
+                              <TabPane>
+                                 <VBox.margin>
+                                    <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+                                 </VBox.margin>
+                                 <tabs>
+                                    <Tab closable="false" text="All">
+                                       <content>
+                                          <VBox style="-fx-background-color: #fefefe;">
+                                             <children>
+                                                <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                                                   <children>
+                                                      <TableView2 fx:id="clAllTable" editable="true" fixedCellSize="64.0" prefHeight="800.0" rowHeaderVisible="true" rowHeaderWidth="60.0" style="-fx-border-color: #e0e0e0; -fx-alignment: Center; -fx-background-color: #fefefe;" stylesheets="@../css/CheckList.css" HBox.hgrow="ALWAYS">
+                                                         <columns>
+                                                            <TableColumn2 fx:id="details" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" resizable="false" style="-fx-alignment: Center;" />
+                                                            <TableColumn2 fx:id="cComp" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" style="-fx-alignment: Center;" text="Completed" />
+                                                            <TableColumn2 fx:id="cID" maxWidth="200.0" minWidth="100.0" prefWidth="100.0" style="-fx-alignment: Center;" text="ID" />
+                                                            <TableColumn2 fx:id="cGroup" maxWidth="200.0" minWidth="90.0" prefWidth="75.0" style="-fx-alignment: Center;" text="Group" />
+                                                            <TableColumn2 fx:id="cCollect" maxWidth="400.0" minWidth="200.0" prefWidth="200.0" style="-fx-alignment: Center;" text="Collection" />
+                                                            <TableColumn2 fx:id="cType" maxWidth="200.0" minWidth="90.0" prefWidth="90.0" style="-fx-alignment: Center;" text="Type" />
+                                                            <TableColumn2 fx:id="cName" maxWidth="200.0" minWidth="150.0" prefWidth="150.0" style="-fx-alignment: Center;" text="Name" />
+                                                            <TableColumn2 fx:id="cTotal" maxWidth="200.0" minWidth="90.0" prefWidth="90.0" style="-fx-alignment: Center;" text="Total" />
+                                                            <TableColumn2 fx:id="cNonFeed" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" style="-fx-alignment: Center;" text="Non-Feeder" />
+                                                            <TableColumn2 fx:id="cComments" maxWidth="600.0" minWidth="100.0" prefWidth="300.0" style="-fx-alignment: Center;" text="Comments" />
+                                                            <TableColumn2 fx:id="cStarted" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" style="-fx-alignment: Center;" text="Started On" />
+                                                            <TableColumn2 fx:id="cCompOn" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" style="-fx-alignment: Center;" text="Completed On" />
+                                                         </columns>
+                                                      </TableView2>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="16.0" left="16.0" right="16.0" top="24.0" />
+                                                   </padding>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </Tab>
+                                 </tabs>
+                              </TabPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="24.0" top="8.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab closable="false" disable="true" text="Manifest">
+                     <content>
+                        <VBox spacing="8.0">
+                           <children>
+                              <TitledPane styleClass="inner-titled-pane" text="Search" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets bottom="8.0" left="16.0" right="16.0" top="16.0" />
+                                 </VBox.margin>
+                                 <content>
+                                    <HBox maxWidth="1.7976931348623157E308" minHeight="100.0" spacing="24.0">
+                                       <children>
+                                          <CustomTextField fx:id="search1111" maxWidth="1000.0" minHeight="50.0" prefHeight="50.0" prefWidth="623.0" promptText="Search" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets left="8.0" />
+                                             </HBox.margin>
+                                          </CustomTextField>
+                                          <AnchorPane prefWidth="1.0" style="-fx-background-color: #a0a0a066;">
+                                             <HBox.margin>
+                                                <Insets bottom="32.0" />
+                                             </HBox.margin>
+                                          </AnchorPane>
+                                          <ComboBox minHeight="50.0" prefWidth="150.0" promptText="Filter By" />
+                                          <AnchorPane prefWidth="1.0" style="-fx-background-color: #a0a0a066;">
+                                             <HBox.margin>
+                                                <Insets bottom="32.0" />
+                                             </HBox.margin>
+                                          </AnchorPane>
+                                          <ComboBox minHeight="50.0" prefWidth="150.0" promptText="Group By" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="32.0" right="24.0" top="16.0" />
+                                       </padding>
+                                    </HBox>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane styleClass="outer-titled-pane" text="CheckList" textFill="WHITE">
+                                 <content>
+                                    <VBox>
+                                       <children>
+                                          <HBox VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <TableView2 prefHeight="800.0" rowHeaderVisible="true" stylesheets="@../css/jfoenix-components.css" tableMenuButtonVisible="true" HBox.hgrow="ALWAYS">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                   <columns>
+                                                      <TableColumn2 prefWidth="100.0" text="Column X" />
+                                                   </columns>
+                                                </TableView2>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="16.0" left="16.0" right="16.0" top="24.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                                 <VBox.margin>
+                                    <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+                                 </VBox.margin>
+                              </TitledPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="24.0" top="8.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </children>
+</HBox>

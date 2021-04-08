@@ -1,0 +1,54 @@
+  
+.root {
+    -fx-font: 16px System;
+    -fx-background-radius: 7;
+    -fx-padding: 40;
+}
+
+.myAlertPane{
+    -fx-background-color: #FEFEFE;
+    -fx-background-radius: 7;   
+    -fx-border-radius: 7;
+}
+
+.myAlertPane:header .header-panel{
+    -fx-background-color: #FEFEFE;
+    -fx-padding: 0 16 16 8;
+}
+
+.myAlertPane:header .header-panel .label{
+    -fx-font-size: 17;
+    -fx-font-weight:bold;
+}
+
+.dialog-pane .content{
+    -fx-font-size: 15;
+    -fx-text-fill:black;
+    -fx-translate-x: 8;
+    -fx-translate-y: 8;
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-padding: 16 0 0 0;
+}
+
+.dialog-pane .button{
+    -fx-background-color:transparent;
+    -fx-text-fill: rgba(0, 90, 224,.8);
+    -fx-wrap-text: true;
+}
+
+.dialog-pane .button{
+    -fx-background-color:transparent;
+    -fx-text-fill: rgba(0, 90, 224,.8);
+    -fx-wrap-text: true;
+    -fx-padding:8 0 0 0;
+    -fx-font-size:15;
+    -fx-font-weight:bold;
+}
+
+.dialog-pane .button:hover{
+    -fx-text-fill:#005ae0;
+    -fx-font-size:15;
+    -fx-font-weight:bold;
+}

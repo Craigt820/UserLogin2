@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #fafafa;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.MainMenuController">
+    <children>
+        <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
+            <children>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label contentDisplay="RIGHT" graphicTextGap="8.0" style="-fx-font-size: 24;" text="User Login" textFill="#686868">
+                            <font>
+                                <Font name="Segoe UI" size="24.0" />
+                            </font>
+                            <HBox.margin>
+                                <Insets left="40.0" />
+                            </HBox.margin>
+                        </Label>
+                    </children>
+                </HBox>
+                <Label contentDisplay="RIGHT" graphicTextGap="8.0" minHeight="100.0" onMousePressed="#toSettings" style="-fx-font-size: 16;" text="Settings" textFill="#686868">
+                    <StackPane.margin>
+                        <Insets right="40.0" top="8.0" />
+                    </StackPane.margin>
+                    <font>
+                        <Font name="Segoe UI" size="18.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" onMousePressed="#toSettings" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/privacy-settings.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Label>
+            </children>
+        </StackPane>
+        <StackPane prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #fafafa;" />
+        <StackPane prefHeight="277.0" prefWidth="1280.0" style="-fx-background-color: #fafafa;">
+            <children>
+                <HBox alignment="TOP_CENTER" minHeight="500.0" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <VBox maxHeight="218.0" minHeight="240.0" prefHeight="218.0" prefWidth="372.0" style="-fx-background-color: #FEFEFE; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-color: #a0a0a0;" visible="false">
+                            <HBox.margin>
+                                <Insets right="16.0" />
+                            </HBox.margin>
+                            <children>
+                                <StackPane prefHeight="20.0">
+                                    <VBox.margin>
+                                        <Insets left="40.0" top="40.0" />
+                                    </VBox.margin>
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                            <children>
+                                                <Label text="Forgot Pasword" textFill="#355ea4">
+                                                    <font>
+                                                        <Font name="Segoe UI Bold" size="15.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </StackPane>
+                                <TextField minHeight="48.0" minWidth="310.0" prefWidth="324.0" style="-fx-background-color: #f9f9f9; -fx-border-color: #a0a0a066; -fx-border-radius: 6; -fx-background-radius: 6;">
+                                    <VBox.margin>
+                                        <Insets left="40.0" right="40.0" top="8.0" />
+                                    </VBox.margin>
+                                </TextField>
+                                <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="444.0" style="-fx-background-color: #226CFC; -fx-background-radius: 6; -fx-border-radius: 6;" text="Reset Password" textFill="#fcfcfc">
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets left="40.0" right="40.0" top="32.0" />
+                                    </VBox.margin>
+                                </Button>
+                            </children>
+                        </VBox>
+                        <VBox minHeight="460.0" prefHeight="489.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #a0a0a0;">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <Label style="-fx-font-size: 32; -fx-font-weight: bold;" text="Sign In" textFill="#3761a1">
+                                            <font>
+                                                <Font name="Segoe UI Bold" size="32.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets top="16.0" />
+                                            </HBox.margin>
+                                        </Label>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets left="60.0" top="8.0" />
+                                    </VBox.margin>
+                                </HBox>
+                                <StackPane prefHeight="20.0">
+                                    <VBox.margin>
+                                        <Insets left="60.0" top="16.0" />
+                                    </VBox.margin>
+                                    <children>
+                                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                                            <children>
+                                                <Label onMouseClicked="#toAccessCode" text="Use Access Code" textFill="#3660a3">
+                                                    <font>
+                                                        <Font name="Segoe UI" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                            <StackPane.margin>
+                                                <Insets right="60.0" />
+                                            </StackPane.margin>
+                                        </HBox>
+                                    </children>
+                                </StackPane>
+                                <TextField fx:id="user" minHeight="50.0" promptText="Username" style="-fx-background-color: #fdfdfd;">
+                                    <VBox.margin>
+                                        <Insets left="60.0" right="60.0" top="16.0" />
+                                    </VBox.margin>
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                                </TextField>
+                                <PasswordField fx:id="password" minHeight="50.0" promptText="Password" style="-fx-background-color: #fdfdfd;">
+                                    <VBox.margin>
+                                        <Insets left="60.0" right="60.0" top="24.0" />
+                                    </VBox.margin>
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                                </PasswordField>
+                                <Label onMouseClicked="#toForgotPwd" text="Forgot Password" textFill="#3660a3">
+                                    <font>
+                                        <Font name="Segoe UI" size="14.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets left="60.0" top="16.0" />
+                                    </VBox.margin>
+                                </Label>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Label fx:id="statusLbl" style="-fx-font-weight: bold; -fx-font-size: 14;" textFill="#108c23">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="32.0" />
+                           </VBox.margin>
+                        </VBox>
+                                <Button mnemonicParsing="false" onAction="#login" prefHeight="54.0" prefWidth="444.0" styleClass="confirmBtn" text="Login" textFill="#fcfcfc">
+                                    <VBox.margin>
+                                        <Insets left="60.0" top="16.0" />
+                                    </VBox.margin>
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </VBox>
+                        <VBox maxHeight="218.0" minHeight="240.0" prefHeight="218.0" prefWidth="380.0" style="-fx-background-color: #FEFEFE; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-color: #a0a0a0;" visible="false">
+                            <children>
+                                <StackPane prefHeight="20.0">
+                                    <VBox.margin>
+                                        <Insets left="40.0" top="40.0" />
+                                    </VBox.margin>
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                            <children>
+                                                <Label contentDisplay="RIGHT" text="Access Code" textFill="#355ea4">
+                                                    <font>
+                                                        <Font name="Segoe UI Bold" size="15.0" />
+                                                    </font>
+                                                    <graphic>
+                                                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../images/info.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </StackPane>
+                                <TextField minHeight="48.0" minWidth="310.0" prefWidth="324.0" promptText="Code" style="-fx-background-color: #ededed; -fx-border-color: #a0a0a066; -fx-border-radius: 6; -fx-background-radius: 6;">
+                                    <VBox.margin>
+                                        <Insets left="40.0" right="40.0" top="16.0" />
+                                    </VBox.margin>
+                                </TextField>
+                                <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="444.0" style="-fx-background-color: #226CFC; -fx-background-radius: 6; -fx-border-radius: 6;" text="Login" textFill="#fcfcfc">
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets left="40.0" right="40.0" top="32.0" />
+                                    </VBox.margin>
+                                </Button>
+                            </children>
+                            <HBox.margin>
+                                <Insets left="16.0" />
+                            </HBox.margin>
+                        </VBox>
+                    </children>
+                    <StackPane.margin>
+                        <Insets bottom="100.0" />
+                    </StackPane.margin>
+                </HBox>
+            </children>
+         <VBox.margin>
+            <Insets top="16.0" />
+         </VBox.margin>
+        </StackPane>
+        <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
+            <children>
+                <Button minHeight="54.0" minWidth="224.0" mnemonicParsing="false" style="-fx-background-color: #226CFC10; -fx-background-radius: 6;" text="Contact Support" textFill="#226cfc">
+                    <StackPane.margin>
+                        <Insets right="40.0" />
+                    </StackPane.margin>
+                    <font>
+                        <Font name="Segoe UI Bold" size="15.0" />
+                    </font>
+                </Button>
+            </children>
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </StackPane>
+    </children>
+</VBox>

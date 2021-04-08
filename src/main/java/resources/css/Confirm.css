@@ -1,0 +1,22 @@
+
+.no{
+    -fx-background-color: #bC2414;
+    -fx-text-fill:white;
+    -fx-border-radius:6;
+    -fx-background-radius:6;
+}
+
+.no:hover{
+   -fx-background-color:#DC2419;
+}
+
+.yes{
+ -fx-background-color: rgba(16, 33, 203,1);
+ -fx-text-fill: white;
+ -fx-border-radius:6;
+ -fx-background-radius:6;
+}
+
+.yes:hover{
+ -fx-background-color: rgba(16, 33, 250,1);
+}

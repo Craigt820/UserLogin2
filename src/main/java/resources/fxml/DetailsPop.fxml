@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckComboBox?>
+
+<VBox prefHeight="737.0" prefWidth="800.0" spacing="16.0" style="-fx-background-color: #f9f9f9;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.DetailsPopController">
+   <children>
+      <TitledPane text="Info" textFill="#fefefe" VBox.vgrow="ALWAYS">
+        <content>
+            <VBox spacing="16.0" style="-fx-background-color: #fdfdfd;">
+               <children>
+                  <VBox spacing="8.0">
+                     <children>
+                        <StackPane alignment="CENTER_LEFT">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="labels" text="Location" textFill="#07255eed">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label fx:id="browseInfo" onMouseClicked="#browseLoc">
+                                       <graphic>
+                                          <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../images/info.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                                 <StackPane.margin>
+                                    <Insets left="64.0" />
+                                 </StackPane.margin>
+                              </HBox>
+                           </children>
+                        </StackPane>
+                        <Label fx:id="location" style="-fx-text-fill: black;" text="-" textFill="#07255eed">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" top="8.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Started On" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="startedOn" style="-fx-text-fill: black;" text="-" textFill="#07255eed">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Completed On" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="compOn" style="-fx-text-fill: black;" text="-" textFill="#07255eed">
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="16.0" left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+            </VBox>
+        </content>
+      </TitledPane>
+      <TitledPane text="Properties" textFill="#fefefe" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox spacing="16.0" style="-fx-background-color: #fdfdfd;">
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+               <children>
+                  <VBox>
+                     <children>
+                        <Label styleClass="labels" text="Condition" textFill="#07255eed" translateX="4.0">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minWidth="218.0" prefHeight="40.0" prefWidth="218.0" showCheckedCount="true">
+                           <VBox.margin>
+                              <Insets top="8.0" />
+                           </VBox.margin></CheckComboBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" right="16.0" top="8.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label styleClass="labels" text="Scanner" textFill="#07255eed" translateX="4.0">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckComboBox fx:id="scannerCombo" maxWidth="1.7976931348623157E308" minWidth="218.0" prefHeight="40.0" prefWidth="218.0" showCheckedCount="true">
+                           <VBox.margin>
+                              <Insets top="8.0" />
+                           </VBox.margin></CheckComboBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="16.0" right="16.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label styleClass="labels" text="Comments" textFill="#07255eed" translateX="4.0">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextArea fx:id="commentsField" maxWidth="1.7976931348623157E308" wrapText="true">
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="8.0" />
+                           </VBox.margin>
+                        </TextArea>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="16.0" left="16.0" right="16.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </TitledPane>
+   </children>
+   <padding>
+      <Insets bottom="40.0" left="40.0" right="40.0" top="32.0" />
+   </padding>
+</VBox>
