@@ -158,7 +158,6 @@ public class CheckListController extends BaseEntryController<BaseEntryController
                         setText(item.getName());
                         final Hyperlink link = new Hyperlink(item.getName());
                         link.setOnAction(e -> {
-                            System.out.println("Link Clicked!");
                             setupGroupPop(item);
                         });
                         setGraphic(link);

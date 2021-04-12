@@ -157,7 +157,8 @@
                                                         </Label>
                                                         <TextArea fx:id="commentsField"
                                                                   maxWidth="1.7976931348623157E308"
-                                                                  style="-fx-background-color: #f0f0f0;-fx-font-size:14;" wrapText="true"
+                                                                  style="-fx-background-color: #f0f0f0;-fx-font-size:14;"
+                                                                  wrapText="true"
                                                                   VBox.vgrow="ALWAYS">
                                                             <VBox.margin>
                                                                 <Insets bottom="14.0"/>
@@ -295,6 +296,9 @@
                                                         <JFXTreeTableView fx:id="tree" editable="true"
                                                                           fixedCellSize="56.0" VBox.vgrow="ALWAYS">
                                                             <columns>
+                                                                <JFXTreeTableColumn fx:id="existColumn" maxWidth="40.0"
+                                                                                    minWidth="40.0" prefWidth="40.0"
+                                                                                    style="-fx-alignment: Center;"/>
                                                                 <JFXTreeTableColumn fx:id="compColumn" maxWidth="100.0"
                                                                                     minWidth="100.0" prefWidth="100.0"
                                                                                     text="Complete"/>

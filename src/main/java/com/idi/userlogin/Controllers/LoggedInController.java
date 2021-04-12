@@ -42,6 +42,10 @@ public class LoggedInController implements Initializable {
     private Label desc;
     @FXML
     private Label jobID;
+    @FXML
+    private Label jobTotals;
+    @FXML
+    private Label job1Total;
 
     @FXML
     private JFXDrawer specsDrawer;
@@ -56,10 +60,8 @@ public class LoggedInController implements Initializable {
         setTimeService();
     }
 
-
     private void setTimeService() {
         ScheduledExecutorService executors = Executors.newScheduledThreadPool(2);
-
         timeClock = executors.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -68,9 +70,6 @@ public class LoggedInController implements Initializable {
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
-    @FXML
-    void changeProject() {
-    }
 
     @FXML
     void showSpecs() throws IOException {
@@ -94,6 +93,14 @@ public class LoggedInController implements Initializable {
     }
 
     @FXML
+    void changeJob() {
+        ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/JobSelect.fxml"), false);
+        if (ControllerHandler.getMainMenuPop().isShowing()) {
+            ControllerHandler.getMainMenuPop().hide();
+        }
+    }
+
+    @FXML
     void signOut() {
         ControllerHandler.getOpaqueOverlay().setVisible(true);
         final CustomAlert alert = new CustomAlert(Alert.AlertType.NONE, "Are you sure you want to sign out?", ButtonType.YES, ButtonType.NO);
@@ -105,7 +112,7 @@ public class LoggedInController implements Initializable {
                     ControllerHandler.getMainMenuPop().hide();
                 }
 
-                String elapsed = hour.getText() + " : " + min.getText() + " : " + sec.getText();
+                final String elapsed = hour.getText() + " : " + min.getText() + " : " + sec.getText();
                 Main.fxTrayIcon.showInfoMessage(" " + jsonHandler.getName() + " signed out \n Time Elapsed: " + elapsed);
                 ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/MainMenu.fxml"), false);
                 resetTime();
@@ -222,5 +229,16 @@ public class LoggedInController implements Initializable {
         this.jobID = jobID;
     }
 
+    public AnchorPane getRoot() {
+        return root;
+    }
+
+    public Label getJobTotals() {
+        return jobTotals;
+    }
+
+    public Label getJob1Total() {
+        return job1Total;
+    }
 
 }

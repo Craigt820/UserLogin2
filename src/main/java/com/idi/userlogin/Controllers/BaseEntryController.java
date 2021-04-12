@@ -4,6 +4,7 @@ import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.ImgFactory;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.application.Platform;
@@ -37,6 +38,7 @@ import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.control.textfield.CustomTextField;
 import com.idi.userlogin.utils.AutoCompleteTextField;
 
+import javax.accessibility.AccessibleHyperlink;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
@@ -52,6 +54,8 @@ import java.util.stream.Collectors;
 
 import static com.idi.userlogin.JsonHandler.trackPath;
 import static com.idi.userlogin.Main.*;
+import static com.idi.userlogin.utils.ImgFactory.IMGS.CHECKMARK;
+import static com.idi.userlogin.utils.ImgFactory.IMGS.EXMARK;
 import static com.idi.userlogin.utils.Utils.*;
 
 public abstract class BaseEntryController<T extends Item> extends ControllerHandler implements Initializable {
@@ -66,6 +70,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     protected AnchorPane root;
     @FXML
     protected JFXTreeTableView<? extends Item> tree;
+    @FXML
+    protected JFXTreeTableColumn<T, Boolean> existColumn;
     @FXML
     protected JFXTreeTableColumn<T, Label> delColumn;
     @FXML
@@ -171,20 +177,25 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     }
 
     private void completeTask(JFXTreeTableView<? extends Item> tree) {
-        fxTrayIcon.showInfoMessage("Group '" + selGroupItem.getName() + "' has been completed!");
-        Platform.runLater(() -> {
-            tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
-        });
-        groupCombo.getSelectionModel().getSelectedItem().setCompleted_On(LocalDateTime.now().toString());
-        groupCombo.getSelectionModel().getSelectedItem().setComplete(true);
-        updateAll(tree);
-        updateGroup(tree, true);
-        tree.getRoot().getChildren().clear();
-        selCol.setText("");
-        selGroup.setText("");
-        countProp.setValue(0);
-        groupCombo.getSelectionModel().clearSelection();
-        selGroupItem = null;
+        Optional<? extends TreeItem<? extends Item>> items = tree.getRoot().getChildren().stream().filter(e -> !e.getValue().exists.get()).findAny();
+        if (!items.isPresent()) {
+            fxTrayIcon.showInfoMessage("Group '" + selGroupItem.getName() + "' has been completed!");
+            Platform.runLater(() -> {
+                tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
+            });
+            groupCombo.getSelectionModel().getSelectedItem().setCompleted_On(LocalDateTime.now().toString());
+            groupCombo.getSelectionModel().getSelectedItem().setComplete(true);
+            updateAll(tree);
+            updateGroup(tree, true);
+            tree.getRoot().getChildren().clear();
+            selCol.setText("");
+            selGroup.setText("");
+            groupCountProp.setValue(0);
+            groupCombo.getSelectionModel().clearSelection();
+            selGroupItem = null;
+        } else {
+            fxTrayIcon.showErrorMessage("Some Items Don't Exist!");
+        }
     }
 
     public class EntryItem extends Item<T> {
@@ -194,20 +205,11 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         public EntryItem() {
             super();
             item = this;
-            super.completed.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldVal, Boolean newVal) {
-                    if (newVal) {
-                        Platform.runLater(() -> {
-                            updateSelected(item);
-                        });
-                    }
-                }
-            });
         }
 
         public EntryItem(int id, com.idi.userlogin.JavaBeans.Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String started_On, String completed_On) {
             super(id, collection, group, name, total, non_feeder, type, completed, comments, started_On, completed_On);
+
             super.details.setOnMousePressed(e -> {
                 setupDetailsPop(this);
             });
@@ -217,40 +219,15 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             });
 
             super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(this.id.get(), this) + "\\" + this.name.getText().trim());
+
         }
-
-
-        protected EntryItem(String name, String type, String comments) {
-            this();
-            this.name.setText(name);
-            this.type.setText(type);
-            final ImageView view = new ImageView();
-            switch (type) {
-                case "Folder":
-                case "Root":
-                    view.setImage(folderIcon);
-                    break;
-                case "Multi-Paged":
-                    view.setImage(fileIcon);
-                    break;
-            }
-            this.type.setGraphic(view);
-            view.setFitWidth(20);
-            view.setFitHeight(20);
-            this.type.setGraphicTextGap(16);
-            this.type.setGraphic(view);
-            this.type.setTooltip(new Tooltip(type));
-            this.type.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        }
-
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Item item = (Item) o;
-            return item.getId() == item.getId() &&
-                    getName().getText().equals(item.getName().getText());
+            return item.getId() == getId();
         }
 
         @Override
@@ -281,7 +258,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         yes.setOnMousePressed(e3 -> {
             if (item != null) {
                 Item.removeItem(item);
-                fxTrayIcon.showInfoMessage("Item '" + item.getName().getText().trim() + "' Has Been Removed!");
+                fxTrayIcon.showInfoMessage("Item: '" + item.getName().getText().trim() + "' Has Been Removed");
 
                 //Remove from group item list
                 final Optional<?> groupItem = selGroupItem.getItemList().stream().filter(e -> e.getId() == item.getId()).findAny();
@@ -316,17 +293,45 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                     tree.getPlaceholder().autosize();
                     final Task task = new Task() {
                         @Override
-                        protected Object call() throws Exception {
-                            Platform.runLater(() -> {
-                                final ObservableList<?> entryItems = getGroupItems(selGroupItem);
-                                final ObservableList group = selGroupItem.getItemList();
-                                if (entryItems != null) {
-                                    group.setAll(entryItems);
-                                    List itemList = entryItems.stream().map(TreeItem::new).collect(Collectors.toList());
-                                    tree.getRoot().getChildren().addAll(itemList);
-                                    updateTotal();
-                                }
-                            });
+                        protected Object call() {
+                            final ObservableList<?> entryItems = getGroupItems(selGroupItem);
+                            final ObservableList group = selGroupItem.getItemList();
+                            if (entryItems != null) {
+                                group.setAll(entryItems);
+
+                                final List itemList = entryItems.stream().map(TreeItem::new).collect(Collectors.toList());
+                                tree.getRoot().getChildren().addAll(itemList);
+                                updateTotal();
+
+                                itemList.forEach(e -> {
+                                    TreeItem<Item> item = (TreeItem<Item>) e;
+                                    Task task1 = new Task() {
+                                        @Override
+                                        protected Object call() throws Exception {
+                                            Map<Integer, Boolean> pages = countHandler(item.getValue().getLocation(), "Multi-Paged");
+                                            item.getValue().setExists((Boolean) pages.values().toArray()[0]);
+                                            item.getValue().setTotal((Integer) pages.keySet().toArray()[0]);
+                                            return null;
+                                        }
+                                    };
+                                    new Thread(task1).start();
+
+//                                    item.getValue().setTotal((Integer) pages.entrySet().toArray()[0]);
+                                    checkListController.getClAllTable().getItems().stream().filter(e2 -> {
+                                        return item.getValue().getId() == e2.getId();
+                                    }).findAny().ifPresent(e3 -> {
+                                        item.getValue().totalProperty().bindBidirectional(e3.totalProperty());
+                                        item.getValue().completed.selectedProperty().bindBidirectional(e3.completed.selectedProperty());
+                                        item.getValue().name.textProperty().bindBidirectional(e3.name.textProperty());
+                                        item.getValue().comments.bindBidirectional(e3.comments);
+                                        item.getValue().completed_On.bindBidirectional(e3.completed_On);
+                                        item.getValue().started_On.bindBidirectional(e3.started_On);
+                                        item.getValue().conditions.bindBidirectional(e3.conditions);
+                                        e3.setLocation(item.getValue().getLocation());
+                                        e3.setExists(item.getValue().isExists());
+                                    });
+                                });
+                            }
                             return null;
                         }
                     };
@@ -464,15 +469,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             for (Group group : groupList) {
                 ObservableList<? extends Item> groupItems = (ObservableList<? extends Item>) group.getItemList();
                 groupItems.forEach(e -> {
-                    final EntryItem checklistItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName().getText(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On());
-                    checklistItem.totalProperty().bindBidirectional(e.totalProperty());
-                    checklistItem.completed.selectedProperty().bindBidirectional(e.completed.selectedProperty());
-                    checklistItem.name.textProperty().bindBidirectional(e.name.textProperty());
-                    checklistItem.comments.bindBidirectional(e.comments);
-                    checklistItem.completed_On.bindBidirectional(e.completed_On);
-                    checklistItem.started_On.bindBidirectional(e.started_On);
-                    checklistItem.conditions.bindBidirectional(e.conditions);
-                    items.add(checklistItem);
+                    final EntryItem clItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName().getText(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On());
+                    items.add(clItem);
                 });
             }
         }
@@ -500,8 +498,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             }
         });
         nameColumn.setStyle("-fx-padding: 0 0 0 16;");
-        ContextMenu treeMenu = new ContextMenu();
-        MenuItem updateAll = new MenuItem("Update All");
+        final ContextMenu treeMenu = new ContextMenu();
+        final MenuItem updateAll = new MenuItem("Update All");
 
         updateAll.setOnAction(e -> {
             if (!tree.getRoot().getChildren().isEmpty()) {
@@ -557,8 +555,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
             });
         }
-//        selCol.textProperty().bind(Bindings.selectString(colCombo.getSelectionModel().selectedItemProperty().get().name.toString()));
-//        selID.textProperty().bind(groupCombo.getSelectionModel().selectedItemProperty().asString());
+
         if (nameField != null) {
             legalTextTest(legalText(""), nameField);
             nameField.textProperty().addListener(new ChangeListener<String>() {
@@ -600,10 +597,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 public void commitEdit(Label newValue) {
                     if (legalText(newValue.getText())) {
                         super.commitEdit(newValue);
-//                        getTreeTableRow().getTreeItem().getValue().getName().setText(getText());
                         setGraphic(null);
                     } else {
-                        ctf.setRight(new ImageView(getClass().getResource("/images/exmark.png").toExternalForm()));
+                        ctf.setRight(ImgFactory.createView(EXMARK));
                     }
                 }
             });
@@ -654,7 +650,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                         item.getName().setText(getText());
                         setGraphic(null);
                     } else {
-                        ctf.setRight(new ImageView(getClass().getResource("/images/exmark.png").toExternalForm()));
+                        ctf.setRight(ImgFactory.createView(EXMARK));
                     }
                 }
             });
@@ -685,30 +681,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         compColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("completed"));
         detailsColumn.setPrefWidth(100);
         detailsColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("details"));
-
-//        newChildNode(rootItem, subRoot);
-//        newChildNode(rootItem, subRoot2);
         conditCombo.getItems().addAll(CONDITION_LIST);
         conditCombo.setManaged(true);
-        totalCount.textProperty().bind(countProp.asString());
-//        subRoot2.getValue().getChildren().add(video.getValue());
+        totalCount.textProperty().bind(groupCountProp.asString());
         updateTotal();
-
-
-//        groupCombo.setCellFactory(e -> {
-//            ListCell<Group> cell = new ListCell<Group>() {
-//                @Override
-//                protected void updateItem(Group item, boolean empty) {
-//                    super.updateItem(item, empty);
-//                    if (item != null && !item.getName().isEmpty()) {
-//                        setText(item.getName());
-//                    }
-//                }
-//            };
-//
-//            return cell;
-//        });
-
 
         groupCombo.setConverter(new StringConverter<Group>() {
             @Override
@@ -817,9 +793,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         }
         groupCombo.setEditable(true);
 
-//        selCol.textProperty().bind(Bindings.selectString(colCombo.getSelectionModel().selectedItemProperty().get().name.toString()));
-//        selID.textProperty().bind(groupCombo.getSelectionModel().selectedItemProperty().asString());
-
         settings.setOnMousePressed(e -> {
             mainMenuPop.setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
             mainMenuPop.setAutoHide(true);
@@ -834,12 +807,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         compColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("completed"));
         detailsColumn.setPrefWidth(100);
         detailsColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("details"));
-
-//        newChildNode(rootItem, subRoot);
-//        newChildNode(rootItem, subRoot2);
         conditCombo.setManaged(true);
-        totalCount.textProperty().bind(countProp.asString());
-//        subRoot2.getValue().getChildren().add(video.getValue());
+        totalCount.textProperty().bind(groupCountProp.asString());
         updateTotal();
 
         groupCombo.setCellFactory(e -> {
@@ -852,7 +821,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                         setText(item.getName());
                         if (item.completeProperty() != null) {
                             if (item.isComplete()) {
-                                setGraphic(new ImageView(getClass().getResource("/images/checkmark.png").toExternalForm()));
+                                setGraphic(ImgFactory.createView(CHECKMARK));
                                 String completed_On = item.getCompleted_On();
                                 if (completed_On != null && !completed_On.isEmpty()) {
                                     setTooltip(new Tooltip("Completed: " + LocalDateTime.parse(completed_On).format(DATE_FORMAT)));
@@ -866,7 +835,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                 @Override
                                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                                     if (item.completeProperty() != null && item.isComplete()) {
-                                        setGraphic(new ImageView(getClass().getResource("/images/checkmark.png").toExternalForm()));
+                                        setGraphic(ImgFactory.createView(CHECKMARK));
                                         String completed_On = item.getCompleted_On();
                                         if (completed_On != null && !completed_On.isEmpty()) {
                                             setTooltip(new Tooltip("Completed: " + LocalDateTime.parse(completed_On).format(DATE_FORMAT)));
@@ -922,7 +891,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 if (item != null && !item.getName().isEmpty()) {
                     setText(item.getName());
                     if (item.completeProperty() != null && item.isComplete()) {
-                        setGraphic(new ImageView(getClass().getResource("/images/checkmark.png").toExternalForm()));
+                        setGraphic(ImgFactory.createView(CHECKMARK));
                         String completed_On = item.getCompleted_On();
                         if (completed_On != null && !completed_On.isEmpty()) {
                             setTooltip(new Tooltip("Completed: " + LocalDateTime.parse(completed_On).format(DATE_FORMAT)));
@@ -977,7 +946,32 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         }
 
         groupCombo.getItems().add(new Group("Add New Group"));
-
+        existColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("exists"));
+        existColumn.setCellFactory(e -> {
+                    TreeTableCell<T, Boolean> cell = new TreeTableCell<T, Boolean>() {
+                        @Override
+                        protected void updateItem(Boolean item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (item != null) {
+                                Label label = new Label();
+                                ImageView view;
+                                if (this.getTreeTableRow().getTreeItem().getValue().exists.get()) {
+                                    view = ImgFactory.createView(ImgFactory.IMGS.CHECKMARK);
+                                    Tooltip.install(label, new Tooltip("Exists"));
+                                } else {
+                                    view = ImgFactory.createView(EXMARK);
+                                    Tooltip.install(label, new Tooltip("Doesn't Exist!"));
+                                }
+                                label.setGraphic(view);
+                                label.setPadding(new Insets(0, 0, 0, 8));
+                                setGraphic(label);
+                                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            }
+                        }
+                    };
+                    return cell;
+                }
+        );
     }
 
     public void newGroupHelper(Group group) {
@@ -1041,15 +1035,36 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     @Override
     public void updateTotal() {
         final AtomicInteger ai = new AtomicInteger(0);
+        final AtomicInteger ai2 = new AtomicInteger(0);
+
         if (tree.getRoot() != null && !tree.getRoot().getChildren().isEmpty()) {
             for (TreeItem<? extends Item> child : tree.getRoot().getChildren()) {
                 ai.getAndAdd(child.getValue().total.get());
+                final String compOn = child.getValue().completed_On.get();
+                if (compOn != null && !compOn.isEmpty()) {
+                    LocalDateTime now = LocalDateTime.now();
+                    int nDay = now.getDayOfMonth();
+                    int nMonth = now.getMonthValue();
+                    int nYear = now.getYear();
+                    final LocalDateTime itemTime = LocalDateTime.parse(child.getValue().completed_On.get().replace(" ", "T"));
+                    int iDay = itemTime.getDayOfMonth();
+                    int iMonth = itemTime.getMonthValue();
+                    int iYear = itemTime.getYear();
+                    if ((nDay + nMonth + nYear) == iDay + iMonth + iYear) {
+                        ai2.getAndAdd(child.getValue().getTotal());
+                    }
+                }
+
                 for (TreeItem<? extends Item> childChild : child.getChildren()) {
                     ai.getAndAdd(childChild.getValue().getTotal());
                 }
             }
-            countProp.setValue(ai.get());
+            Platform.runLater(() -> {
+                groupCountProp.setValue(ai.get());
+                totalCountProp.setValue(ai2.get());
+            });
         }
+
     }
 
     @Override
@@ -1065,7 +1080,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         try {
             connection = ConnectionHandler.createDBConnection();
             ps = connection.prepareStatement("Update `sc_groups` SET total=?, scanned=?, completed_On=? WHERE id=?");
-            ps.setInt(1, countProp.get());
+            ps.setInt(1, groupCountProp.get());
             ps.setInt(2, booleanToInt(completed));
             if (completed) {
                 final Date now = formatDateTime(LocalDateTime.now().toString());

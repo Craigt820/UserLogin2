@@ -2,6 +2,7 @@ package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
+import com.idi.userlogin.Main;
 import com.itextpdf.text.pdf.PdfReader;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.animation.FadeTransition;
@@ -21,7 +22,6 @@ import javafx.util.Duration;
 import org.apache.commons.dbutils.DbUtils;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.textfield.CustomTextField;
-import com.idi.userlogin.Main;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -37,9 +37,9 @@ import java.nio.file.Path;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Date;
 import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Main.fxTrayIcon;
@@ -56,12 +56,13 @@ public abstract class ControllerHandler {
     public static LoggedInController loggedInController;
     public static CheckListController checkListController;
     public static PopOver mainMenuPop;
-    public static SimpleIntegerProperty countProp = new SimpleIntegerProperty(0); //For Total Count
+    public static SimpleIntegerProperty totalCountProp = new SimpleIntegerProperty(0); //For Total Count
+    public static SimpleIntegerProperty groupCountProp = new SimpleIntegerProperty(0); //For Total Count
     public static JFXTreeTableView mainTree;
     public static HBox checkListScene;
 
     static {
-        final FXMLLoader loader = new FXMLLoader(ControllerHandler.class.getResource("/fxml/LoggedInMenu.fxml"));
+        final FXMLLoader loader = new FXMLLoader(ControllerHandler.class.getResource("/fxml/LoggedInMenu_.fxml"));
         Parent settingsRoot = null;
         try {
             settingsRoot = (Parent) loader.load();
@@ -70,6 +71,8 @@ public abstract class ControllerHandler {
             Main.LOGGER.log(Level.SEVERE, "There was an error loading the 'LoggedInMenu' Scene!", e);
 
         }
+        loggedInController.getJobTotals().textProperty().bind(totalCountProp.asString());
+
         mainMenuPop = new PopOver(settingsRoot);
         mainMenuPop.setTitle("Main Menu");
         mainMenuPop.detachedProperty().addListener(e -> {
@@ -144,7 +147,7 @@ public abstract class ControllerHandler {
         return cols;
     }
 
-    public static void createFoldersFromStruct(Item item)  {
+    public static void createFoldersFromStruct(Item item) {
         Path newStructPath = item.getLocation();
         if (item.getType().getText().equals("Multi-Paged")) {
             newStructPath = newStructPath.getParent();
@@ -303,7 +306,8 @@ public abstract class ControllerHandler {
         opaquePOS();
     }
 
-    public static int countHandler(Path path, String type) {
+    public static Map<Integer, Boolean> countHandler(Path path, String type) {
+        boolean exists = false;
         int pages = 0;
         try {
             if (path != null) {
@@ -312,6 +316,7 @@ public abstract class ControllerHandler {
                     if (files != null) {
                         Optional<File> file = Arrays.stream(files).filter(e -> e.getName().contains(path.getFileName().toString())).findAny();
                         if (file.isPresent()) {
+                            exists = true;
                             if (file.get().toString().contains(".pdf")) {
                                 pages = countPDF(file.get());
                             } else if (file.get().toString().contains(".tif") || file.get().toString().contains(".tiff")) {
@@ -321,6 +326,7 @@ public abstract class ControllerHandler {
                     }
                 } else {
                     if (path.toFile().listFiles() != null) {
+                        exists = true;
                         pages = Objects.requireNonNull(path.toFile().listFiles()).length;
                     }
                 }
@@ -328,9 +334,8 @@ public abstract class ControllerHandler {
         } catch (Exception e) {
             e.printStackTrace();
             Main.LOGGER.log(Level.SEVERE, "There was an error with counting a file/folder!", e);
-
         }
-        return pages;
+        return Collections.singletonMap(pages, exists);
     }
 
     private static List<Image> createThumbnails(Item item) {
@@ -389,10 +394,10 @@ public abstract class ControllerHandler {
 
     public static void updateAll(JFXTreeTableView<? extends Item> tree) {
         tree.getRoot().getChildren().forEach(e2 -> {
-            Item item = e2.getValue();
-            int pages = countHandler(item.getLocation(), item.type.getText());
-            item.setTotal(pages);
-//            item.previews.addAll(createThumbnails(item));
+            final Item item = e2.getValue();
+            Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
+            item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
+            item.existsProperty().set((Boolean) pages.values().toArray()[0]);
             updateItemDB(item);
         });
         tree.refresh();
@@ -401,13 +406,41 @@ public abstract class ControllerHandler {
     public abstract void resetFields();
 
     public static void updateSelected(Item item) {
-        int pages = countHandler(item.getLocation(), item.type.getText());
-        item.setTotal(pages);
+        Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
+        item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
+        item.existsProperty().set((Boolean) pages.values().toArray()[0]);
         updateItemDB(item);
+        mainTree.refresh();
     }
 
     public abstract void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed);
 
+    public static void updateItemDB(final Item item, String sql) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("Update `" + jsonHandler.getSelJobID() + "` SET total=?, completed=?, completed_On=? WHERE id=?");
+            ps.setInt(1, item.getTotal());
+            ps.setInt(2, booleanToInt(item.getCompleted().isSelected()));
+            if (item.getCompleted().isSelected()) {
+                Date now = formatDateTime(item.getCompleted_On().replace(" ", "T"));
+                ps.setString(3, new Timestamp(now.toInstant().toEpochMilli()).toString());
+            } else {
+                ps.setString(3, null);
+            }
+            ps.setInt(4, item.getId());
+            ps.executeUpdate();
+            ps.executeUpdate(sql);
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating an item!", e);
+
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+    }
 
     public static void updateItemDB(final Item item) {
         Connection connection = null;

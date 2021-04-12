@@ -13,14 +13,12 @@
 .table-view2 .table-row-cell::empty:filled:focused,
 .table-view2 .table-row-cell::empty:hover:empty{
     -fx-background: none;
-        -fx-background-color: rgba(242,242,242,.6);
-
+    -fx-background-color: rgba(242,242,242,.1);
 }
-
 
 .table-view2 .table-row-cell:filled:focused,
 .table-view2 .table-row-cell:hover{
-    -fx-background: rgba(242,242,242,.7);
+    -fx-background: rgba(242,242,242,.2);
 }
 
 .table-view2 .table-row-cell:empty{

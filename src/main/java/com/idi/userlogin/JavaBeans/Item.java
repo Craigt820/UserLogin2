@@ -1,7 +1,10 @@
 package com.idi.userlogin.JavaBeans;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -27,6 +30,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
 
     public static final Image folderIcon = new Image(Item.class.getResourceAsStream("/images/folder.png"));
     public static final Image fileIcon = new Image(Item.class.getResourceAsStream("/images/file.png"));
+    public BooleanProperty exists;
     public SimpleIntegerProperty id;
     public SimpleStringProperty started_On;
     public SimpleStringProperty completed_On;
@@ -45,7 +49,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
     public SimpleIntegerProperty total;
     public Path location;
     public List<Image> previews;
-    public SimpleMapProperty<String,String> projColumns;
+    public SimpleMapProperty<String, String> projColumns;
 
     public SimpleIntegerProperty countProperty() {
         if (total == null) {
@@ -73,6 +77,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
 
     public Item(int id, Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String startedOn, String completedOn) {
         this();
+        this.exists = new SimpleBooleanProperty(false);
 
         this.id.set(id);
         this.group = group;
@@ -88,8 +93,9 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.comments.set(comments);
         this.started_On.set(startedOn);
         this.completed_On.set(completedOn);
-        this.completed.selectedProperty().addListener(e -> {
-            this.completed.setSelected(this.completed.isSelected());
+
+        this.completed.selectedProperty().addListener((ob, ov, nv) -> {
+            this.completed.setSelected(nv);
             if (this.completed.isSelected()) {
                 this.completed_On.set(LocalDateTime.now().toString());
             } else {
@@ -98,6 +104,8 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
 
             updateSelected(this);
         });
+
+
     }
 
 
@@ -149,6 +157,18 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.started_On = new SimpleStringProperty();
         this.completed_On = new SimpleStringProperty();
         this.previews = new ArrayList<>();
+    }
+
+    public boolean isExists() {
+        return exists.get();
+    }
+
+    public BooleanProperty existsProperty() {
+        return exists;
+    }
+
+    public void setExists(boolean exists) {
+        this.exists.set(exists);
     }
 
     public static Image getFolderIcon() {

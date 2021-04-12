@@ -1,5 +1,6 @@
 package com.idi.userlogin.Controllers;
 
+import com.idi.userlogin.utils.ImgFactory;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
@@ -32,6 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Main.fxTrayIcon;
+import static com.idi.userlogin.utils.ImgFactory.IMGS.CHECKMARK;
+import static com.idi.userlogin.utils.ImgFactory.IMGS.EXMARK;
 
 public class EntryCheckListController extends BaseEntryController<BaseEntryController.EntryItem> {
 
@@ -41,13 +44,13 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
     @Override
     public void legalTextTest(boolean isLegal, CustomTextField node) {
         if (!isLegal) {
-            node.setRight(new ImageView(getClass().getResource("/images/exmark.png").toExternalForm()));
+            node.setRight(ImgFactory.createView(EXMARK));
             node.setTooltip(new Tooltip("May Contain a Special Character (?\\/:*\"<>|) or Is Empty!"));
             errorLbl.setText("Empty or Contains a Special Character (?\\/:*\"<>|) ");
             errorLbl.setVisible(true);
             insertBtn.setDisable(true);
         } else {
-            node.setRight(new ImageView(getClass().getResource("/images/checkmark.png").toExternalForm()));
+            node.setRight(ImgFactory.createView(CHECKMARK));
             node.setTooltip(new Tooltip("Legal Text"));
             errorLbl.setVisible(false);
             insertBtn.setDisable(false);
@@ -109,7 +112,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         boolean isPresent = tree.getRoot().getChildren().stream().anyMatch(e -> e.getValue().getType().getText().equals(type) && e.getValue().getName().getText().toLowerCase().equals(name.toLowerCase()));
         if (!isPresent) {
             if (!name.isEmpty()) {
-                nameField.setRight(new ImageView(getClass().getResource("/images/checkmark.png").toExternalForm()));
+                nameField.setRight(ImgFactory.createView(CHECKMARK));
                 final EntryItem item = new EntryItem(0, group.getCollection(), group, StringUtils.trim(name), 0, 0, type, false, comments, LocalDateTime.now().toString(), "");
                 final TreeItem newItem = new TreeItem<>(item);
                 item.setComments(commentsField.getText());
@@ -129,6 +132,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
                 checklistItem.completed_On.bindBidirectional(item.completed_On);
                 checklistItem.started_On.bindBidirectional(item.started_On);
                 checklistItem.conditions.bindBidirectional(item.conditions);
+                checklistItem.setLocation(item.getLocation());
                 checkListController.getClAllTable().getItems().add(checklistItem);
                 ObservableList items = group.getItemList();
                 items.add(item);
@@ -140,8 +144,6 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         } else {
             errorLbl.setText("Name Already Exists!");
             errorLbl.setVisible(true);
-            nameField.setTooltip(new Tooltip("Name Already Exists!"));
-            nameField.setRight(new ImageView(getClass().getResource("/images/exmark.png").toExternalForm()));
         }
         nameField.getRight().setStyle("-fx-translate-x:-8;");
     }

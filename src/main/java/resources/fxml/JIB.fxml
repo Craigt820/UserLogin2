@@ -44,7 +44,7 @@
                           <items>
                               <VBox minWidth="200.0" prefWidth="779.0" style="-fx-background-color: #f9f9f9;">
                                  <children>
-                                    <VBox style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
+                                    <VBox prefWidth="959.0" style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
                                        <children>
                                           <HBox spacing="4.0">
                                              <children>
@@ -390,15 +390,16 @@
                                           </HBox>
                                           <JFXTreeTableView fx:id="tree" editable="true" fixedCellSize="56.0" style="-fx-font-family: Segoe UI; -fx-border-color: #e0e0e0;" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <JFXTreeTableColumn fx:id="compColumn" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Complete" />
-                                              <JFXTreeTableColumn fx:id="idColumn" maxWidth="600.0" prefWidth="100.0" text="ID" />
-                                                <JFXTreeTableColumn fx:id="nameColumn" maxWidth="600.0" prefWidth="246.0" text="Name" />
-                                                <JFXTreeTableColumn fx:id="dtColumn" maxWidth="200.0" minWidth="100.0" prefWidth="300.0" text="Doc Type" />
+                                                <JFXTreeTableColumn fx:id="existColumn" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: Center;" />
+                                                <JFXTreeTableColumn fx:id="compColumn" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" text="Complete" />
+                                              <JFXTreeTableColumn fx:id="idColumn" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="ID" />
+                                                <JFXTreeTableColumn fx:id="nameColumn" maxWidth="600.0" prefWidth="200.0" text="Name" />
+                                                <JFXTreeTableColumn fx:id="dtColumn" maxWidth="400.0" minWidth="100.0" prefWidth="250.0" text="Doc Type" />
                                                 <JFXTreeTableColumn fx:id="statusColumn" maxWidth="200.0" minWidth="100.0" prefWidth="300.0" text="Status" />
                                                 <JFXTreeTableColumn fx:id="ssColumn" maxWidth="200.0" minWidth="100.0" prefWidth="300.0" text="SS" />
                                                 <JFXTreeTableColumn fx:id="countColumn" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Count" />
                                                <JFXTreeTableColumn fx:id="detailsColumn" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: Center;" />
-                                                <JFXTreeTableColumn fx:id="delColumn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" style="-fx-alignment: Center;" />
+                                                <JFXTreeTableColumn fx:id="delColumn" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" style="-fx-alignment: Center;" />
                                             </columns>
                                              <VBox.margin>
                                                 <Insets bottom="52.0" left="16.0" right="16.0" top="16.0" />

@@ -14,12 +14,11 @@
     -fx-text-fill:rgb(200,25,20);
 }
 
-.tooltip {
-  -fx-font-size: 14;
-}
-
 /* Label */
 
+.tooltip .text{
+  -fx-font-size: 0.80em;
+}
 .labels{
  -fx-text-fill:#07255e;
  -fx-font-weight:bold;
@@ -28,6 +27,7 @@
 }
 
 /* Table View */
+
 
 .tree-table-view{
   -fx-border-color: #e0e0e0;

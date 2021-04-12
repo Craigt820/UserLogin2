@@ -5,7 +5,11 @@ import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.cell.ComboBoxTreeTableCell;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import org.controlsfx.control.SearchableComboBox;
 import com.idi.userlogin.Main;
@@ -45,7 +49,7 @@ import static com.idi.userlogin.Main.*;
 
 public class JIBController extends BaseEntryController<JIBController.JIBEntryItem> implements Initializable {
     private final static ArrayList<String> STATUS = new ArrayList<>(Arrays.asList("LIVING", "DECEASED"));
-    private final static ArrayList<String> DOC_TYPES = new ArrayList<>(Arrays.asList("ACUPUN", "ALLERG", "AUDIO", "CARDIO", "CORRESPONDENCE", "DERMAT", "DIET", "DISAB", "EKGS", "ENT", "EXAMPHY", "GYN", "IMMUNE", "INTMED", "LAB", "MAMMO", "MISC", "NEURO", "OPHTH", "ORTHO", "OUTEST", "PHYORD", "PHYTRY", "PODTRY", "PROCTO", "PT", "PULMON", "RADIO", "SPEC", "SURG", "UROLGY", "OTHER"));
+    private ArrayList<String> DOC_TYPES = new ArrayList<>();
     private final JIBEntryItem treeRoot = new JIBEntryItem();
     private final RecursiveTreeItem<JIBEntryItem> rootItem = new RecursiveTreeItem<>(treeRoot, RecursiveTreeObject::getChildren);
 
@@ -191,31 +195,33 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         jibController = this;
         tree.setRoot(rootItem);
         afterInitialize();
-//        final TableColumn2<EntryItem, String> ssCol = new TableColumn2<>("SS");
-//        final TableColumn2<EntryItem, String> docTypeCol = new TableColumn2<>("Doc Type");
-//        final TableColumn2<EntryItem, String> statusCol = new TableColumn2<>("Status");
-//        ssCol.setCellValueFactory(new PropertyValueFactory<>("ss"));
-//        ssCol.setCellValueFactory(new PropertyValueFactory<>("docType"));
-//        ssCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-//
-//        checkListController.getClAllTable().getColumns().addAll(ssCol, docTypeCol, statusCol);
-//        groupCombo.getEditor().textProperty().addListener(new ChangeListener<String>() {
-//            @Override
-//            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//                System.out.println(newValue);
-//                final List<String> groups = groupCombo.getItems().stream().map(Group::getName).collect(Collectors.toList());
-//                if (!groups.contains(groupCombo.getEditor().getText())) {
-//                    final Collection col = colCombo.getSelectionModel().getSelectedItem();
-//                    final Group group = new Group(0, col, groupCombo.getEditor().getText(), false, "");
-//                    groupCombo.getItems().add(group);
-//                }
-//            }
-//        });
-
+        DOC_TYPES.addAll(getDocTypes());
+        FXCollections.sort(dtCombo.getItems());
 
         nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fullName"));
         idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"));
         dtColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("docType"));
+        dtColumn.setCellFactory(e -> new ComboBoxTreeTableCell<JIBEntryItem, String>(FXCollections.observableArrayList(DOC_TYPES)) {
+
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+            }
+
+            @Override
+            public void startEdit() {
+                super.startEdit();
+            }
+
+            @Override
+            public void commitEdit(String newValue) {
+                JIBEntryItem item = getTreeTableRow().getTreeItem().getValue();
+                item.setDocType(newValue);
+                ControllerHandler.updateItemDB(item, "UPDATE `" + jsonHandler.getSelJobID() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
+                super.commitEdit(newValue);
+            }
+        });
+        dtColumn.setEditable(true);
         statusColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("status"));
         ssColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("ss"));
         ssColumn.setCellFactory(e -> {
@@ -241,6 +247,46 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         final JIBEntryItem treeRoot = new JIBEntryItem();
         statusCombo.getItems().addAll(STATUS);
         dtCombo.getItems().addAll(DOC_TYPES);
+        dtCombo.getItems().add("ADD NEW DOCTYPE");
+        dtCombo.setCellFactory(e -> {
+            ListCell<String> cell = new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item != null && !item.isEmpty()) {
+                        setText(item);
+                    } else {
+                        setText("");
+                    }
+                }
+            };
+
+            cell.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, evt -> {
+                if (!cell.getItem().isEmpty() && !cell.isEmpty()) {
+                    if (cell.getItem().equals("ADD NEW DOCTYPE")) {
+                        TextInputDialog dialog = new TextInputDialog();
+                        dialog.setContentText("Enter Type");
+                        dialog.showAndWait().ifPresent(text -> {
+                            boolean match = dtCombo.getItems().contains(text);
+                            if (!match) {
+                                final int index = dtCombo.getItems().size() - 1;
+                                newDocType(text);
+                                dtCombo.getItems().add(text);
+                                FXCollections.sort(dtCombo.getItems());
+                                Platform.runLater(() -> {
+                                    dtCombo.getSelectionModel().select(index);
+                                });
+
+                                fxTrayIcon.showInfoMessage("DocType '" + text + "' Has Been Created");
+                            } else {
+                                fxTrayIcon.showErrorMessage("DocType '" + text + "' Exists Already!");
+                            }
+                        });
+                    }
+                }
+            });
+            return cell;
+        });
 
         ss.setSkin(new SocialFormatter(ss));
         ss.textProperty().bindBidirectional(ssHelper);
@@ -276,6 +322,55 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
                 legalDocumentHelper();
             }
         });
+    }
+
+    public void newDocType(String type) {
+
+        Connection connection = null;
+        ResultSet set = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("INSERT INTO `jib_dt` (name) VALUES(?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setString(1, type);
+            ps.executeUpdate();
+            set = ps.getGeneratedKeys();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new group!", e);
+
+        } finally {
+
+            DbUtils.closeQuietly(set);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+    }
+
+    private List<String> getDocTypes() {
+        Connection connection = null;
+        ResultSet set = null;
+        PreparedStatement ps = null;
+        List<String> dts = new ArrayList<>();
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("SELECT * FROM `jib_dt`");
+            set = ps.executeQuery();
+            while (set.next()) {
+                dts.add(set.getString("name"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the data of a column from the db!", e);
+
+        } finally {
+            DbUtils.closeQuietly(set);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+        return dts;
     }
 
     //Adds dashes in between the numerical numbers
@@ -491,10 +586,11 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             checklistItem.completed_On.bindBidirectional(item.completed_On);
             checklistItem.started_On.bindBidirectional(item.started_On);
             checklistItem.conditions.bindBidirectional(item.conditions);
+            checklistItem.setLocation(item.getLocation());
             checkListController.getClAllTable().getItems().add(checklistItem);
             ObservableList<JIBEntryItem> items = (ObservableList<JIBEntryItem>) group.getItemList();
             items.add(item);
-            fxTrayIcon.showInfoMessage("Item: " + item.id.get() + " Inserted");
+            fxTrayIcon.showInfoMessage("Item: `" + item.id.get() + "` Inserted");
             createFoldersFromStruct(item);
             resetFields();
         } else {
@@ -547,18 +643,6 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             updateItemProps(item);
         }
         return key;
-    }
-
-    @Override
-    public void updateTotal() {
-        AtomicInteger ai = new AtomicInteger(0);
-        for (TreeItem<JIBEntryItem> child : tree.getRoot().getChildren()) {
-            ai.getAndAdd(child.getValue().total.get());
-            for (TreeItem<JIBEntryItem> childChild : child.getChildren()) {
-                ai.getAndAdd(childChild.getValue().getTotal());
-            }
-        }
-        countProp.setValue(ai.get());
     }
 
     public AnchorPane getRoot() {

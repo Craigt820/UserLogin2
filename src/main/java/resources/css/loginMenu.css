@@ -9,6 +9,13 @@
  -fx-font-family: 'Segoe UI';
 }
 
+/* Scroll Pane */
+
+.scroll-pane:fitToWidth:fitToHeight .viewport,
+.scroll-pane{
+  -fx-background-color: none;
+}
+
 /* Buttons */
 
 
