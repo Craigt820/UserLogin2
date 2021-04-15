@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
@@ -229,14 +230,22 @@
                                           </HBox>
                                           <VBox>
                                              <children>
-                                                <Label styleClass="labels" text="Doc Type" textFill="#07255eed" translateX="4.0">
-                                                   <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                   </font>
+                                                <StackPane>
                                                    <VBox.margin>
                                                       <Insets bottom="8.0" />
                                                    </VBox.margin>
-                                                </Label>
+                                                   <children>
+                                                      <HBox>
+                                                         <children>
+                                                            <Label styleClass="labels" text="Doc Type" textFill="#07255eed" translateX="4.0">
+                                                               <font>
+                                                                  <Font name="System Bold" size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </StackPane>
                                                 <SearchableComboBox fx:id="dtCombo" maxWidth="1.7976931348623157E308" minHeight="48.0" minWidth="438.0" prefHeight="48.0" style="-fx-background-color: #fdfdfd;" />
                                              </children>
                                              <VBox.margin>

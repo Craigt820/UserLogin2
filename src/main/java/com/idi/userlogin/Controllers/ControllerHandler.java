@@ -3,12 +3,16 @@ package com.idi.userlogin.Controllers;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.Utils;
 import com.itextpdf.text.pdf.PdfReader;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -40,6 +44,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Main.fxTrayIcon;
@@ -392,23 +401,45 @@ public abstract class ControllerHandler {
         return tree;
     }
 
-    public static void updateAll(JFXTreeTableView<? extends Item> tree) {
+    public synchronized static void updateAll(JFXTreeTableView<? extends Item> tree) {
+        List<CompletableFuture> futures = new ArrayList<>();
         tree.getRoot().getChildren().forEach(e2 -> {
             final Item item = e2.getValue();
-            Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
-            item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
-            item.existsProperty().set((Boolean) pages.values().toArray()[0]);
-            updateItemDB(item);
+
+            CompletableFuture future = CompletableFuture.supplyAsync(() -> {
+                return countHandler(item.getLocation(), item.getType().getText());
+            }).thenAccept(e -> {
+                item.totalProperty().set((Integer) e.keySet().toArray()[0]);
+                item.existsProperty().set((Boolean) e.values().toArray()[0]);
+                updateItemDB(item);
+            }).whenComplete((i, e) -> {
+//                System.out.println(item.getName().getText().toString());
+            });
+
+            futures.add(future);
         });
+
+        for (CompletableFuture future : futures) {
+            if (future != null) {
+                try {
+                    future.get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         tree.refresh();
     }
 
     public abstract void resetFields();
 
-    public static void updateSelected(Item item) {
-        Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
-        item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
-        item.existsProperty().set((Boolean) pages.values().toArray()[0]);
+    public synchronized static void updateSelected(Item item) {
+        if (!item.overridden.get()) {
+            Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
+            item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
+            item.existsProperty().set((Boolean) pages.values().toArray()[0]);
+        }
         updateItemDB(item);
         mainTree.refresh();
     }
@@ -447,7 +478,7 @@ public abstract class ControllerHandler {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + jsonHandler.getSelJobID() + "` SET total=?, completed=?, completed_On=? WHERE id=?");
+            ps = connection.prepareStatement("Update `" + jsonHandler.getSelJobID() + "` SET total=?, completed=?, completed_On=?,overridden=? WHERE id=?");
             ps.setInt(1, item.getTotal());
             ps.setInt(2, booleanToInt(item.getCompleted().isSelected()));
             if (item.getCompleted().isSelected()) {
@@ -456,7 +487,8 @@ public abstract class ControllerHandler {
             } else {
                 ps.setString(3, null);
             }
-            ps.setInt(4, item.getId());
+            ps.setInt(4, Utils.booleanToInt(item.isOverridden()));
+            ps.setInt(5, item.getId());
             ps.executeUpdate();
 
         } catch (SQLException | ParseException e) {

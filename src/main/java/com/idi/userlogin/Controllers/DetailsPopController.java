@@ -25,6 +25,8 @@ public class DetailsPopController implements Initializable {
     public TextArea commentsField;
     @FXML
     public CheckComboBox<String> conditCombo, scannerCombo;
+    @FXML
+    public Label overridden;
 
     @FXML
     private void browseLoc() throws IOException {

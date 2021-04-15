@@ -90,6 +90,23 @@
                         </Label>
                      </children>
                      <VBox.margin>
+                        <Insets left="16.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="labels" text="Overridden" textFill="#07255eed">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="overridden" style="-fx-text-fill: black;" text="False" textFill="#07255eed">
+                           <font>
+                              <Font name="Segoe UI" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
                         <Insets bottom="16.0" left="16.0" />
                      </VBox.margin>
                   </VBox>

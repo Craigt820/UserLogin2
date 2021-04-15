@@ -1,10 +1,7 @@
 package com.idi.userlogin.JavaBeans;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -30,7 +27,8 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
 
     public static final Image folderIcon = new Image(Item.class.getResourceAsStream("/images/folder.png"));
     public static final Image fileIcon = new Image(Item.class.getResourceAsStream("/images/file.png"));
-    public BooleanProperty exists;
+    public BooleanProperty overridden; //Tracks if the user want to complete a non-existing item (Physical material may not exist)
+    public BooleanProperty exists; //File/Folder
     public SimpleIntegerProperty id;
     public SimpleStringProperty started_On;
     public SimpleStringProperty completed_On;
@@ -75,10 +73,10 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         }
     }
 
-    public Item(int id, Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String startedOn, String completedOn) {
+    public Item(int id, Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String startedOn, String completedOn, boolean overridden) {
         this();
+        this.overridden.set(overridden);
         this.exists = new SimpleBooleanProperty(false);
-
         this.id.set(id);
         this.group = group;
         this.collection = collection;
@@ -130,7 +128,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
     }
 
     public Item() {
-
+        this.overridden = new SimpleBooleanProperty();
         this.details = new Label("Details");
         this.details.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         this.details.setGraphic(new ImageView(getClass().getResource("/images/info.png").toExternalForm()));
@@ -143,6 +141,15 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.name = new Label();
         this.nonFeeder = new SimpleIntegerProperty(0);
         this.completed = new CheckBox();
+        this.completed.setContextMenu(new ContextMenu());
+        final MenuItem override = new MenuItem("Override");
+        override.setOnAction(e -> {
+            this.overridden.set(true);
+            this.exists.set(true);
+            this.completed.setSelected(true);
+            updateSelected(this);
+        });
+        this.completed.getContextMenu().getItems().add(override);
         this.comments = new SimpleStringProperty("");
         this.type = new Label();
         this.delete = new Label("Remove");
@@ -169,6 +176,18 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
 
     public void setExists(boolean exists) {
         this.exists.set(exists);
+    }
+
+    public boolean isOverridden() {
+        return overridden.get();
+    }
+
+    public BooleanProperty overriddenProperty() {
+        return overridden;
+    }
+
+    public void setOverridden(boolean overridden) {
+        this.overridden.set(overridden);
     }
 
     public static Image getFolderIcon() {

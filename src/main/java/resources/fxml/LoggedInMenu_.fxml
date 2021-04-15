@@ -231,7 +231,7 @@
                                         <Insets right="108.0" />
                                     </padding>
                                 </Button>
-                                <Button graphicTextGap="16.0" maxHeight="40.0" minHeight="40.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="260.0" style="-fx-text-fill: #fefefe;" styleClass="secondaryBtn" text="Change Project" wrapText="true">
+                                <Button graphicTextGap="16.0" maxHeight="40.0" minHeight="40.0" mnemonicParsing="false" onAction="#changeJob" prefHeight="40.0" prefWidth="260.0" style="-fx-text-fill: #fefefe;" styleClass="secondaryBtn" text="Change Project" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>

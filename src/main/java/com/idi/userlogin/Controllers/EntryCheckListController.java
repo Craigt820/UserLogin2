@@ -1,6 +1,7 @@
 package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.utils.ImgFactory;
+import com.idi.userlogin.utils.Utils;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
@@ -113,7 +114,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         if (!isPresent) {
             if (!name.isEmpty()) {
                 nameField.setRight(ImgFactory.createView(CHECKMARK));
-                final EntryItem item = new EntryItem(0, group.getCollection(), group, StringUtils.trim(name), 0, 0, type, false, comments, LocalDateTime.now().toString(), "");
+                final EntryItem item = new EntryItem(0, group.getCollection(), group, StringUtils.trim(name), 0, 0, type, false, comments, LocalDateTime.now().toString(), "", false);
                 final TreeItem newItem = new TreeItem<>(item);
                 item.setComments(commentsField.getText());
                 item.getConditions().setAll(conditions);
@@ -124,7 +125,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
                 typeCombo.getSelectionModel().selectFirst();
                 conditCombo.getCheckModel().clearChecks();
                 errorLbl.setVisible(false);
-                final EntryItem checklistItem = new EntryItem(item.getId(), item.getCollection(), item.getGroup(), item.getName().getText(), item.getTotal(), item.getNonFeeder(), item.getType().getText(), item.getCompleted().isSelected(), item.getComments(), item.getStarted_On(), item.getCompleted_On());
+                final EntryItem checklistItem = new EntryItem(item.getId(), item.getCollection(), item.getGroup(), item.getName().getText(), item.getTotal(), item.getNonFeeder(), item.getType().getText(), item.getCompleted().isSelected(), item.getComments(), item.getStarted_On(), item.getCompleted_On(), item.isOverridden());
                 checklistItem.totalProperty().bindBidirectional(item.totalProperty());
                 checklistItem.completed.selectedProperty().bindBidirectional(item.completed.selectedProperty());
                 checklistItem.name.textProperty().bindBidirectional(item.name.textProperty());
@@ -132,9 +133,10 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
                 checklistItem.completed_On.bindBidirectional(item.completed_On);
                 checklistItem.started_On.bindBidirectional(item.started_On);
                 checklistItem.conditions.bindBidirectional(item.conditions);
+                checklistItem.overridden.bindBidirectional(item.overridden);
                 checklistItem.setLocation(item.getLocation());
                 checkListController.getClAllTable().getItems().add(checklistItem);
-                ObservableList items = group.getItemList();
+                final ObservableList items = group.getItemList();
                 items.add(item);
                 fxTrayIcon.showInfoMessage("Item: " + item.getName().getText() + " Inserted");
                 createFoldersFromStruct(item);
@@ -198,10 +200,10 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.id,g.id as group_id, g.name group_name, m.name as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE group_id=" + group.getID() + "");
+            ps = connection.prepareStatement("SELECT m.overridden,m.id,g.id as group_id, g.name group_name, m.name as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
-                final EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"));
+                final EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), Utils.intToBoolean(set.getInt("m.overridden")));
                 String condition = set.getString("m.conditions");
                 if (condition != null && !condition.isEmpty()) {
                     String[] splitConditions = condition.split(", ");

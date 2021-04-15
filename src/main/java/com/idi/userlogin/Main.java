@@ -1,6 +1,7 @@
 package com.idi.userlogin;
 
 import com.dustinredmond.fxtrayicon.FXTrayIcon;
+import com.idi.userlogin.utils.ImgFactory;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,6 +16,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 //import sun.util.logging.PlatformLogger;
 import java.io.*;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,7 +36,6 @@ public class Main extends Application {
     private static SimpleFormatter formatter;
 
 
-
     @Override
     public void start(Stage primaryStage) throws Exception {
 //        com.sun.javafx.util.Logging.getCSSLogger().setLevel(sun.util.logging.PlatformLogger.Level.OFF);
@@ -45,7 +47,7 @@ public class Main extends Application {
         Platform.setImplicitExit(true);
         primaryStage.setOnCloseRequest(e -> System.exit(0));
 
-        //Logs
+        //Logging
         File dir = new File(JsonHandler.userDir + "\\Logs");
         if (!dir.exists()) {
             Files.createDirectories(dir.toPath());
@@ -55,12 +57,14 @@ public class Main extends Application {
         formatter = new SimpleFormatter();
         Main.logHandler.setFormatter(formatter);
         Main.LOGGER.addHandler(logHandler);
-        LOGGER.setLevel(Level.SEVERE);
+        LOGGER.setLevel(Level.ALL);
+        //
 
-        fxTrayIcon = new FXTrayIcon((Stage) root.getScene().getWindow(), Main.class.getResource("/images/check.png"));
-        fxTrayIcon.show();
-        fxTrayIcon.setApplicationTitle("User Login");
-
+        if (fxTrayIcon == null) {
+            fxTrayIcon = new FXTrayIcon((Stage) root.getScene().getWindow(), new URL(ImgFactory.IMGS.CHECKMARK.getLoc()));
+            fxTrayIcon.show();
+            fxTrayIcon.setApplicationTitle("User Login");
+        }
         //Init & Read Json Properties File
         jsonHandler = new JsonHandler();
 

@@ -70,7 +70,6 @@ public class LoggedInController implements Initializable {
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
-
     @FXML
     void showSpecs() throws IOException {
         specsDrawer.setPrefSize(315, 630);

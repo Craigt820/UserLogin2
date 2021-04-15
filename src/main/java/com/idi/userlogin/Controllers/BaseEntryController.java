@@ -22,6 +22,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -34,11 +35,9 @@ import org.apache.commons.dbutils.DbUtils;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SearchableComboBox;
-import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.control.textfield.CustomTextField;
 import com.idi.userlogin.utils.AutoCompleteTextField;
 
-import javax.accessibility.AccessibleHyperlink;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
@@ -48,6 +47,7 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Date;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -57,6 +57,7 @@ import static com.idi.userlogin.Main.*;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.CHECKMARK;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.EXMARK;
 import static com.idi.userlogin.utils.Utils.*;
+import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
 
 public abstract class BaseEntryController<T extends Item> extends ControllerHandler implements Initializable {
 
@@ -83,7 +84,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     @FXML
     protected JFXTreeTableColumn<T, Integer> nonFeederCol;
     @FXML
-    protected JFXTreeTableColumn<T, ToggleSwitch> compColumn;
+    protected JFXTreeTableColumn<T, CheckBox> compColumn;
     @FXML
     protected JFXTreeTableColumn<T, Label> detailsColumn;
     @FXML
@@ -173,26 +174,33 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
     @FXML
     public void complete() {
-        completeTask(tree);
+        completeGroupTask(tree);
     }
 
-    private void completeTask(JFXTreeTableView<? extends Item> tree) {
-        Optional<? extends TreeItem<? extends Item>> items = tree.getRoot().getChildren().stream().filter(e -> !e.getValue().exists.get()).findAny();
+    private void completeGroupTask(JFXTreeTableView<? extends Item> tree) {
+        Optional<? extends TreeItem<? extends Item>> items = tree.getRoot().getChildren().stream().filter(e -> !e.getValue().overridden.get()).filter(e -> !e.getValue().exists.get()).findAny();
         if (!items.isPresent()) {
             fxTrayIcon.showInfoMessage("Group '" + selGroupItem.getName() + "' has been completed!");
-            Platform.runLater(() -> {
-                tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
-            });
+            tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
             groupCombo.getSelectionModel().getSelectedItem().setCompleted_On(LocalDateTime.now().toString());
             groupCombo.getSelectionModel().getSelectedItem().setComplete(true);
-            updateAll(tree);
-            updateGroup(tree, true);
-            tree.getRoot().getChildren().clear();
-            selCol.setText("");
-            selGroup.setText("");
-            groupCountProp.setValue(0);
-            groupCombo.getSelectionModel().clearSelection();
-            selGroupItem = null;
+            Task task = new Task() {
+                @Override
+                protected Object call() throws Exception {
+                    updateAll(tree);
+                    return null;
+                }
+            };
+            new Thread(task).start();
+            task.setOnSucceeded(e -> {
+                updateGroup(tree, true);
+                tree.getRoot().getChildren().clear();
+                selCol.setText("");
+                selGroup.setText("");
+                groupCountProp.setValue(0);
+                groupCombo.getSelectionModel().clearSelection();
+                selGroupItem = null;
+            });
         } else {
             fxTrayIcon.showErrorMessage("Some Items Don't Exist!");
         }
@@ -207,8 +215,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             item = this;
         }
 
-        public EntryItem(int id, com.idi.userlogin.JavaBeans.Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String started_On, String completed_On) {
-            super(id, collection, group, name, total, non_feeder, type, completed, comments, started_On, completed_On);
+        public EntryItem(int id, com.idi.userlogin.JavaBeans.Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String started_On, String completed_On, Boolean overridden) {
+            super(id, collection, group, name, total, non_feeder, type, completed, comments, started_On, completed_On, overridden);
 
             super.details.setOnMousePressed(e -> {
                 setupDetailsPop(this);
@@ -238,7 +246,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     }
 
 
-    public void setupDelete(Item item, TreeTableView<? extends Item> tree) {
+    public void setupDelete(Item item, JFXTreeTableView<? extends Item> tree) {
         //Confirmation - Yes/No
         final Button yes = new Button("Yes");
         final Button no = new Button("No");
@@ -270,7 +278,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 final Optional<?> chkitem = checkListController.getClAllTable().getItems().stream().filter(e -> e.getId() == item.getId()).findAny();
 
                 boolean remove = tree.getRoot().getChildren().removeIf(e -> e.getValue().id.get() == item.getId());
-                updateTotal();
+
+                updateGroup(tree, false);
                 if (chkitem.isPresent()) {
                     checkListController.getClAllTable().getItems().remove(chkitem.get());
                 }
@@ -287,6 +296,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
                 if (!sameVal) {
                     selGroupItem = nv;
+                    groupCountProp.set(0);
                     tree.getRoot().getChildren().clear();
                     selGroup.setText(nv.getName());
                     tree.setPlaceholder(indicator);
@@ -301,7 +311,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
                                 final List itemList = entryItems.stream().map(TreeItem::new).collect(Collectors.toList());
                                 tree.getRoot().getChildren().addAll(itemList);
-                                updateTotal();
 
                                 itemList.forEach(e -> {
                                     TreeItem<Item> item = (TreeItem<Item>) e;
@@ -316,7 +325,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                     };
                                     new Thread(task1).start();
 
-//                                    item.getValue().setTotal((Integer) pages.entrySet().toArray()[0]);
                                     checkListController.getClAllTable().getItems().stream().filter(e2 -> {
                                         return item.getValue().getId() == e2.getId();
                                     }).findAny().ifPresent(e3 -> {
@@ -327,6 +335,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                         item.getValue().completed_On.bindBidirectional(e3.completed_On);
                                         item.getValue().started_On.bindBidirectional(e3.started_On);
                                         item.getValue().conditions.bindBidirectional(e3.conditions);
+                                        item.getValue().overridden.bindBidirectional(e3.overridden);
                                         e3.setLocation(item.getValue().getLocation());
                                         e3.setExists(item.getValue().isExists());
                                     });
@@ -336,6 +345,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                         }
                     };
                     new Thread(task).start();
+
+                    task.setOnSucceeded(e -> {
+                        updateTotal();
+                    });
                 }
             }
         }
@@ -415,7 +428,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         if (item.comments != null && !item.comments.get().isEmpty()) {
             detailPopCont.commentsField.setText(item.comments.get());
         }
-
         if (item.conditions != null) {
             for (Object s : item.conditions.get()) {
                 detailPopCont.conditCombo.getItemBooleanProperty(s.toString()).set(true);
@@ -428,6 +440,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 detailPopCont.scannerCombo.getItemBooleanProperty(s.toString()).set(true);
             }
         }
+
+        detailPopCont.overridden.setText(capitalizeFully(String.valueOf(item.isOverridden())));
         //
 //                ImageView testImg = new ImageView(getClass().getResource("/images/testImg.png").toExternalForm());
 //                testImg.setFitWidth(140);
@@ -469,7 +483,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             for (Group group : groupList) {
                 ObservableList<? extends Item> groupItems = (ObservableList<? extends Item>) group.getItemList();
                 groupItems.forEach(e -> {
-                    final EntryItem clItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName().getText(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On());
+                    final EntryItem clItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName().getText(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On(), e.isOverridden());
                     items.add(clItem);
                 });
             }
@@ -481,13 +495,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
     @PostConstruct
     public void afterInitialize() {
+        totalCount.textProperty().bind(groupCountProp.asString());
         groupCombo.setEditable(true);
-        groupCombo.getEditor().textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//                System.out.println(newValue);
-            }
-        });
+
         tree.getColumns().forEach(e -> e.setContextMenu(new ContextMenu()));
         setupCompTask(tree);
         tree.setShowRoot(false);
@@ -504,7 +514,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         updateAll.setOnAction(e -> {
             if (!tree.getRoot().getChildren().isEmpty()) {
                 updateAll(tree);
-                updateTotal();
                 updateGroup(tree, groupCombo.getSelectionModel().getSelectedItem().isComplete());
             }
         });
@@ -677,14 +686,25 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         countColumn.setPrefWidth(190);
         countColumn.setCellValueFactory(new TreeItemPropertyValueFactory("total"));
         countColumn.setCellFactory(e -> new CustomTreeTableCell());
+        compColumn.setCellFactory(e -> new CheckBoxTreeTableCell<T, CheckBox>() {
+            @Override
+            public void updateItem(CheckBox item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item != null) {
+                    item.setSelected(this.getTreeTableRow().getTreeItem().getValue().isCompleted_prop());
+                    setGraphic(item);
+                } else {
+                    setGraphic(null);
+                }
+            }
+        });
         compColumn.setPrefWidth(190);
         compColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("completed"));
+
         detailsColumn.setPrefWidth(100);
         detailsColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("details"));
         conditCombo.getItems().addAll(CONDITION_LIST);
         conditCombo.setManaged(true);
-        totalCount.textProperty().bind(groupCountProp.asString());
-        updateTotal();
 
         groupCombo.setConverter(new StringConverter<Group>() {
             @Override
@@ -808,7 +828,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         detailsColumn.setPrefWidth(100);
         detailsColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("details"));
         conditCombo.setManaged(true);
-        totalCount.textProperty().bind(groupCountProp.asString());
         updateTotal();
 
         groupCombo.setCellFactory(e -> {
@@ -862,15 +881,15 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                             boolean noMatch = groupCombo.getItems().stream().map(Group::getName).noneMatch(e3 -> e3.toLowerCase().equals(group.getName().toLowerCase()));
                             if (noMatch) {
                                 newGroupHelper(group);
-                                groupCombo.getItems().add(index, group);
-                                FXCollections.sort(groupCombo.getItems(), new Comparator<Group>() {
-                                    @Override
-                                    public int compare(Group o1, Group o2) {
-                                        return o1.nameProperty().get().compareTo(o2.getName());
-                                    }
-                                });
                                 Platform.runLater(() -> {
-                                    groupCombo.getSelectionModel().select(index);
+                                    groupCombo.getItems().add(index, group);
+                                    FXCollections.sort(groupCombo.getItems(), new Comparator<Group>() {
+                                        @Override
+                                        public int compare(Group o1, Group o2) {
+                                            return o1.nameProperty().get().compareTo(o2.getName());
+                                        }
+                                    });
+                                    groupCombo.getSelectionModel().select(group);
                                 });
 
                                 fxTrayIcon.showInfoMessage("Group '" + group.getName() + "' Has Been Created");
@@ -955,12 +974,14 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                             if (item != null) {
                                 Label label = new Label();
                                 ImageView view;
-                                if (this.getTreeTableRow().getTreeItem().getValue().exists.get()) {
+                                Item itemObj = this.getTreeTableRow().getTreeItem().getValue();
+                                if (itemObj.exists.get() || itemObj.overridden.get()) {
                                     view = ImgFactory.createView(ImgFactory.IMGS.CHECKMARK);
                                     Tooltip.install(label, new Tooltip("Exists"));
                                 } else {
                                     view = ImgFactory.createView(EXMARK);
                                     Tooltip.install(label, new Tooltip("Doesn't Exist!"));
+                                    itemObj.getCompleted().setSelected(false);
                                 }
                                 label.setGraphic(view);
                                 label.setPadding(new Insets(0, 0, 0, 8));
@@ -1014,11 +1035,13 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     public void setupCompTask(TreeTableView<? extends Item> tree) {
         compColumn.getContextMenu().getItems().add(compAll);
         compAll.setOnAction(e -> {
-            tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
-            updateAll((JFXTreeTableView<? extends Item>) tree);
-            updateTotal();
+            CompletableFuture.runAsync(() -> {
+                tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
+            }).whenComplete((i, e2) -> {
+                updateAll((JFXTreeTableView<? extends Item>) tree);
+                updateTotal();
+            });
         });
-
     }
 
     public List<com.idi.userlogin.JavaBeans.Collection> getCollectionList() {
@@ -1033,7 +1056,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     public abstract void initialize(URL location, ResourceBundle bundle);
 
     @Override
-    public void updateTotal() {
+    public synchronized void updateTotal() {
         final AtomicInteger ai = new AtomicInteger(0);
         final AtomicInteger ai2 = new AtomicInteger(0);
 
@@ -1059,12 +1082,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                     ai.getAndAdd(childChild.getValue().getTotal());
                 }
             }
-            Platform.runLater(() -> {
-                groupCountProp.setValue(ai.get());
-                totalCountProp.setValue(ai2.get());
-            });
         }
 
+        groupCountProp.setValue(ai.get());
+        totalCountProp.setValue(ai2.get());
     }
 
     @Override
@@ -1073,7 +1094,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     }
 
     @Override
-    public void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed) {
+    public synchronized void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed) {
+
         updateTotal();
         Connection connection = null;
         PreparedStatement ps = null;
@@ -1099,6 +1121,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(connection);
         }
+
     }
 
     @Override
