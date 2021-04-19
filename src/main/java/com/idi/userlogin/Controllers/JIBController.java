@@ -14,6 +14,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -72,6 +73,7 @@ import static com.idi.userlogin.Main.*;
 
 public class JIBController extends BaseEntryController<JIBController.JIBEntryItem> implements Initializable {
     private final ArrayList<String> STATUS = new ArrayList<>(Arrays.asList("LIVING", "DECEASED"));
+    private final String addDocHelper = "ADD NEW DOC TYPE";
     private final ObservableList<String> DOC_TYPES = FXCollections.observableArrayList();
     private final JIBEntryItem treeRoot = new JIBEntryItem();
     private final RecursiveTreeItem<JIBEntryItem> rootItem = new RecursiveTreeItem<>(treeRoot, RecursiveTreeObject::getChildren);
@@ -256,7 +258,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         dtCombo.getItems().addAll(DOC_TYPES);
         FXCollections.sort(DOC_TYPES);
         FXCollections.sort(dtCombo.getItems());
-        dtCombo.getItems().add("Add New DocType");
+        dtCombo.getItems().add(addDocHelper);
         dtCombo.setCellFactory(e -> {
             ListCell<String> cell = new ListCell<String>() {
                 @Override
@@ -264,20 +266,85 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
                     super.updateItem(item, empty);
                     if (item != null && !item.isEmpty()) {
                         setText(item);
+                        setContentDisplay(ContentDisplay.TEXT_ONLY);
+                        if (!item.equals(addDocHelper)) {
+                            StackPane stackPane = new StackPane();
+                            Label text = new Label(item);
+                            HBox left = new HBox(text);
+                            left.setAlignment(Pos.CENTER_LEFT);
+                            Label edit = new Label("EDIT");
+                            edit.getStyleClass().add("labels");
+                            edit.setStyle("-fx-text-fill: #07255E;");
+                            ChangeListener listViewShowListener = new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue observable, Boolean oldValue, Boolean newValue) {
+                                    if (!newValue) {
+                                        dtCombo.show();
+                                    }
+                                }
+                            };
+
+                            edit.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+                                dtCombo.showingProperty().addListener(listViewShowListener);
+                                TextField textField = new TextField(item);
+                                StackPane pane2 = new StackPane();
+                                HBox root = new HBox();
+                                root.setSpacing(8);
+                                HBox left2 = new HBox();
+                                HBox right2 = new HBox();
+                                root.getChildren().addAll(left2, right2);
+                                left2.setAlignment(Pos.CENTER_LEFT);
+                                right2.setAlignment(Pos.CENTER_RIGHT);
+                                HBox.setHgrow(left2, Priority.ALWAYS);
+                                HBox.setHgrow(right2, Priority.ALWAYS);
+                                Label cancelEdit = new Label("X");
+                                cancelEdit.setMaxWidth(40);
+                                cancelEdit.getStyleClass().add("labels");
+                                cancelEdit.setStyle("-fx-text-fill: #07255E;");
+                                left2.getChildren().add(textField);
+                                right2.getChildren().add(cancelEdit);
+                                pane2.getChildren().addAll(root);
+
+                                cancelEdit.addEventFilter(MouseEvent.MOUSE_PRESSED, e2 -> {
+                                    setGraphic(stackPane);
+                                    dtCombo.showingProperty().removeListener(listViewShowListener);
+                                });
+
+                                textField.addEventFilter(KeyEvent.KEY_PRESSED, e2 -> {
+                                    if (e2.getCode().equals(KeyCode.ENTER)) {
+                                        System.out.println(textField.getText());
+                                        docTypeHelper(text.getText(), textField.getText());
+                                        fxTrayIcon.showInfoMessage("Doc Type: `" + text.getText() + "` Renamed To `" + textField.getText() + "`");
+                                        text.setText(textField.getText());
+                                        setText(textField.getText());
+                                        dtCombo.getItems().set(getIndex(), textField.getText());
+                                        setGraphic(stackPane);
+                                        dtCombo.showingProperty().removeListener(listViewShowListener);
+                                    }
+                                });
+                                setGraphic(pane2);
+                            });
+                            HBox right = new HBox(edit);
+                            right.setAlignment(Pos.CENTER_RIGHT);
+                            stackPane.getChildren().addAll(left, right);
+                            setGraphic(stackPane);
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                        }
                     } else {
                         setText("");
                     }
                 }
             };
 
-
+            //ADD NEW DOC TYPE was selected
             cell.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, evt -> {
 
                 if (!cell.getItem().isEmpty() && !cell.isEmpty()) {
 
-                    if (cell.getItem().equals("Add New DocType")) {
+                    if (cell.getItem().equals(addDocHelper)) {
                         TextInputDialog dialog = new TextInputDialog();
                         dialog.setContentText("Enter Type");
+
                         dialog.showAndWait().ifPresent(text -> {
                             boolean match = dtCombo.getItems().contains(text);
                             if (!match) {
@@ -424,7 +491,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         List<String> dts = new ArrayList<>();
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT * FROM `jib_dt`");
+            ps = connection.prepareStatement("SELECT name FROM `jib_dt`");
             set = ps.executeQuery();
             while (set.next()) {
                 dts.add(set.getString("name"));

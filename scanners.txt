@@ -6,5 +6,6 @@ USB Mass Storage Device
 Intel(R) USB 3.1 eXtensible Host Controller - 1.10 (Microsoft)
 USB Root Hub (USB 3.0)                                        
 Realtek USB 2.0 Card Reader                                   
+USB Mass Storage Device                                       
 
 

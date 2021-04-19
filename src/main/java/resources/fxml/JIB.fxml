@@ -21,11 +21,11 @@
 <?import org.controlsfx.control.SearchableComboBox?>
 <?import org.controlsfx.control.textfield.CustomTextField?>
 
-<AnchorPane fx:id="root" style="-fx-background-color: rgb(250,250,250);" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.JIBController">
+<AnchorPane fx:id="root" minHeight="800.0" minWidth="600.0" style="-fx-background-color: rgb(250,250,250);" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.JIBController">
    <children>
-      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox minHeight="800.0" minWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <TabPane fx:id="tabPane" minHeight="800.0" minWidth="600.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
                   <Tab closable="false" disable="true" style="-fx-background-color: none;">
                      <graphic>
@@ -41,11 +41,11 @@
                   </Tab>
                 <Tab closable="false" text="Overview">
                      <content>
-                        <SplitPane dividerPositions="0.4449188727583262">
+                        <SplitPane dividerPositions="0.4449188727583262" minHeight="800.0" minWidth="600.0">
                           <items>
-                              <VBox minWidth="200.0" prefWidth="779.0" style="-fx-background-color: #f9f9f9;">
+                              <VBox minHeight="800.0" minWidth="600.0" style="-fx-background-color: #f9f9f9;">
                                  <children>
-                                    <VBox prefWidth="959.0" style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
+                                    <VBox minHeight="800.0" minWidth="600.0" style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
                                        <children>
                                           <HBox spacing="4.0">
                                              <children>
@@ -87,7 +87,7 @@
                                                 <Insets bottom="24.0" />
                                              </VBox.margin>
                                           </HBox>
-                                          <HBox>
+                                          <HBox VBox.vgrow="ALWAYS">
                                              <children>
                                                 <VBox minWidth="197.0">
                                                    <children>
@@ -103,9 +103,9 @@
                                                             <Insets bottom="8.0" />
                                                          </VBox.margin>
                                                       </HBox>
-                                                      <HBox>
+                                                      <HBox minWidth="100.0" VBox.vgrow="ALWAYS">
                                                          <children>
-                                                            <CustomTextField fx:id="firstField" minHeight="48.0" prefHeight="48.0" prefWidth="197.0" promptText="John" style="-fx-background-color: #fbfbfb; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;">
+                                                            <CustomTextField fx:id="firstField" minHeight="48.0" prefHeight="48.0" prefWidth="197.0" promptText="John" style="-fx-background-color: #fdfdfd; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;" HBox.hgrow="ALWAYS">
                                                                <font>
                                                                   <Font name="Segoe UI" size="14.0" />
                                                                </font>
@@ -114,7 +114,7 @@
                                                       </HBox>
                                                    </children>
                                                 </VBox>
-                                                <VBox minWidth="197.0">
+                                                <VBox minWidth="100.0">
                                                    <children>
                                                       <HBox>
                                                          <children>
@@ -130,7 +130,7 @@
                                                       </HBox>
                                                       <HBox>
                                                          <children>
-                                                            <CustomTextField fx:id="lastField" minHeight="48.0" prefHeight="48.0" prefWidth="197.0" promptText="Doe" style="-fx-background-color: #f8f8f8; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;">
+                                                            <CustomTextField fx:id="lastField" minHeight="48.0" prefHeight="48.0" promptText="Doe" style="-fx-background-color: #fdfdfd; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;" HBox.hgrow="ALWAYS">
                                                                <font>
                                                                   <Font name="Segoe UI" size="14.0" />
                                                                </font>
@@ -142,9 +142,9 @@
                                                       <Insets left="32.0" />
                                                    </HBox.margin>
                                                 </VBox>
-                                                <VBox minWidth="98.0" prefWidth="98.0">
+                                                <VBox minWidth="98.0" prefWidth="98.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <HBox>
+                                                      <HBox VBox.vgrow="ALWAYS">
                                                          <children>
                                                             <Label styleClass="labels" text="Middle" textFill="#07255eed" translateX="4.0">
                                                                <font>
@@ -156,9 +156,9 @@
                                                             <Insets bottom="8.0" />
                                                          </VBox.margin>
                                                       </HBox>
-                                                      <HBox maxWidth="88.0" prefWidth="88.0" VBox.vgrow="ALWAYS">
+                                                      <HBox maxWidth="88.0" minWidth="100.0" prefWidth="88.0" VBox.vgrow="ALWAYS">
                                                          <children>
-                                                            <CustomTextField fx:id="middleField" minHeight="48.0" prefHeight="48.0" promptText="A" style="-fx-background-color: #f8f8f8; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;" HBox.hgrow="ALWAYS">
+                                                            <CustomTextField fx:id="middleField" minHeight="48.0" prefHeight="48.0" promptText="A" style="-fx-background-color: #fdfdfd; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;" HBox.hgrow="ALWAYS">
                                                                <font>
                                                                   <Font name="Segoe UI" size="14.0" />
                                                                </font>
@@ -193,7 +193,7 @@
                                                       </HBox>
                                                       <HBox>
                                                          <children>
-                                                            <PasswordField fx:id="ss" minHeight="48.0" prefHeight="48.0" prefWidth="197.0" promptText="***-***-****" style="-fx-background-color: #f8f8f8; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;">
+                                                            <PasswordField fx:id="ss" minHeight="48.0" prefHeight="48.0" prefWidth="197.0" promptText="***-***-****" style="-fx-background-color: #fdfdfd; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #dfdfdf;">
                                                                <font>
                                                                   <Font name="Segoe UI" size="14.0" />
                                                                </font>
@@ -220,7 +220,7 @@
                                                             <Insets bottom="8.0" />
                                                          </VBox.margin>
                                                       </Label>
-                                                      <SearchableComboBox fx:id="statusCombo" maxWidth="1.7976931348623157E308" minHeight="48.0" minWidth="438.0" prefHeight="48.0" style="-fx-background-color: #fdfdfd;" />
+                                                      <SearchableComboBox fx:id="statusCombo" maxWidth="1.7976931348623157E308" minHeight="48.0" prefHeight="48.0" style="-fx-background-color: #fdfdfd;" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -271,7 +271,7 @@
                                                       <Insets bottom="8.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <TextArea fx:id="commentsField" maxWidth="1.7976931348623157E308" style="-fx-background-color: #f0f0f0;" wrapText="true" VBox.vgrow="ALWAYS">
+                                                <TextArea fx:id="commentsField" maxWidth="1.7976931348623157E308" minHeight="100.0" style="-fx-background-color: #f0f0f0;" wrapText="true" VBox.vgrow="ALWAYS">
                                                    <font>
                                                       <Font name="Segoe UI" size="14.0" />
                                                    </font></TextArea>
@@ -280,20 +280,28 @@
                                                 <Insets top="24.0" />
                                              </VBox.margin>
                                           </VBox>
-                                          <VBox alignment="CENTER">
+                                          <VBox alignment="CENTER" minHeight="66.0" VBox.vgrow="ALWAYS">
                                              <VBox.margin>
                                                 <Insets bottom="32.0" left="80.0" right="80.0" top="24.0" />
                                              </VBox.margin>
                                              <children>
-                                                <Label fx:id="errorLbl" opacity="0.0" text="Item Already Exists!" textFill="#bc2414">
+                                                <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
                                                    <VBox.margin>
                                                       <Insets bottom="8.0" />
                                                    </VBox.margin>
-                                                   <font>
-                                                      <Font name="Segoe UI Bold" size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Button fx:id="insertBtn" contentDisplay="RIGHT" disable="true" maxWidth="1.7976931348623157E308" minHeight="42.0" minWidth="340.0" mnemonicParsing="false" onAction="#insert" prefHeight="40.0" prefWidth="340.0" styleClass="thirdBtn" text="Insert" textFill="#063f80" />
+                                                   <children>
+                                                      <Label fx:id="errorLbl" opacity="0.0" text="Item Already Exists!" textFill="#bc2414">
+                                                         <font>
+                                                            <Font name="Segoe UI Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <HBox>
+                                                   <children>
+                                                      <Button fx:id="insertBtn" contentDisplay="RIGHT" disable="true" maxWidth="1.7976931348623157E308" minWidth="340.0" mnemonicParsing="false" onAction="#insert" prefHeight="40.0" prefWidth="340.0" styleClass="thirdBtn" text="Insert" textFill="#063f80" HBox.hgrow="ALWAYS" />
+                                                   </children>
+                                                </HBox>
                                              </children>
                                           </VBox>
                                        </children>
@@ -306,7 +314,7 @@
                                     </VBox>
                                  </children>
                               </VBox>
-                            <AnchorPane fx:id="treePaneRoot">
+                            <AnchorPane fx:id="treePaneRoot" minHeight="800.0" minWidth="600.0">
                                  <children>
                                     <VBox fx:id="entryPane" layoutX="-14.0" style="-fx-background-color: #f9f9f9;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
@@ -417,11 +425,14 @@
                                                 <JFXTreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                              </columnResizePolicy>
                                           </JFXTreeTableView>
-                                          <Button fx:id="compBtn" disable="true" maxWidth="1.7976931348623157E308" minWidth="340.0" mnemonicParsing="false" onAction="#complete" prefHeight="40.0" prefWidth="340.0" styleClass="primaryBtn" text="Complete">
+                                          <HBox>
                                              <VBox.margin>
                                                 <Insets left="180.0" right="180.0" />
                                              </VBox.margin>
-                                          </Button>
+                                             <children>
+                                                <Button fx:id="compBtn" disable="true" maxWidth="1.7976931348623157E308" minWidth="340.0" mnemonicParsing="false" onAction="#complete" prefHeight="40.0" prefWidth="340.0" styleClass="primaryBtn" text="Complete" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
                                        </children>
                                        <padding>
                                           <Insets bottom="32.0" left="16.0" />
@@ -444,7 +455,7 @@
                   </Tab>
               </tabs>
                <VBox.margin>
-                  <Insets right="8.0" />
+                  <Insets />
                </VBox.margin>
             </TabPane>
          </children>
