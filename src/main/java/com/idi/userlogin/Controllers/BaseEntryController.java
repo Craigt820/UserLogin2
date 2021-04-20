@@ -313,31 +313,31 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                 tree.getRoot().getChildren().addAll(itemList);
 
                                 itemList.forEach(e -> {
-                                    TreeItem<Item> item = (TreeItem<Item>) e;
+                                    TreeItem<Item> checklistItem = (TreeItem<Item>) e;
                                     Task task1 = new Task() {
                                         @Override
                                         protected Object call() throws Exception {
-                                            Map<Integer, Boolean> pages = countHandler(item.getValue().getLocation(), "Multi-Paged");
-                                            item.getValue().setExists((Boolean) pages.values().toArray()[0]);
-                                            item.getValue().setTotal((Integer) pages.keySet().toArray()[0]);
+                                            Map<Integer, Boolean> pages = countHandler(checklistItem.getValue().getLocation(), "Multi-Paged");
+                                            checklistItem.getValue().setExists((Boolean) pages.values().toArray()[0]);
+                                            checklistItem.getValue().setTotal((Integer) pages.keySet().toArray()[0]);
                                             return null;
                                         }
                                     };
                                     new Thread(task1).start();
 
                                     checkListController.getClAllTable().getItems().stream().filter(e2 -> {
-                                        return item.getValue().getId() == e2.getId();
+                                        return checklistItem.getValue().getId() == e2.getId();
                                     }).findAny().ifPresent(e3 -> {
-                                        item.getValue().totalProperty().bindBidirectional(e3.totalProperty());
-                                        item.getValue().completed.selectedProperty().bindBidirectional(e3.completed.selectedProperty());
-                                        item.getValue().name.textProperty().bindBidirectional(e3.name.textProperty());
-                                        item.getValue().comments.bindBidirectional(e3.comments);
-                                        item.getValue().completed_On.bindBidirectional(e3.completed_On);
-                                        item.getValue().started_On.bindBidirectional(e3.started_On);
-                                        item.getValue().conditions.bindBidirectional(e3.conditions);
-                                        item.getValue().overridden.bindBidirectional(e3.overridden);
-                                        e3.setLocation(item.getValue().getLocation());
-                                        e3.setExists(item.getValue().isExists());
+                                        e3.totalProperty().bindBidirectional(checklistItem.getValue().totalProperty());
+                                        e3.completed.selectedProperty().bindBidirectional(checklistItem.getValue().completed.selectedProperty());
+                                        e3.name.textProperty().bindBidirectional(checklistItem.getValue().name.textProperty());
+                                        e3.comments.bindBidirectional(checklistItem.getValue().comments);
+                                        e3.completed_On.bindBidirectional(checklistItem.getValue().completed_On);
+                                        e3.started_On.bindBidirectional(checklistItem.getValue().started_On);
+                                        e3.conditions.bindBidirectional(checklistItem.getValue().conditions);
+                                        e3.overridden.bindBidirectional(checklistItem.getValue().overridden);
+                                        e3.setLocation(checklistItem.getValue().getLocation());
+                                        e3.setExists(checklistItem.getValue().isExists());
                                     });
                                 });
                             }
@@ -384,7 +384,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
             if (detailPopCont.conditCombo.getCheckModel().getCheckedItems() != null) {
                 if (!item.conditions.equals(detailPopCont.conditCombo.getCheckModel().getCheckedItems())) {
-                    item.conditions.setAll(detailPopCont.conditCombo.getCheckModel().getCheckedItems());
+                    item.conditions.get().setAll(detailPopCont.conditCombo.getCheckModel().getCheckedItems());
                 }
             }
 
@@ -428,25 +428,24 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         if (item.comments != null && !item.comments.get().isEmpty()) {
             detailPopCont.commentsField.setText(item.comments.get());
         }
+
         if (item.conditions != null) {
             for (Object s : item.conditions.get()) {
                 detailPopCont.conditCombo.getItemBooleanProperty(s.toString()).set(true);
             }
         }
 
-        if (item.scanners != null && !devices.isEmpty()) {
+        if (!devices.isEmpty()) {
             detailPopCont.scannerCombo.getItems().addAll(devices);
-            for (Object s : item.scanners) {
-                detailPopCont.scannerCombo.getItemBooleanProperty(s.toString()).set(true);
+            if (item.scanners != null) {
+                for (Object s : item.scanners) {
+                    detailPopCont.scannerCombo.getItemBooleanProperty(s.toString()).set(true);
+                }
             }
         }
 
         detailPopCont.overridden.setText(capitalizeFully(String.valueOf(item.isOverridden())));
-        //
-//                ImageView testImg = new ImageView(getClass().getResource("/images/testImg.png").toExternalForm());
-//                testImg.setFitWidth(140);
-//                testImg.setFitHeight(140);
-//                detailPopCont.prevRoot.getChildren().add(testImg);
+
     }
 
     BaseEntryController() {
@@ -484,6 +483,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 ObservableList<? extends Item> groupItems = (ObservableList<? extends Item>) group.getItemList();
                 groupItems.forEach(e -> {
                     final EntryItem clItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName().getText(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On(), e.isOverridden());
+                    clItem.getConditions().setAll(e.getConditions());
                     items.add(clItem);
                 });
             }

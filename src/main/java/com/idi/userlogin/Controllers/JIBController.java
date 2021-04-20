@@ -191,7 +191,6 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
     @Override
     public void afterInitialize() {
         super.afterInitialize();
-
     }
 
     public class CustomJIBTableCell<S, T> extends TreeTableCell<JIBEntryItem, T> {
@@ -227,10 +226,9 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error editing a doc-type!", e);
+            Main.LOGGER.log(Level.SEVERE, "There was an error editing a doc type!", e);
 
         } finally {
-
             DbUtils.closeQuietly(set);
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(connection);

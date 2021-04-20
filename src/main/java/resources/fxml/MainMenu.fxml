@@ -226,14 +226,30 @@
         </StackPane>
         <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
             <children>
-                <Button minHeight="54.0" minWidth="224.0" mnemonicParsing="false" style="-fx-background-color: #226CFC10; -fx-background-radius: 6;" text="Contact Support" textFill="#226cfc">
-                    <StackPane.margin>
-                        <Insets right="40.0" />
-                    </StackPane.margin>
-                    <font>
-                        <Font name="Segoe UI Bold" size="15.0" />
-                    </font>
-                </Button>
+            <HBox alignment="CENTER_RIGHT">
+               <StackPane.margin>
+                  <Insets right="40.0" />
+               </StackPane.margin>
+               <children>
+                      <Button minHeight="54.0" minWidth="224.0" mnemonicParsing="false" style="-fx-background-color: #226CFC10; -fx-background-radius: 6;" text="Contact Support" textFill="#226cfc">
+                          <font>
+                              <Font name="Segoe UI Bold" size="15.0" />
+                          </font>
+                      </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label text="4/19/2021 v 1.1" textFill="#686868">
+                     <font>
+                        <Font name="Segoe UI" size="19.0" />
+                     </font>
+                  </Label>
+               </children>
+               <StackPane.margin>
+                  <Insets left="40.0" />
+               </StackPane.margin>
+            </HBox>
             </children>
             <VBox.margin>
                 <Insets />

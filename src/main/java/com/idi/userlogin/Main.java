@@ -41,8 +41,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        primaryStage.setMinHeight(600);
-        primaryStage.setMinWidth(1280);
+
 //        com.sun.javafx.util.Logging.getCSSLogger().setLevel(sun.util.logging.PlatformLogger.Level.OFF);
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/MainMenu.fxml"));
         Scene scene = new Scene(root);
@@ -108,6 +107,7 @@ public class Main extends Application {
         task.setOnSucceeded(e -> {
             try {
                 devices.addAll(task.get());
+                System.out.println(devices.toString());
             } catch (InterruptedException | ExecutionException ex) {
                 ex.printStackTrace();
             }

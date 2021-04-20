@@ -1,12 +1,12 @@
 ;This file will be executed next to the application bundle image
-;I.e. current directory will contain folder UserLogin2-1.0 with application files
+;I.e. current directory will contain folder UserLogin2-1.1 with application files
 [Setup]
 AppId={{com.idi.userlogin}}
-AppName=UserLogin2-1.0
-AppVersion=1.0
-AppVerName=UserLogin2-1.0
+AppName=UserLogin2-1.1
+AppVersion=1.1
+AppVerName=UserLogin2-1.1
 AppPublisher=idi
-AppComments=UserLogin2-1.0
+AppComments=UserLogin2-1.1
 AppCopyright=Copyright (C) 2021
 ;AppPublisherURL=http://java.com/
 ;AppSupportURL=http://java.com/
@@ -25,15 +25,15 @@ DefaultGroupName=idi
 LicenseFile=
 ;(Windows 2000/XP/Server 2003 are no longer supported.)
 MinVersion=6.0
-OutputBaseFilename=UserLogin2-1.0
+OutputBaseFilename=UserLogin2-1.1
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=lowest
-SetupIconFile=UserLogin2-1.0\UserLogin2-1.0.ico
-UninstallDisplayIcon={app}\UserLogin2-1.0.ico
-UninstallDisplayName=UserLogin2-1.0
+SetupIconFile=UserLogin2-1.1\UserLogin2-1.1.ico
+UninstallDisplayIcon={app}\UserLogin2-1.1.ico
+UninstallDisplayName=UserLogin2-1.1
 WizardImageStretch=No
-WizardSmallImageFile=UserLogin2-1.0-setup-icon.bmp
+WizardSmallImageFile=UserLogin2-1.1-setup-icon.bmp
 ArchitecturesInstallIn64BitMode=x64
 
 
@@ -45,21 +45,21 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; \
     GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "UserLogin2-1.0\UserLogin2-1.0.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "UserLogin2-1.0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "UserLogin2-1.1\UserLogin2-1.1.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "UserLogin2-1.1\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\UserLogin2-1.0"; Filename: "{app}\UserLogin2-1.0.exe"; IconFilename: "{app}\UserLogin2-1.0.ico"; Check: returnTrue()
-Name: "{commondesktop}\UserLogin2-1.0"; Filename: "{app}\UserLogin2-1.0.exe";  IconFilename: "{app}\UserLogin2-1.0.ico"; Check: returnTrue()
-Name: "{userdesktop}\UserLogin2-1.0"; Filename: "{app}\UserLogin2-1.0.exe"; Tasks: desktopicon
+Name: "{group}\UserLogin2-1.1"; Filename: "{app}\UserLogin2-1.1.exe"; IconFilename: "{app}\UserLogin2-1.1.ico"; Check: returnTrue()
+Name: "{commondesktop}\UserLogin2-1.1"; Filename: "{app}\UserLogin2-1.1.exe";  IconFilename: "{app}\UserLogin2-1.1.ico"; Check: returnTrue()
+Name: "{userdesktop}\UserLogin2-1.1"; Filename: "{app}\UserLogin2-1.1.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\UserLogin2-1.0.exe"; Parameters: "-Xappcds:generatecache"; Check: returnFalse()
-Filename: "{app}\UserLogin2-1.0.exe"; Description: "{cm:LaunchProgram,UserLogin2-1.0}"; Flags: nowait postinstall skipifsilent; Check: returnTrue()
-Filename: "{app}\UserLogin2-1.0.exe"; Parameters: "-install -svcName ""UserLogin2-1.0"" -svcDesc ""UserLogin2-1.0"" -mainExe ""UserLogin2-1.0.exe""  "; Check: returnFalse()
+Filename: "{app}\UserLogin2-1.1.exe"; Parameters: "-Xappcds:generatecache"; Check: returnFalse()
+Filename: "{app}\UserLogin2-1.1.exe"; Description: "{cm:LaunchProgram,UserLogin2-1.1}"; Flags: nowait postinstall skipifsilent; Check: returnTrue()
+Filename: "{app}\UserLogin2-1.1.exe"; Parameters: "-install -svcName ""UserLogin2-1.1"" -svcDesc ""UserLogin2-1.1"" -mainExe ""UserLogin2-1.1.exe""  "; Check: returnFalse()
 
 [UninstallRun]
-Filename: "{app}\UserLogin2-1.0.exe "; Parameters: "-uninstall -svcName UserLogin2-1.0 -stopOnUninstall"; Check: returnFalse()
+Filename: "{app}\UserLogin2-1.1.exe "; Parameters: "-uninstall -svcName UserLogin2-1.1 -stopOnUninstall"; Check: returnFalse()
 
 [Code]
 function returnTrue(): Boolean;

@@ -12,7 +12,8 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-<VBox prefHeight="737.0" prefWidth="800.0" spacing="16.0" style="-fx-background-color: #f9f9f9;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.DetailsPopController">
+
+<VBox prefHeight="800.0" prefWidth="800.0" spacing="24.0" style="-fx-background-color: #f9f9f9;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.DetailsPopController">
    <children>
       <TitledPane text="Info" textFill="#fefefe" VBox.vgrow="ALWAYS">
         <content>
@@ -134,7 +135,8 @@
                         <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minWidth="218.0" prefHeight="40.0" prefWidth="218.0" showCheckedCount="true">
                            <VBox.margin>
                               <Insets top="8.0" />
-                           </VBox.margin></CheckComboBox>
+                           </VBox.margin>
+                        </CheckComboBox>
                      </children>
                      <VBox.margin>
                         <Insets left="16.0" right="16.0" top="8.0" />
@@ -150,20 +152,21 @@
                         <CheckComboBox fx:id="scannerCombo" maxWidth="1.7976931348623157E308" minWidth="218.0" prefHeight="40.0" prefWidth="218.0" showCheckedCount="true">
                            <VBox.margin>
                               <Insets top="8.0" />
-                           </VBox.margin></CheckComboBox>
+                           </VBox.margin>
+                        </CheckComboBox>
                      </children>
                      <VBox.margin>
                         <Insets left="16.0" right="16.0" />
                      </VBox.margin>
                   </VBox>
-                  <VBox>
+                  <VBox VBox.vgrow="ALWAYS">
                      <children>
                         <Label styleClass="labels" text="Comments" textFill="#07255eed" translateX="4.0">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <TextArea fx:id="commentsField" maxWidth="1.7976931348623157E308" wrapText="true">
+                        <TextArea fx:id="commentsField" maxWidth="1.7976931348623157E308" minHeight="150.0" wrapText="true">
                            <font>
                               <Font name="Segoe UI" size="14.0" />
                            </font>

@@ -55,7 +55,9 @@
 
 .tab-pane:top .tab-header-area .tab-header-background{
   -fx-background-radius:4;
+   -fx-background-color:#07255e22;
 }
+
 .inner-titled-pane > .title {
     -fx-background-color: #fbfbfb;
     -fx-font-family:'Roboto medium';
