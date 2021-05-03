@@ -244,20 +244,18 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         public int hashCode() {
             return Objects.hash(getId(), getName());
         }
-
     }
-
 
     public void setupDelete(Item item, JFXTreeTableView<? extends Item> tree) {
         //Confirmation - Yes/No
         final Button yes = new Button("Yes");
         final Button no = new Button("No");
         yes.setPadding(new Insets(8, 8, 8, 0));
-        no.setPadding(new Insets(8, 0, 8, 4));
+        no.setPadding(new Insets(8, 0, 8, 2));
         yes.setPrefWidth(40);
         no.setPrefWidth(40);
-        yes.setStyle("-fx-font-size:1.0em;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0");
-        no.setStyle("-fx-font-size:1.0em;-fx-text-fill:black;-fx-background-color: #fefefe66;");
+        yes.setStyle("-fx-font-size:0.9em;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0;");
+        no.setStyle("-fx-font-size:0.9em;-fx-text-fill:black;-fx-background-color: #fefefe66;");
         item.delete.setGraphic(new HBox(yes, no));
         item.delete.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
@@ -280,7 +278,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 final Optional<?> chkitem = checkListController.getClAllTable().getItems().stream().filter(e -> e.getId() == item.getId()).findAny();
                 boolean remove = tree.getRoot().getChildren().removeIf(e -> e.getValue().id.get() == item.getId());
                 updateGroup(tree, false);
-
                 DailyLog.updateJobTotal();
                 if (chkitem.isPresent()) {
                     checkListController.getClAllTable().getItems().remove(chkitem.get());
@@ -517,7 +514,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             if (!tree.getRoot().getChildren().isEmpty()) {
                 updateAll(tree);
                 updateTotal();
-
                 updateGroup(tree, groupCombo.getSelectionModel().getSelectedItem().isComplete());
                 DailyLog.updateJobTotal();
             }

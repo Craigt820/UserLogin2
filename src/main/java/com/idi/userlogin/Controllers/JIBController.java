@@ -735,7 +735,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
     @Override
     @FXML
     public void insert() throws IOException {
-        final String fullName = firstField.getText() + " " + lastField.getText() + " " + middleField.getText();
+        final String fullName = (firstField.getText() + " " + lastField.getText() + " " + middleField.getText()).trim();
         final String docType = dtCombo.getSelectionModel().getSelectedItem();
         final String status = statusCombo.getSelectionModel().getSelectedItem();
         final List<String> condition = conditCombo.getCheckModel().getCheckedItems();

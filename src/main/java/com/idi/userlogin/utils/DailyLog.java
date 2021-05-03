@@ -3,6 +3,7 @@ package com.idi.userlogin.utils;
 import com.idi.userlogin.Controllers.ConnectionHandler;
 import com.idi.userlogin.Controllers.ControllerHandler;
 import com.idi.userlogin.Main;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.logging.Level;
+
 import org.apache.commons.dbutils.DbUtils;
 
 public abstract class DailyLog {
@@ -29,7 +31,7 @@ public abstract class DailyLog {
             ps.setInt(3, 0);
             ps.executeUpdate();
             set = ps.getGeneratedKeys();
-        } catch (SQLException|java.text.ParseException e) {
+        } catch (SQLException | java.text.ParseException e) {
             e.printStackTrace();
             Main.LOGGER.log(Level.SEVERE, "There was an error inserting the scan log!", e);
         } finally {
@@ -68,9 +70,9 @@ public abstract class DailyLog {
                 DbUtils.closeQuietly(ps);
                 DbUtils.closeQuietly(connection);
             }
+            ControllerHandler.loggedInController.getJob1Total().setText(String.valueOf(total));
         }
 
-        ControllerHandler.loggedInController.getJob1Total().setText(String.valueOf(total));
         return total;
     }
 
@@ -107,7 +109,7 @@ public abstract class DailyLog {
                 ps.setTimestamp(1, new Timestamp(now.toInstant().toEpochMilli()));
                 ps.executeUpdate();
                 set = ps.getGeneratedKeys();
-            } catch (SQLException|java.text.ParseException e) {
+            } catch (SQLException | java.text.ParseException e) {
                 e.printStackTrace();
                 Main.LOGGER.log(Level.SEVERE, "There was an error updating the scan log", e);
             } finally {
