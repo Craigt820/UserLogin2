@@ -346,7 +346,7 @@
                                                 <Insets left="16.0" />
                                              </padding>
                                              <VBox.margin>
-                                                <Insets top="16.0" />
+                                                <Insets top="24.0" />
                                              </VBox.margin>
                                           </HBox>
                                           <HBox style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;">
