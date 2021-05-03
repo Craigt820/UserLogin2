@@ -12,13 +12,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #fafafa;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.MainMenuController">
+<VBox fx:id="root" style="-fx-background-color: #fafafa;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.MainMenuController">
     <children>
         <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
             <children>
                 <HBox alignment="CENTER_LEFT">
                     <children>
-                        <Label contentDisplay="RIGHT" graphicTextGap="8.0" style="-fx-font-size: 24;" text="User Login" textFill="#686868">
+                        <Label contentDisplay="RIGHT" graphicTextGap="8.0" style="-fx-font-size: 2.0em;" text="User Login" textFill="#686868">
                             <font>
                                 <Font name="Segoe UI" size="24.0" />
                             </font>
@@ -86,7 +86,7 @@
                                 </Button>
                             </children>
                         </VBox>
-                        <VBox minHeight="460.0" prefHeight="489.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #a0a0a0;">
+                        <VBox minHeight="460.0" minWidth="566.0" prefHeight="489.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #a0a0a0;">
                             <children>
                                 <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                                     <children>
@@ -224,14 +224,14 @@
             <Insets top="16.0" />
          </VBox.margin>
         </StackPane>
-        <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
+        <StackPane alignment="BOTTOM_CENTER" style="-fx-background-color: #fafafa;">
             <children>
             <HBox alignment="CENTER_RIGHT">
                <StackPane.margin>
                   <Insets right="40.0" />
                </StackPane.margin>
                <children>
-                      <Button minHeight="54.0" minWidth="224.0" mnemonicParsing="false" style="-fx-background-color: #226CFC10; -fx-background-radius: 6;" text="Contact Support" textFill="#226cfc">
+                      <Button minHeight="48.0" minWidth="224.0" mnemonicParsing="false" style="-fx-background-color: #226CFC10; -fx-background-radius: 6; -fx-font-size: 1.3em;" text="Contact Support" textFill="#226cfc">
                           <font>
                               <Font name="Segoe UI Bold" size="15.0" />
                           </font>
@@ -240,10 +240,13 @@
             </HBox>
             <HBox alignment="CENTER_LEFT">
                <children>
-                  <Label text="4/19/2021 v 1.1" textFill="#686868">
+                  <Label style="-fx-font-size: 1.4em;" text="4/19/2021 v 1.1" textFill="#686868">
                      <font>
                         <Font name="Segoe UI" size="19.0" />
                      </font>
+                     <HBox.margin>
+                        <Insets top="24.0" />
+                     </HBox.margin>
                   </Label>
                </children>
                <StackPane.margin>
@@ -252,7 +255,7 @@
             </HBox>
             </children>
             <VBox.margin>
-                <Insets />
+                <Insets bottom="24.0" top="40.0" />
             </VBox.margin>
         </StackPane>
     </children>

@@ -22,7 +22,7 @@
 .labels{
  -fx-text-fill:#07255e;
  -fx-font-weight:bold;
- -fx-font-size: 14;
+ -fx-font-size: 1.2em;
  -fx-font-family: 'Segoe UI';
 }
 
@@ -59,7 +59,6 @@
 }
 
 .tree-table-view .column-header-background .nested-column-header .table-column .label .text{
-  -fx-font-size: 13;
   -fx-font-weight:regular;
 }
 
@@ -67,7 +66,7 @@
 .tree-table-view .virtual-flow .tree-table-row-cell{
   -fx-background: #fefefe;
   -fx-fill:#07255e;
-  -fx-font-size:13;
+  -fx-font-size:1.0em;
   -fx-font-weight: bold;
   -fx-border-color:#efefef;
    -fx-border-style: solid;
@@ -92,11 +91,11 @@
 .tree-table-cell{
   -fx-alignment: center;
   -fx-text-fill:#07255eed;
-  -fx-font-size: 13;
+  -fx-font-size: 1.0em;
 } 
 
 .jfx-tree-table-view .column-header-background .nested-column-header .table-column .label{
-    -fx-font-size:13;
+     -fx-font-size:1.0em;
     -fx-text-fill:#1a1a1a;
 }
 
@@ -163,7 +162,7 @@
 
 .primaryBtn{
     -fx-background-color: #bC2414;
-    -fx-font-size:15;
+    -fx-font-size:1.1em;
     -fx-font-weight: bold;
     -fx-text-fill:white;
     -fx-border-radius:6;
@@ -172,7 +171,7 @@
 
 .secondaryBtn{
     -fx-text-fill:#063f80;
-    -fx-font-size:15;
+     -fx-font-size:1.1em;
     -fx-border-radius:6;
     -fx-background-radius:6;
     -fx-text-fill:white;
@@ -188,7 +187,7 @@
 
 .thirdBtn{
  -fx-background-color: rgba(16, 33, 203,.8);
- -fx-font-size:15;
+ -fx-font-size:1.1em;
  -fx-font-weight: bold;
  -fx-text-fill: #FEFEFE;
  -fx-border-radius:6;
@@ -268,7 +267,7 @@
 }
 
 .tab-pane:top .tab-header-area .headers-region .tab:top .tab-container .tab-label .text{
-  -fx-font-size:14;
+  -fx-font-size:1.0em;
   -fx-font-weight: bold;
 }
 

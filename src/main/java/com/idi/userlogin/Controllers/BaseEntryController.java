@@ -254,8 +254,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         no.setPadding(new Insets(8, 0, 8, 2));
         yes.setPrefWidth(40);
         no.setPrefWidth(40);
-        yes.setStyle("-fx-font-size:0.8em;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0;");
-        no.setStyle("-fx-font-size:0.8em;-fx-text-fill:black;-fx-background-color: #fefefe66;");
+        yes.setStyle("-fx-font-size:0.85em;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0;");
+        no.setStyle("-fx-font-size:0.85em;-fx-text-fill:black;-fx-background-color: #fefefe66;");
         item.delete.setGraphic(new HBox(yes, no));
         item.delete.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 

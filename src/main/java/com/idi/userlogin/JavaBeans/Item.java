@@ -131,7 +131,10 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.overridden = new SimpleBooleanProperty();
         this.details = new Label("Details");
         this.details.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        this.details.setGraphic(new ImageView(getClass().getResource("/images/info.png").toExternalForm()));
+        ImageView details=new ImageView(getClass().getResource("/images/info.png").toExternalForm());
+        details.setFitWidth(20);
+        details.setFitHeight(20);
+        this.details.setGraphic(details);
         this.details.setTranslateX(0);
         this.details.setTooltip(new Tooltip("Details"));
         this.details.getGraphic().maxHeight(8);
