@@ -3,6 +3,7 @@ package com.idi.userlogin.Controllers;
 import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.DailyLog;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -91,6 +92,7 @@ public class JobSelectController implements Initializable {
             ControllerHandler.loggedInController.getName().setText(jsonHandler.name);
             ControllerHandler.loggedInController.getJobID().setText(jsonHandler.getSelJobID());
         }
+        DailyLog.insertNewDailyLog();
     }
 
 

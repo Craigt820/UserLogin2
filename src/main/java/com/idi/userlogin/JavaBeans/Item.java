@@ -34,7 +34,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
     public SimpleStringProperty completed_On;
     public SimpleBooleanProperty completed_prop;
     public Label delete;
-    public Label name;
+    public SimpleStringProperty name;
     public Label type;
     public CheckBox completed;
     public Label details;
@@ -80,7 +80,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.id.set(id);
         this.group = group;
         this.collection = collection;
-        this.name.setText(name);
+        this.name.set(name);
         this.total.set(total);
         this.nonFeeder.set(non_feeder);
         this.type.setText(type);
@@ -138,7 +138,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.details.getGraphic().maxWidth(8);
         this.details.getStyleClass().add("detailBtn");
         this.id = new SimpleIntegerProperty(0);
-        this.name = new Label();
+        this.name = new SimpleStringProperty();
         this.nonFeeder = new SimpleIntegerProperty(0);
         this.completed = new CheckBox();
         this.completed.setContextMenu(new ContextMenu());
@@ -218,12 +218,16 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.delete = delete;
     }
 
-    public Label getName() {
+    public String getName() {
+        return name.get();
+    }
+
+    public SimpleStringProperty nameProperty() {
         return name;
     }
 
-    public void setName(Label name) {
-        this.name = name;
+    public void setName(String name) {
+        this.name.set(name);
     }
 
     public Path getLocation() {

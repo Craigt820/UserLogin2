@@ -78,9 +78,7 @@ public abstract class ControllerHandler {
         } catch (IOException e) {
             e.printStackTrace();
             Main.LOGGER.log(Level.SEVERE, "There was an error loading the 'LoggedInMenu' Scene!", e);
-
         }
-        loggedInController.getJobTotals().textProperty().bind(totalCountProp.asString());
 
         mainMenuPop = new PopOver(settingsRoot);
         mainMenuPop.setTitle("Main Menu");
@@ -401,7 +399,7 @@ public abstract class ControllerHandler {
         return tree;
     }
 
-    public synchronized static void updateAll(JFXTreeTableView<? extends Item> tree) {
+    public static void updateAll(JFXTreeTableView<? extends Item> tree) {
         List<CompletableFuture> futures = new ArrayList<>();
         tree.getRoot().getChildren().forEach(e2 -> {
             final Item item = e2.getValue();
@@ -412,8 +410,6 @@ public abstract class ControllerHandler {
                 item.totalProperty().set((Integer) e.keySet().toArray()[0]);
                 item.existsProperty().set((Boolean) e.values().toArray()[0]);
                 updateItemDB(item);
-            }).whenComplete((i, e) -> {
-//                System.out.println(item.getName().getText().toString());
             });
 
             futures.add(future);
@@ -434,7 +430,7 @@ public abstract class ControllerHandler {
 
     public abstract void resetFields();
 
-    public synchronized static void updateSelected(Item item) {
+    public static void updateSelected(Item item) {
         if (!item.overridden.get()) {
             Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
             item.totalProperty().set((Integer) pages.keySet().toArray()[0]);

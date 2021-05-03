@@ -66,6 +66,16 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
     }
 
     @Override
+    public void updateItem(String paramString1, String paramString2, Item paramItem) {
+
+    }
+
+    @Override
+    public void updateName(String paramString1, String paramString2, Item paramItem) {
+
+    }
+
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         entryController = this;
         tree.setRoot(rootItem);
@@ -110,7 +120,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         final List<String> conditions = conditCombo.getCheckModel().getCheckedItems();
         final String comments = commentsField.getText();
         final Group group = groupCombo.getSelectionModel().getSelectedItem();
-        boolean isPresent = tree.getRoot().getChildren().stream().anyMatch(e -> e.getValue().getType().getText().equals(type) && e.getValue().getName().getText().toLowerCase().equals(name.toLowerCase()));
+        boolean isPresent = tree.getRoot().getChildren().stream().anyMatch(e -> e.getValue().getType().getText().equals(type) && e.getValue().getName().toLowerCase().equals(name.toLowerCase()));
         if (!isPresent) {
             if (!name.isEmpty()) {
                 nameField.setRight(ImgFactory.createView(CHECKMARK));
@@ -125,10 +135,10 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
                 typeCombo.getSelectionModel().selectFirst();
                 conditCombo.getCheckModel().clearChecks();
                 errorLbl.setVisible(false);
-                final EntryItem checklistItem = new EntryItem(item.getId(), item.getCollection(), item.getGroup(), item.getName().getText(), item.getTotal(), item.getNonFeeder(), item.getType().getText(), item.getCompleted().isSelected(), item.getComments(), item.getStarted_On(), item.getCompleted_On(), item.isOverridden());
+                final EntryItem checklistItem = new EntryItem(item.getId(), item.getCollection(), item.getGroup(), item.getName(), item.getTotal(), item.getNonFeeder(), item.getType().getText(), item.getCompleted().isSelected(), item.getComments(), item.getStarted_On(), item.getCompleted_On(), item.isOverridden());
                 checklistItem.totalProperty().bindBidirectional(item.totalProperty());
                 checklistItem.completed.selectedProperty().bindBidirectional(item.completed.selectedProperty());
-                checklistItem.name.textProperty().bindBidirectional(item.name.textProperty());
+                checklistItem.name.bindBidirectional(item.name);
                 checklistItem.comments.bindBidirectional(item.comments);
                 checklistItem.completed_On.bindBidirectional(item.completed_On);
                 checklistItem.started_On.bindBidirectional(item.started_On);
@@ -138,7 +148,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
                 checkListController.getClAllTable().getItems().add(checklistItem);
                 final ObservableList items = group.getItemList();
                 items.add(item);
-                fxTrayIcon.showInfoMessage("Item: " + item.getName().getText() + " Inserted");
+                fxTrayIcon.showInfoMessage("Item: " + item.getName() + " Inserted");
                 createFoldersFromStruct(item);
                 resetFields();
             }
@@ -159,7 +169,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         try {
             connection = ConnectionHandler.createDBConnection();
             ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,type_id,comments) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + Main.jsonHandler.getName() + "'),?,?,(SELECT id FROM item_types WHERE item_types.name = '" + item.getType().getText() + "'),?)", PreparedStatement.RETURN_GENERATED_KEYS);
-            ps.setString(1, item.getName().getText());
+            ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setInt(3, item.getCollection().getID());

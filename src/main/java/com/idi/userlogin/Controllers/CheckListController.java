@@ -142,6 +142,16 @@ public class CheckListController extends BaseEntryController<BaseEntryController
     }
 
     @Override
+    public void updateItem(String paramString1, String paramString2, Item paramItem) {
+
+    }
+
+    @Override
+    public void updateName(String paramString1, String paramString2, Item paramItem) {
+
+    }
+
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         checkListController = this;
         cID.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -250,7 +260,7 @@ public class CheckListController extends BaseEntryController<BaseEntryController
 
                 final String lowerCaseFilter = newValue.toLowerCase();
 
-                if (p.name.getText().toLowerCase().contains(lowerCaseFilter)) {
+                if (p.name.get().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 } else if (p.group.getName().toLowerCase().contains(lowerCaseFilter)) {
                     return true;

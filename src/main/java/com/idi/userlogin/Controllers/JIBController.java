@@ -193,6 +193,45 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         super.afterInitialize();
     }
 
+    @Override
+    public void updateItem(String column, String newValue, Item item) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `" + column + "`=? WHERE employee_id=(SELECT id from employees WHERE name='" + Main.jsonHandler.getName() + "') AND id=?");
+            ps.setString(1, newValue);
+            ps.setInt(2, item.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating a field!", e);
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+    }
+
+    @Override
+    public void updateName(String oldValue, String newValue, Item item) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `full_name`=? WHERE employee_id=(SELECT id from employees WHERE name='" + Main.jsonHandler.getName() + "') AND full_name=?");
+            ps.setString(1, newValue);
+            ps.setString(2, oldValue);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating a field!", e);
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+        this.tree.getRoot().getChildren().stream().filter(e -> (e.getValue()).fullName.get().equals(oldValue)).forEach(e -> ((JIBEntryItem) e.getValue()).setFullName(newValue));
+    }
+
     public class CustomJIBTableCell<S, T> extends TreeTableCell<JIBEntryItem, T> {
         protected void updateItem(T item, boolean empty) {
             super.updateItem(item, empty);
@@ -270,7 +309,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
                             Label text = new Label(item);
                             HBox left = new HBox(text);
                             left.setAlignment(Pos.CENTER_LEFT);
-                            Label edit = new Label("EDIT");
+                            Label edit = new Label("Edit");
                             edit.getStyleClass().add("labels");
                             edit.setStyle("-fx-text-fill: #07255E;");
                             ChangeListener listViewShowListener = new ChangeListener<Boolean>() {
@@ -714,15 +753,15 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             insertHelper(item);
             tree.getRoot().getChildren().add(new TreeItem<JIBEntryItem>(item));
             final BaseEntryController.EntryItem checklistItem = new BaseEntryController.EntryItem(item.getId(), item.getCollection(), item.getGroup(), item.getFullName(), item.getTotal(), item.getNonFeeder(), item.getType().getText(), item.getCompleted().isSelected(), item.getComments(), item.getStarted_On(), item.getCompleted_On(), item.isOverridden());
-            checklistItem.totalProperty().bindBidirectional(item.totalProperty());
-            checklistItem.completed.selectedProperty().bindBidirectional(item.completed.selectedProperty());
-            checklistItem.name.textProperty().bindBidirectional(item.name.textProperty());
-            checklistItem.comments.bindBidirectional(item.comments);
-            checklistItem.completed_On.bindBidirectional(item.completed_On);
-            checklistItem.started_On.bindBidirectional(item.started_On);
-            checklistItem.overridden.bindBidirectional(item.overridden);
-            checklistItem.conditions.bindBidirectional(item.conditions);
-            checklistItem.setLocation(item.getLocation());
+            item.totalProperty().bindBidirectional(checklistItem.totalProperty());
+            item.completed.selectedProperty().bindBidirectional(checklistItem.completed.selectedProperty());
+            item.name.bindBidirectional(checklistItem.name);
+            item.comments.bindBidirectional(checklistItem.comments);
+            item.completed_On.bindBidirectional(checklistItem.completed_On);
+            item.started_On.bindBidirectional(checklistItem.started_On);
+            item.overridden.bindBidirectional(checklistItem.overridden);
+            item.conditions.bindBidirectional(checklistItem.conditions);
+            item.setLocation(checklistItem.getLocation());
             checkListController.getClAllTable().getItems().add(checklistItem);
             ObservableList<JIBEntryItem> items = (ObservableList<JIBEntryItem>) group.getItemList();
             items.add(item);
@@ -752,7 +791,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         try {
             connection = ConnectionHandler.createDBConnection();
             ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + Main.jsonHandler.getName() + "'),?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
-            ps.setString(1, item.getName().getText());
+            ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setInt(3, item.getCollection().getID());

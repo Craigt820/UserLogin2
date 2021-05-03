@@ -4,7 +4,9 @@ import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.DailyLog;
 import com.idi.userlogin.utils.ImgFactory;
+import com.idi.userlogin.utils.Utils;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.application.Platform;
@@ -76,7 +78,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     @FXML
     protected JFXTreeTableColumn<T, Label> delColumn;
     @FXML
-    protected JFXTreeTableColumn<T, Label> nameColumn;
+    protected JFXTreeTableColumn<T, String> nameColumn;
     @FXML
     protected JFXTreeTableColumn<T, Label> typeColumn;
     @FXML
@@ -226,7 +228,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 setupDelete(this, tree);
             });
 
-            super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(this.id.get(), this) + "\\" + this.name.getText().trim());
+            super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(this.id.get(), this) + "\\" + this.name.get().trim());
 
         }
 
@@ -251,11 +253,11 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         final Button yes = new Button("Yes");
         final Button no = new Button("No");
         yes.setPadding(new Insets(8, 8, 8, 0));
-        no.setPadding(new Insets(8, 0, 8, 8));
+        no.setPadding(new Insets(8, 0, 8, 4));
         yes.setPrefWidth(40);
         no.setPrefWidth(40);
-        yes.setStyle("-fx-font-size:14;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0");
-        no.setStyle("-fx-font-size:14;-fx-text-fill:black;-fx-background-color: #fefefe66;");
+        yes.setStyle("-fx-font-size:1.0em;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0");
+        no.setStyle("-fx-font-size:1.0em;-fx-text-fill:black;-fx-background-color: #fefefe66;");
         item.delete.setGraphic(new HBox(yes, no));
         item.delete.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
@@ -266,7 +268,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         yes.setOnMousePressed(e3 -> {
             if (item != null) {
                 Item.removeItem(item);
-                fxTrayIcon.showInfoMessage("Item: '" + item.getName().getText().trim() + "' Has Been Removed");
+                fxTrayIcon.showInfoMessage("Item: '" + item.getName().trim() + "' Has Been Removed");
 
                 //Remove from group item list
                 final Optional<?> groupItem = selGroupItem.getItemList().stream().filter(e -> e.getId() == item.getId()).findAny();
@@ -276,10 +278,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
                 //Remove from checklist
                 final Optional<?> chkitem = checkListController.getClAllTable().getItems().stream().filter(e -> e.getId() == item.getId()).findAny();
-
                 boolean remove = tree.getRoot().getChildren().removeIf(e -> e.getValue().id.get() == item.getId());
-
                 updateGroup(tree, false);
+
+                DailyLog.updateJobTotal();
                 if (chkitem.isPresent()) {
                     checkListController.getClAllTable().getItems().remove(chkitem.get());
                 }
@@ -330,7 +332,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                     }).findAny().ifPresent(e3 -> {
                                         e3.totalProperty().bindBidirectional(checklistItem.getValue().totalProperty());
                                         e3.completed.selectedProperty().bindBidirectional(checklistItem.getValue().completed.selectedProperty());
-                                        e3.name.textProperty().bindBidirectional(checklistItem.getValue().name.textProperty());
+                                        e3.name.bindBidirectional(checklistItem.getValue().name);
                                         e3.comments.bindBidirectional(checklistItem.getValue().comments);
                                         e3.completed_On.bindBidirectional(checklistItem.getValue().completed_On);
                                         e3.started_On.bindBidirectional(checklistItem.getValue().started_On);
@@ -375,7 +377,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         final DetailsPopController detailPopCont = loader.getController();
         final PopOver popOver = new PopOver(root);
         popOver.setDetached(true);
-        popOver.setTitle(item.name.getText());
+        popOver.setTitle(item.name.get());
 
         popOver.setOnHiding(e2 -> {
             if (detailPopCont.commentsField.getText() != null) {
@@ -482,7 +484,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             for (Group group : groupList) {
                 ObservableList<? extends Item> groupItems = (ObservableList<? extends Item>) group.getItemList();
                 groupItems.forEach(e -> {
-                    final EntryItem clItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName().getText(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On(), e.isOverridden());
+                    final EntryItem clItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On(), e.isOverridden());
                     clItem.getConditions().setAll(e.getConditions());
                     items.add(clItem);
                 });
@@ -514,7 +516,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         updateAll.setOnAction(e -> {
             if (!tree.getRoot().getChildren().isEmpty()) {
                 updateAll(tree);
+                updateTotal();
+
                 updateGroup(tree, groupCombo.getSelectionModel().getSelectedItem().isComplete());
+                DailyLog.updateJobTotal();
             }
         });
 
@@ -564,6 +569,52 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
             });
         }
+        nameColumn.setPrefWidth(190);
+        nameColumn.setEditable(true);
+        this.nameColumn.setCellFactory(e -> new TextFieldTreeTableCell<T, String>(new StringConverter<String>() {
+            public String toString(String object) {
+                return object;
+            }
+
+            public String fromString(String string) {
+                return string;
+            }
+        }) {
+            public CustomTextField ctf = new CustomTextField();
+
+            String oldValue;
+
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item != null && !item.isEmpty()) {
+                    setText(item);
+                } else {
+                    setText("");
+                }
+            }
+
+            public void startEdit() {
+                this.oldValue = getText();
+                this.ctf.setText(this.oldValue);
+                setGraphic(this.ctf);
+                super.startEdit();
+            }
+
+            public void commitEdit(String newValue) {
+                if (Utils.legalText(newValue)) {
+                    super.commitEdit(newValue);
+                    Item item = getTreeTableRow().getTreeItem().getValue();
+                    item.setName(getText());
+                    setGraphic(null);
+                    updateName(this.oldValue, newValue, item);
+                } else {
+                    this.ctf.setRight(ImgFactory.createView(ImgFactory.IMGS.EXMARK));
+                }
+            }
+        });
+
+
+        nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
 
         if (nameField != null) {
             legalTextTest(legalText(""), nameField);
@@ -574,48 +625,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
             });
 
-            nameColumn.setCellFactory(e -> new TextFieldTreeTableCell<T, Label>(new StringConverter<Label>() {
-                @Override
-                public String toString(Label object) {
-                    return object.getText();
-                }
-
-                @Override
-                public Label fromString(String string) {
-                    return new Label(string);
-                }
-            }) {
-                public CustomTextField ctf = new CustomTextField();
-
-                @Override
-                public void updateItem(Label item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item != null && !item.getText().isEmpty()) {
-                        setText(item.getText());
-                    }
-                }
-
-                @Override
-                public void startEdit() {
-                    ctf.setText(getText());
-                    setGraphic(ctf);
-                    super.startEdit();
-                }
-
-                @Override
-                public void commitEdit(Label newValue) {
-                    if (legalText(newValue.getText())) {
-                        super.commitEdit(newValue);
-                        setGraphic(null);
-                    } else {
-                        ctf.setRight(ImgFactory.createView(EXMARK));
-                    }
-                }
-            });
-            nameColumn.setEditable(false);
-            nameColumn.setPrefWidth(190);
-            nameColumn.setEditable(true);
-            nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
             legalTextTest(legalText(""), nameField);
             nameField.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -623,49 +632,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                     legalTextTest(legalText(newValue), nameField);
                 }
             });
-            nameColumn.setCellFactory(e -> new TextFieldTreeTableCell<T, Label>(new StringConverter<Label>() {
-                @Override
-                public String toString(Label object) {
-                    return object.getText();
-                }
 
-                @Override
-                public Label fromString(String string) {
-                    return new Label(string);
-                }
-            }) {
-                public CustomTextField ctf = new CustomTextField();
-
-                @Override
-                public void updateItem(Label item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item != null && !item.getText().isEmpty()) {
-                        setText(item.getText());
-                    }
-                }
-
-                @Override
-                public void startEdit() {
-                    ctf.setText(getText());
-                    setGraphic(ctf);
-                    super.startEdit();
-                }
-
-                @Override
-                public void commitEdit(Label newValue) {
-                    if (legalText(newValue.getText())) {
-                        super.commitEdit(newValue);
-                        Item item = (Item) getTreeTableRow().getTreeItem().getValue();
-                        item.getName().setText(getText());
-                        setGraphic(null);
-                    } else {
-                        ctf.setRight(ImgFactory.createView(EXMARK));
-                    }
-                }
-            });
-            nameColumn.setPrefWidth(190);
-            nameColumn.setEditable(true);
-            nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
         }
 
         if (typeCombo != null) {
@@ -685,14 +652,16 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         delColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("delete"));
         countColumn.setPrefWidth(190);
         countColumn.setCellValueFactory(new TreeItemPropertyValueFactory("total"));
-        countColumn.setCellFactory(e -> new CustomTreeTableCell());
         compColumn.setCellFactory(e -> new CheckBoxTreeTableCell<T, CheckBox>() {
-            @Override
             public void updateItem(CheckBox item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item != null) {
-                    item.setSelected(this.getTreeTableRow().getTreeItem().getValue().isCompleted_prop());
+                    item.setSelected(getTreeTableRow().getTreeItem().getValue().isCompleted_prop());
                     setGraphic(item);
+                    item.setOnAction(e -> {
+                        updateTotal();
+                        updateGroup(tree, false);
+                    });
                 } else {
                     setGraphic(null);
                 }
@@ -995,6 +964,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         );
     }
 
+    public abstract void updateItem(String paramString1, String paramString2, Item paramItem);
+
+    public abstract void updateName(String paramString1, String paramString2, Item paramItem);
+
     public void newGroupHelper(Group group) {
 
         Connection connection = null;
@@ -1056,28 +1029,12 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     public abstract void initialize(URL location, ResourceBundle bundle);
 
     @Override
-    public synchronized void updateTotal() {
+    public void updateTotal() {
         final AtomicInteger ai = new AtomicInteger(0);
-        final AtomicInteger ai2 = new AtomicInteger(0);
 
         if (tree.getRoot() != null && !tree.getRoot().getChildren().isEmpty()) {
             for (TreeItem<? extends Item> child : tree.getRoot().getChildren()) {
                 ai.getAndAdd(child.getValue().total.get());
-                final String compOn = child.getValue().completed_On.get();
-                if (compOn != null && !compOn.isEmpty()) {
-                    LocalDateTime now = LocalDateTime.now();
-                    int nDay = now.getDayOfMonth();
-                    int nMonth = now.getMonthValue();
-                    int nYear = now.getYear();
-                    final LocalDateTime itemTime = LocalDateTime.parse(child.getValue().completed_On.get().replace(" ", "T"));
-                    int iDay = itemTime.getDayOfMonth();
-                    int iMonth = itemTime.getMonthValue();
-                    int iYear = itemTime.getYear();
-                    if ((nDay + nMonth + nYear) == iDay + iMonth + iYear) {
-                        ai2.getAndAdd(child.getValue().getTotal());
-                    }
-                }
-
                 for (TreeItem<? extends Item> childChild : child.getChildren()) {
                     ai.getAndAdd(childChild.getValue().getTotal());
                 }
@@ -1085,7 +1042,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         }
 
         groupCountProp.setValue(ai.get());
-        totalCountProp.setValue(ai2.get());
     }
 
     @Override
@@ -1094,9 +1050,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     }
 
     @Override
-    public synchronized void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed) {
+    public void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed) {
 
-        updateTotal();
         Connection connection = null;
         PreparedStatement ps = null;
         try {
