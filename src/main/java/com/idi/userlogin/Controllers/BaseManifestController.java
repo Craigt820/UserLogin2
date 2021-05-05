@@ -39,7 +39,7 @@ public class BaseManifestController  extends ControllerHandler implements Initia
 
 
     @Override
-    public void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed) {
+    public void updateGroup( boolean completed) {
 
     }
 

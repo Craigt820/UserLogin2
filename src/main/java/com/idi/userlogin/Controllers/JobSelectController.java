@@ -22,8 +22,8 @@ import com.idi.userlogin.utils.FXUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Main.jsonHandler;
@@ -65,29 +65,50 @@ public class JobSelectController implements Initializable {
                 ControllerHandler.jibController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
                 ControllerHandler.jibController.getCollectionList().addAll(collections);
                 ControllerHandler.jibController.getColCombo().getItems().addAll(collections);
+                List<CompletableFuture> futures = new ArrayList<>();
+
                 collections.forEach(e -> {
                     e.getGroupList().forEach(e2 -> {
-                        ObservableList<JIBController.JIBEntryItem> entryItems = (ObservableList<JIBController.JIBEntryItem>) e2.getItemList();
-                        ObservableList<JIBController.JIBEntryItem> groupItems = (ObservableList<JIBController.JIBEntryItem>) ControllerHandler.jibController.getGroupItems(e2);
-                        entryItems.addAll(groupItems);
+                        CompletableFuture future = CompletableFuture.supplyAsync(() -> {
+                            ObservableList<JIBController.JIBEntryItem> entryItems = (ObservableList<JIBController.JIBEntryItem>) e2.getItemList();
+                            ObservableList<JIBController.JIBEntryItem> groupItems = (ObservableList<JIBController.JIBEntryItem>) ControllerHandler.jibController.getGroupItems(e2);
+                            entryItems.addAll(groupItems);
+                            return null;
+                        });
+                        futures.add(future);
                     });
                 });
-                ControllerHandler.jibController.initCheckListScene();
+
+                CompletableFuture[] compFutures = futures.stream().filter(Objects::nonNull).toArray(CompletableFuture[]::new);
+                CompletableFuture.allOf(compFutures).whenCompleteAsync((ig,e)->{
+                    ControllerHandler.jibController.initCheckListScene();
+                }).join();
+
             } else {
                 ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/EntryCheckList.fxml"), true);
                 ControllerHandler.entryController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
                 ControllerHandler.entryController.getCollectionList().addAll(collections);
-//                ControllerHandler.entryController.getGroupCombo().getItems().addAll(collections.get(0).getGroupList());
                 ControllerHandler.entryController.getColCombo().getItems().addAll(collections);
+                List<CompletableFuture> futures = new ArrayList<>();
+
                 collections.forEach(e -> {
                     e.getGroupList().forEach(e2 -> {
-                        ObservableList entryItems = e2.getItemList();
-                        ObservableList<?> groupItems = ControllerHandler.entryController.getGroupItems(e2);
-                        entryItems.addAll(groupItems);
+                        CompletableFuture future = CompletableFuture.supplyAsync(() -> {
+                            ObservableList entryItems = e2.getItemList();
+                            ObservableList<?> groupItems = ControllerHandler.entryController.getGroupItems(e2);
+                            entryItems.addAll(groupItems);
+                            return null;
+                        });
+                        futures.add(future);
                     });
                 });
+
+                CompletableFuture[] compFutures = futures.stream().filter(Objects::nonNull).toArray(CompletableFuture[]::new);
+                CompletableFuture.allOf(compFutures).join();
+
                 ControllerHandler.entryController.initCheckListScene();
             }
+
             ControllerHandler.loggedInController.getDesc().setText(jsonHandler.getSelJobDesc());
             ControllerHandler.loggedInController.getName().setText(jsonHandler.name);
             ControllerHandler.loggedInController.getJobID().setText(jsonHandler.getSelJobID());

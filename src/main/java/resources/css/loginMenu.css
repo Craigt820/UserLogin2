@@ -5,7 +5,7 @@
 .labels{
  -fx-text-fill:#07255e;
  -fx-font-weight:bold;
- -fx-font-size: 16;
+ -fx-font-size: 1.12em;
  -fx-font-family: 'Segoe UI';
 }
 
@@ -18,6 +18,11 @@
 
 /* Buttons */
 
+
+.button{
+  -fx-font-size:1.20em;
+  -fx-font-weight:bold;
+}
 
 .setupBtn:pressed{
     -fx-background-color: yellow;
@@ -40,7 +45,6 @@
 }
 
 .secondaryBtn{
-    -fx-text-fill:#063f80;
     -fx-border-radius:6;
     -fx-background-radius:6;
     -fx-text-fill:white;

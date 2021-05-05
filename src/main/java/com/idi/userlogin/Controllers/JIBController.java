@@ -704,7 +704,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
     }
 
     public boolean legalDocument() {
-        return groupCombo.getSelectionModel().getSelectedItem() != null && firstField.getText() != null && !firstField.getText().isEmpty() && lastField.getText() != null && !lastField.getText().isEmpty() && ss.getText() != null && !ss.getText().isEmpty() && ss.getText().length() >= 9 && dtCombo.getSelectionModel().getSelectedItem() != null;
+        return statusCombo.getSelectionModel().getSelectedItem() != null && groupCombo.getSelectionModel().getSelectedItem() != null && firstField.getText() != null && !firstField.getText().isEmpty() && lastField.getText() != null && !lastField.getText().isEmpty() && ss.getText() != null && !ss.getText().isEmpty() && ss.getText().length() >= 9 && dtCombo.getSelectionModel().getSelectedItem() != null;
     }
 
     public void legalDocumentHelper() {

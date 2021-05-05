@@ -118,7 +118,7 @@ public class LoggedInController implements Initializable {
             }
 
             if (getMainTreeView() != null) {
-                updateAll(getMainTreeView());
+                updateAll(selGroup.getItemList());
             }
             ControllerHandler.getOpaqueOverlay().setVisible(false);
         }
@@ -131,9 +131,7 @@ public class LoggedInController implements Initializable {
         sec.setText(String.format("%02d", s));
         min.setText(String.format("%02d", m));
         hour.setText(String.format("%02d", h));
-
     }
-
 
     @FXML
     private void pause_Resume() throws URISyntaxException {
@@ -156,7 +154,7 @@ public class LoggedInController implements Initializable {
                 break;
             case "Pause":
                 if (getMainTreeView() != null) {
-                    updateAll(getMainTreeView());
+                    updateAll(selGroup.getItemList());
                 }
                 pause_resume.setText("Resume");
                 ControllerHandler.getOpaqueOverlay().setVisible(true);

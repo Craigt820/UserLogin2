@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import org.apache.commons.dbutils.DbUtils;
 import com.idi.userlogin.Controllers.ConnectionHandler;
 import com.idi.userlogin.Main;
@@ -32,7 +33,6 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
     public SimpleIntegerProperty id;
     public SimpleStringProperty started_On;
     public SimpleStringProperty completed_On;
-    public SimpleBooleanProperty completed_prop;
     public Label delete;
     public SimpleStringProperty name;
     public Label type;
@@ -85,27 +85,27 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.nonFeeder.set(non_feeder);
         this.type.setText(type);
         setupType(type);
-        this.completed.setSelected(completed);
-        this.completed_prop = new SimpleBooleanProperty();
-        this.completed_prop.bindBidirectional(this.completed.selectedProperty());
+        this.completed.selectedProperty().set(completed);
         this.comments.set(comments);
         this.started_On.set(startedOn);
         this.completed_On.set(completedOn);
 
-        this.completed.selectedProperty().addListener((ob, ov, nv) -> {
-            this.completed.setSelected(nv);
-            if (this.completed.isSelected()) {
-                this.completed_On.set(LocalDateTime.now().toString());
-            } else {
-                this.completed_On.set(null);
-            }
-
-            updateSelected(this);
+        this.completed.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+            completeHandler();
         });
-
-
     }
 
+    public void completeHandler(){
+        this.completed.selectedProperty().set(this.completed.isSelected()?false:true);
+//            this.completed.setSelected(this.completed.selectedProperty().get());
+        if (this.completed.isSelected()) {
+            this.completed_On.set(LocalDateTime.now().toString());
+        } else {
+            this.completed_On.set(null);
+        }
+
+        updateSelected(this);
+    }
 
     public void setupType(String type) {
         final ImageView view = new ImageView();
@@ -131,7 +131,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.overridden = new SimpleBooleanProperty();
         this.details = new Label("Details");
         this.details.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        ImageView details=new ImageView(getClass().getResource("/images/info.png").toExternalForm());
+        ImageView details = new ImageView(getClass().getResource("/images/info.png").toExternalForm());
         details.setFitWidth(20);
         details.setFitHeight(20);
         this.details.setGraphic(details);
@@ -277,10 +277,6 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.comments.set(comments);
     }
 
-    public void setCompleted_prop(boolean completed_prop) {
-        this.completed_prop.set(completed_prop);
-    }
-
     public ObservableList<String> getConditions() {
         return conditions.get();
     }
@@ -371,14 +367,6 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
 
     public void setPreviews(List<Image> previews) {
         this.previews = previews;
-    }
-
-    public boolean isCompleted_prop() {
-        return completed_prop.get();
-    }
-
-    public SimpleBooleanProperty completed_propProperty() {
-        return completed_prop;
     }
 
 }

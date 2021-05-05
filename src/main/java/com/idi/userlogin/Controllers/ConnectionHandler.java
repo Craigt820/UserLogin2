@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class ConnectionHandler {
 
-    public static final String CONN = "jdbc:mysql://" + JsonHandler.hostName + "/Tracking";
+    public static final String CONN = "jdbc:mysql://" + JsonHandler.hostName + "/Tracking?useSSL=false";
 
     public static Connection createDBConnection() {
         try {

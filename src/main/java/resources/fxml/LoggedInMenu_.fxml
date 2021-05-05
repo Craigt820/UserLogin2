@@ -15,11 +15,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="root" prefHeight="648.0" prefWidth="315.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.LoggedInController">
+<AnchorPane fx:id="root" prefHeight="680.0" prefWidth="315.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.LoggedInController">
     <children>
-        <VBox minHeight="700.0" prefHeight="700.0" prefWidth="315.0" style="-fx-background-color: #fefefe;" stylesheets="@../css/loginMenu.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox minHeight="680.0" prefHeight="680.0" prefWidth="315.0" style="-fx-background-color: #fefefe;" stylesheets="@../css/loginMenu.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <VBox style="-fx-border-radius: 6; -fx-border-width: 2;">
+                <VBox prefWidth="299.0" style="-fx-border-radius: 6; -fx-border-width: 2;">
                     <children>
                         <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="299.0" spacing="12.0">
                             <children>
@@ -30,25 +30,12 @@
                                 </Label>
                                 <HBox alignment="CENTER_LEFT">
                                     <children>
-                                        <Label fx:id="hour" text="00" textFill="#5a5a5a">
+                                        <Label fx:id="hour" style="-fx-font-size: 1.3em;" text="00" textFill="#07265c">
                                             <font>
-                                                <Font name="Segoe UI Bold" size="14.0" />
+                                                <Font name="Segoe UI" size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label text=":">
-                                            <font>
-                                                <Font name="Segoe UI" size="16.0" />
-                                            </font>
-                                            <HBox.margin>
-                                                <Insets left="4.0" right="4.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label fx:id="min" text="00" textFill="#5a5a5a">
-                                            <font>
-                                                <Font name="Segoe UI Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label text=":">
+                                        <Label style="-fx-font-size: 1.3em;" text=":" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="16.0" />
                                             </font>
@@ -56,12 +43,25 @@
                                                 <Insets left="4.0" right="4.0" />
                                             </HBox.margin>
                                         </Label>
-                                        <Label fx:id="sec" text="00" textFill="#5a5a5a">
+                                        <Label fx:id="min" style="-fx-font-size: 1.3em;" text="00" textFill="#07265c">
                                             <font>
-                                                <Font name="Segoe UI Bold" size="14.0" />
+                                                <Font name="Segoe UI" size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label>
+                                        <Label style="-fx-font-size: 1.3em;" text=":" textFill="#07265c">
+                                            <font>
+                                                <Font name="Segoe UI" size="16.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="4.0" right="4.0" />
+                                            </HBox.margin>
+                                        </Label>
+                                        <Label fx:id="sec" style="-fx-font-size: 1.3em;" text="00" textFill="#07265c">
+                                            <font>
+                                                <Font name="Segoe UI" size="15.0" />
+                                            </font>
+                                        </Label>
+                                        <Label style="-fx-font-size: 1.3em;" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="16.0" />
                                             </font>
@@ -71,9 +71,9 @@
                                         </Label>
                                     </children>
                                 </HBox>
-                                <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #a0a0a0;">
+                                <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #07255e44;">
                                     <VBox.margin>
-                                        <Insets top="2.0" />
+                                        <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
                                 <Label styleClass="labels" text="Status" textFill="#113a68">
@@ -86,7 +86,7 @@
                                 </Label>
                                 <HBox alignment="CENTER_LEFT" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="39.0" prefWidth="108.0">
                                     <children>
-                                        <Label fx:id="status" style="-fx-font-size: 14; -fx-font-weight: BOLD;" text="Online" textFill="#12960d" HBox.hgrow="NEVER">
+                                        <Label fx:id="status" style="-fx-font-size: 1.2em; -fx-font-weight: BOLD;" text="Online" textFill="#12960d" HBox.hgrow="NEVER">
                                             <HBox.margin>
                                                 <Insets />
                                             </HBox.margin>
@@ -96,9 +96,9 @@
                                         </Label>
                                     </children>
                                 </HBox>
-                                <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #a0a0a0;">
+                                <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #07255e44;">
                                     <VBox.margin>
-                                        <Insets top="2.0" />
+                                        <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
                                 <Label styleClass="labels" text="Name" textFill="#113a68">
@@ -109,14 +109,14 @@
                                         <Insets top="8.0" />
                                     </VBox.margin>
                                 </Label>
-                                <Label fx:id="name" ellipsisString="." prefHeight="25.0" text="Name" textFill="#5a5a5a">
+                                <Label fx:id="name" ellipsisString="." prefHeight="25.0" style="-fx-font-size: 1.3em;" text="Name" textFill="#07265c">
                                     <font>
-                                        <Font name="Segoe UI Bold" size="14.0" />
+                                        <Font name="Segoe UI" size="15.0" />
                                     </font>
                                 </Label>
-                                <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #a0a0a0;">
+                                <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #07255e44;">
                                     <VBox.margin>
-                                        <Insets top="2.0" />
+                                        <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
                         <StackPane alignment="CENTER_LEFT">
@@ -152,9 +152,9 @@
                                        <children>
                                           <HBox>
                                              <children>
-                                                        <Label fx:id="jobID" alignment="CENTER" prefHeight="25.0" text="JOB001" textFill="#5a5a5a">
+                                                        <Label fx:id="jobID" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.3em;" text="JOB001" textFill="#07265c">
                                                             <font>
-                                                                <Font name="Segoe UI Bold" size="14.0" />
+                                                                <Font name="Segoe UI" size="15.0" />
                                                             </font>
                                                         </Label>
                                              </children>
@@ -164,9 +164,9 @@
                                           </HBox>
                                           <HBox alignment="BOTTOM_RIGHT">
                                              <children>
-                                                <Label fx:id="job1Total" alignment="CENTER" prefHeight="25.0" text="0" textFill="#5a5a5a">
+                                                <Label fx:id="job1Total" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.3em;" text="0" textFill="#07265c">
                                                    <font>
-                                                      <Font name="Segoe UI Bold" size="14.0" />
+                                                      <Font name="Segoe UI" size="15.0" />
                                                    </font>
                                                 </Label>
                                              </children>
@@ -176,9 +176,9 @@
                                           </HBox>
                                           <HBox alignment="BOTTOM_LEFT">
                                              <children>
-                                                        <Label fx:id="desc" alignment="CENTER" prefHeight="25.0" text="Job 1" textFill="#5a5a5a">
+                                                        <Label fx:id="desc" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.3em;" text="Job 1" textFill="#07265c">
                                                             <font>
-                                                                <Font name="Segoe UI Bold" size="14.0" />
+                                                                <Font name="Segoe UI" size="15.0" />
                                                             </font>
                                                         </Label>
                                              </children>
@@ -186,7 +186,7 @@
                                                 <Insets top="24.0" />
                                              </StackPane.margin>
                                           </HBox>
-                                                  <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="260.0" style="-fx-background-color: #a0a0a0;" translateY="12.0">
+                                                  <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="260.0" style="-fx-background-color: #07255e44;" translateY="12.0">
                                              <StackPane.margin>
                                                 <Insets top="40.0" />
                                              </StackPane.margin>
@@ -205,17 +205,17 @@
                         </ScrollPane>
                             </children>
                             <padding>
-                                <Insets bottom="16.0" left="24.0" right="24.0" top="16.0" />
+                                <Insets bottom="16.0" left="24.0" right="24.0" top="24.0" />
                             </padding>
                         </VBox>
-                        <VBox alignment="CENTER" prefHeight="221.0" prefWidth="299.0" spacing="20.0">
+                        <VBox alignment="CENTER" prefHeight="221.0" prefWidth="299.0" spacing="18.0">
                             <children>
-                                <Button fx:id="pause_resume" graphicTextGap="16.0" maxHeight="40.0" minHeight="40.0" mnemonicParsing="false" onAction="#pause_Resume" prefHeight="40.0" prefWidth="260.0" style="-fx-text-fill: #fefefe;" styleClass="secondaryBtn" text="Pause" wrapText="true">
+                                <Button fx:id="pause_resume" contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#pause_Resume" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="secondaryBtn" text="Pause" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="12.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" translateX="-4.0">
+                                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" translateX="62.0">
                                             <image>
                                                 <Image url="@../images/pause.png" />
                                             </image>
@@ -227,16 +227,13 @@
                                     <VBox.margin>
                                         <Insets />
                                     </VBox.margin>
-                                    <padding>
-                                        <Insets right="108.0" />
-                                    </padding>
                                 </Button>
-                                <Button graphicTextGap="16.0" maxHeight="40.0" minHeight="40.0" mnemonicParsing="false" onAction="#changeJob" prefHeight="40.0" prefWidth="260.0" style="-fx-text-fill: #fefefe;" styleClass="secondaryBtn" text="Change Project" wrapText="true">
+                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#changeJob" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="secondaryBtn" text="Change Project" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="16.0" fitWidth="16.0" opacity="0.94" pickOnBounds="true" preserveRatio="true" translateX="32.0">
                                             <image>
                                                 <Image url="@../images/project.png" />
                                             </image>
@@ -245,16 +242,16 @@
                                             </effect>
                                         </ImageView>
                                     </graphic>
-                                    <padding>
-                                        <Insets right="42.0" />
-                                    </padding>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                                 </Button>
-                                <Button graphicTextGap="16.0" maxHeight="40.0" minHeight="40.0" mnemonicParsing="false" onAction="#showSpecs" prefHeight="40.0" prefWidth="260.0" style="-fx-text-fill: #fefefe;" styleClass="secondaryBtn" text="Show Specs" wrapText="true">
+                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#showSpecs" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="secondaryBtn" text="Show Specs" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="16.0" fitWidth="16.0" opacity="0.94" pickOnBounds="true" preserveRatio="true" translateX="42.0">
                                             <image>
                                                 <Image url="@../images/notification.png" />
                                             </image>
@@ -263,16 +260,13 @@
                                             </effect>
                                         </ImageView>
                                     </graphic>
-                                    <padding>
-                                        <Insets right="68.0" />
-                                    </padding>
                                 </Button>
-                                <Button graphicTextGap="16.0" maxHeight="40.0" minHeight="40.0" mnemonicParsing="false" onAction="#signOut" prefHeight="40.0" prefWidth="260.0" style="-fx-text-fill: #fefefe;" styleClass="primaryBtn" text="Sign Out" textFill="WHITE" wrapText="true">
+                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#signOut" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="primaryBtn" text="Sign Out" textFill="WHITE" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="16.0" fitWidth="16.0" opacity="0.94" pickOnBounds="true" preserveRatio="true" translateX="52.0">
                                             <image>
                                                 <Image url="@../images/door.png" />
                                             </image>
@@ -281,16 +275,13 @@
                                             </effect>
                                         </ImageView>
                                     </graphic>
-                                    <padding>
-                                        <Insets right="90.0" />
-                                    </padding>
                                 </Button>
                             </children>
                             <VBox.margin>
                                 <Insets bottom="8.0" />
                             </VBox.margin>
                             <padding>
-                                <Insets top="32.0" />
+                                <Insets top="8.0" />
                             </padding>
                         </VBox>
                     </children>

@@ -130,7 +130,6 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
                 item.getConditions().setAll(conditions);
                 insertHelper(item);
                 tree.getRoot().getChildren().add(newItem);
-                updateTotal();
                 nameField.clear();
                 typeCombo.getSelectionModel().selectFirst();
                 conditCombo.getCheckModel().clearChecks();

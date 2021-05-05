@@ -18,7 +18,6 @@ public class Collection extends ListCell<Collection> {
         this.groupList = new ArrayList<>();
     }
 
-
     public int getID() {
         return this.id;
     }

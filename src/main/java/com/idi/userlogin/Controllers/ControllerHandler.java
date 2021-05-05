@@ -63,6 +63,8 @@ public abstract class ControllerHandler {
     public static JIBController jibController;
     public static EntryCheckListController entryController;
     public static LoggedInController loggedInController;
+    public static Group selGroup = null;
+    public com.idi.userlogin.JavaBeans.Collection selColItem = null;
     public static CheckListController checkListController;
     public static PopOver mainMenuPop;
     public static SimpleIntegerProperty totalCountProp = new SimpleIntegerProperty(0); //For Total Count
@@ -399,48 +401,40 @@ public abstract class ControllerHandler {
         return tree;
     }
 
-    public static void updateAll(JFXTreeTableView<? extends Item> tree) {
+    public static void updateAll(ObservableList<? extends Item> items) {
         List<CompletableFuture> futures = new ArrayList<>();
-        tree.getRoot().getChildren().forEach(e2 -> {
-            final Item item = e2.getValue();
-
+        items.forEach(e2 -> {
             CompletableFuture future = CompletableFuture.supplyAsync(() -> {
-                return countHandler(item.getLocation(), item.getType().getText());
-            }).thenAccept(e -> {
-                item.totalProperty().set((Integer) e.keySet().toArray()[0]);
-                item.existsProperty().set((Boolean) e.values().toArray()[0]);
-                updateItemDB(item);
+                Map<Integer, Boolean> count = countHandler(e2.getLocation(), e2.getType().getText());
+                e2.totalProperty().set((Integer) count.keySet().toArray()[0]);
+                e2.existsProperty().set((Boolean) count.values().toArray()[0]);
+                return e2;
+            }).thenAcceptAsync(item1 -> {
+                updateItemDB(item1);
             });
-
             futures.add(future);
         });
 
-        for (CompletableFuture future : futures) {
-            if (future != null) {
-                try {
-                    future.get();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        tree.refresh();
+        CompletableFuture[] compFutures = futures.stream().filter(Objects::nonNull).toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(compFutures).join();
     }
 
     public abstract void resetFields();
 
     public static void updateSelected(Item item) {
         if (!item.overridden.get()) {
-            Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
-            item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
-            item.existsProperty().set((Boolean) pages.values().toArray()[0]);
+            CompletableFuture.supplyAsync(() -> {
+                Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
+                item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
+                item.existsProperty().set((Boolean) pages.values().toArray()[0]);
+                return item;
+            }).whenCompleteAsync((ig, e) -> {
+                updateItemDB(item);
+            });
         }
-        updateItemDB(item);
-        mainTree.refresh();
     }
 
-    public abstract void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed);
+    public abstract void updateGroup(boolean completed);
 
     public static void updateItemDB(final Item item, String sql) {
         Connection connection = null;
@@ -477,7 +471,7 @@ public abstract class ControllerHandler {
             ps = connection.prepareStatement("Update `" + jsonHandler.getSelJobID() + "` SET total=?, completed=?, completed_On=?,overridden=? WHERE id=?");
             ps.setInt(1, item.getTotal());
             ps.setInt(2, booleanToInt(item.getCompleted().isSelected()));
-            if (item.getCompleted().isSelected()) {
+            if (item.getCompleted_On() != null && item.getCompleted().isSelected()) {
                 Date now = formatDateTime(item.getCompleted_On().replace(" ", "T"));
                 ps.setString(3, new Timestamp(now.toInstant().toEpochMilli()).toString());
             } else {

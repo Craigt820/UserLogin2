@@ -297,10 +297,10 @@
 
 .text-area,
 .text-field{
-      -fx-faint-focus-color: #063fb066;
+      -fx-faint-focus-color: #266cfc88;
       -fx-focus-color: #063fb066;
-      -fx-background-color:#efefef;
-      -fx-border-color: #e0e0e0;
+      -fx-background-color:transparent,#063fb066,transparent,#fefefe;
+      -fx-border-color: #d0d0d0;
       -fx-background-radius: 6;
       -fx-border-radius: 6;
 }

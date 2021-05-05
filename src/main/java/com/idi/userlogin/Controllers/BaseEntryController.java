@@ -41,6 +41,7 @@ import org.controlsfx.control.textfield.CustomTextField;
 import com.idi.userlogin.utils.AutoCompleteTextField;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -65,8 +66,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
     public ProgressIndicator indicator = new ProgressIndicator();
     public List<com.idi.userlogin.JavaBeans.Collection> collectionList;
-    public Group selGroupItem = null;
-    public com.idi.userlogin.JavaBeans.Collection selColItem = null;
     final MenuItem compAll = new MenuItem("Complete All");
 
     @FXML
@@ -182,27 +181,25 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     private void completeGroupTask(JFXTreeTableView<? extends Item> tree) {
         Optional<? extends TreeItem<? extends Item>> items = tree.getRoot().getChildren().stream().filter(e -> !e.getValue().overridden.get()).filter(e -> !e.getValue().exists.get()).findAny();
         if (!items.isPresent()) {
-            fxTrayIcon.showInfoMessage("Group '" + selGroupItem.getName() + "' has been completed!");
             tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
             groupCombo.getSelectionModel().getSelectedItem().setCompleted_On(LocalDateTime.now().toString());
             groupCombo.getSelectionModel().getSelectedItem().setComplete(true);
-            Task task = new Task() {
-                @Override
-                protected Object call() throws Exception {
-                    updateAll(tree);
-                    return null;
-                }
-            };
-            new Thread(task).start();
-            task.setOnSucceeded(e -> {
-                updateGroup(tree, true);
+            CompletableFuture.runAsync(() -> {
+                updateAll(ControllerHandler.selGroup.getItemList());
+            }).thenRunAsync(() -> {
+                updateTotal();
+            }).thenRunAsync(() -> {
+                updateGroup(true);
+            }).whenCompleteAsync((ig, t) -> {
+                fxTrayIcon.showInfoMessage("Group '" + ControllerHandler.selGroup.getName() + "' has been completed!");
                 tree.getRoot().getChildren().clear();
                 selCol.setText("");
                 selGroup.setText("");
                 groupCountProp.setValue(0);
                 groupCombo.getSelectionModel().clearSelection();
-                selGroupItem = null;
+                ControllerHandler.selGroup = null;
             });
+
         } else {
             fxTrayIcon.showErrorMessage("Some Items Don't Exist!");
         }
@@ -269,16 +266,22 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 fxTrayIcon.showInfoMessage("Item: '" + item.getName().trim() + "' Has Been Removed");
 
                 //Remove from group item list
-                final Optional<?> groupItem = selGroupItem.getItemList().stream().filter(e -> e.getId() == item.getId()).findAny();
+                final Optional<?> groupItem = ControllerHandler.selGroup.getItemList().stream().filter(e -> e.getId() == item.getId()).findAny();
                 if (groupItem.isPresent()) {
-                    selGroupItem.getItemList().remove(groupItem.get());
+                    ControllerHandler.selGroup.getItemList().remove(groupItem.get());
                 }
 
                 //Remove from checklist
                 final Optional<?> chkitem = checkListController.getClAllTable().getItems().stream().filter(e -> e.getId() == item.getId()).findAny();
                 boolean remove = tree.getRoot().getChildren().removeIf(e -> e.getValue().id.get() == item.getId());
-                updateGroup(tree, false);
-                DailyLog.updateJobTotal();
+                CompletableFuture.runAsync(() -> {
+                    updateTotal();
+                }).thenRunAsync(() -> {
+                    updateGroup(false);
+                }).thenRunAsync(() -> {
+                    DailyLog.updateJobTotal();
+                });
+
                 if (chkitem.isPresent()) {
                     checkListController.getClAllTable().getItems().remove(chkitem.get());
                 }
@@ -289,64 +292,50 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     private void groupSelectTask(Group nv, JFXTreeTableView<? extends Item> tree) {
         boolean sameVal = false;
         if (nv != null && !nv.getName().isEmpty()) {
-            if (nv.getName() != "Add New Group") {
-                if (selGroupItem != null && nv == selGroupItem) {
+            if (!nv.getName().equals("Add New Group")) {
+                if (ControllerHandler.selGroup != null && nv == ControllerHandler.selGroup) {
                     sameVal = true;
                 }
                 if (!sameVal) {
-                    selGroupItem = nv;
+                    ControllerHandler.selGroup = nv;
                     groupCountProp.set(0);
                     tree.getRoot().getChildren().clear();
                     selGroup.setText(nv.getName());
                     tree.setPlaceholder(indicator);
                     tree.getPlaceholder().autosize();
-                    final Task task = new Task() {
-                        @Override
-                        protected Object call() {
-                            final ObservableList<?> entryItems = getGroupItems(selGroupItem);
-                            final ObservableList group = selGroupItem.getItemList();
-                            if (entryItems != null) {
-                                group.setAll(entryItems);
+                    CompletableFuture.supplyAsync(() -> {
+                        final ObservableList<?> entryItems = getGroupItems(ControllerHandler.selGroup);
+                        return entryItems;
+                    }).thenApplyAsync(entryItems -> {
+                        final ObservableList group = ControllerHandler.selGroup.getItemList();
+                        group.setAll(entryItems);
+                        final List itemList = entryItems.stream().map(TreeItem::new).collect(Collectors.toList());
+                        return itemList;
+                    }).thenApplyAsync(itemList -> {
+                        itemList.forEach(e -> {
+                            TreeItem<Item> checklistItem = (TreeItem<Item>) e;
+                            checkListController.getClAllTable().getItems().stream().filter(e2 -> {
+                                return checklistItem.getValue().getId() == e2.getId();
+                            }).findAny().ifPresent(e3 -> {
+                                e3.totalProperty().bindBidirectional(checklistItem.getValue().totalProperty());
+                                e3.completed.selectedProperty().bindBidirectional(checklistItem.getValue().completed.selectedProperty());
+                                e3.name.bindBidirectional(checklistItem.getValue().name);
+                                e3.comments.bindBidirectional(checklistItem.getValue().comments);
+                                e3.completed_On.bindBidirectional(checklistItem.getValue().completed_On);
+                                e3.started_On.bindBidirectional(checklistItem.getValue().started_On);
+                                e3.conditions.bindBidirectional(checklistItem.getValue().conditions);
+                                e3.overridden.bindBidirectional(checklistItem.getValue().overridden);
+                                e3.setLocation(checklistItem.getValue().getLocation());
+                                e3.existsProperty().bindBidirectional(checklistItem.getValue().existsProperty());
+                            });
+                        });
 
-                                final List itemList = entryItems.stream().map(TreeItem::new).collect(Collectors.toList());
-                                tree.getRoot().getChildren().addAll(itemList);
-
-                                itemList.forEach(e -> {
-                                    TreeItem<Item> checklistItem = (TreeItem<Item>) e;
-                                    Task task1 = new Task() {
-                                        @Override
-                                        protected Object call() throws Exception {
-                                            Map<Integer, Boolean> pages = countHandler(checklistItem.getValue().getLocation(), "Multi-Paged");
-                                            checklistItem.getValue().setExists((Boolean) pages.values().toArray()[0]);
-                                            checklistItem.getValue().setTotal((Integer) pages.keySet().toArray()[0]);
-                                            return null;
-                                        }
-                                    };
-                                    new Thread(task1).start();
-
-                                    checkListController.getClAllTable().getItems().stream().filter(e2 -> {
-                                        return checklistItem.getValue().getId() == e2.getId();
-                                    }).findAny().ifPresent(e3 -> {
-                                        e3.totalProperty().bindBidirectional(checklistItem.getValue().totalProperty());
-                                        e3.completed.selectedProperty().bindBidirectional(checklistItem.getValue().completed.selectedProperty());
-                                        e3.name.bindBidirectional(checklistItem.getValue().name);
-                                        e3.comments.bindBidirectional(checklistItem.getValue().comments);
-                                        e3.completed_On.bindBidirectional(checklistItem.getValue().completed_On);
-                                        e3.started_On.bindBidirectional(checklistItem.getValue().started_On);
-                                        e3.conditions.bindBidirectional(checklistItem.getValue().conditions);
-                                        e3.overridden.bindBidirectional(checklistItem.getValue().overridden);
-                                        e3.setLocation(checklistItem.getValue().getLocation());
-                                        e3.setExists(checklistItem.getValue().isExists());
-                                    });
-                                });
-                            }
-                            return null;
-                        }
-                    };
-                    new Thread(task).start();
-
-                    task.setOnSucceeded(e -> {
-                        updateTotal();
+                        tree.getRoot().getChildren().addAll(itemList);
+                        return itemList;
+                    }).thenRunAsync(() -> {
+                        Platform.runLater(() -> {
+                            updateTotal();
+                        });
                     });
                 }
             }
@@ -475,20 +464,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
     public void initCheckListScene() {
         checkListRoot.getChildren().add(checkListScene);
-        final List<List<Group>> colGroups = collectionList.stream().map(com.idi.userlogin.JavaBeans.Collection::getGroupList).collect(Collectors.toList());
-        final ObservableList items = FXCollections.observableArrayList();
-        for (List<Group> groupList : colGroups) {
-            for (Group group : groupList) {
-                ObservableList<? extends Item> groupItems = (ObservableList<? extends Item>) group.getItemList();
-                groupItems.forEach(e -> {
-                    final EntryItem clItem = new EntryItem(e.getId(), e.getCollection(), e.getGroup(), e.getName(), e.getTotal(), e.getNonFeeder(), e.getType().getText(), e.getCompleted().isSelected(), e.getComments(), e.getStarted_On(), e.getCompleted_On(), e.isOverridden());
-                    clItem.getConditions().setAll(e.getConditions());
-                    items.add(clItem);
-                });
-            }
-        }
-
-        checkListController.getClAllTable().getItems().addAll(items);
     }
 
 
@@ -498,7 +473,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         groupCombo.setEditable(true);
 
         tree.getColumns().forEach(e -> e.setContextMenu(new ContextMenu()));
-        setupCompTask(tree);
+        setupCompTask();
         tree.setShowRoot(false);
         tree.getRoot().getChildren().addListener(new ListChangeListener<TreeItem<? extends Item>>() {
             @Override
@@ -512,10 +487,15 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
         updateAll.setOnAction(e -> {
             if (!tree.getRoot().getChildren().isEmpty()) {
-                updateAll(tree);
-                updateTotal();
-                updateGroup(tree, groupCombo.getSelectionModel().getSelectedItem().isComplete());
-                DailyLog.updateJobTotal();
+                CompletableFuture.runAsync(() -> {
+                    updateAll(ControllerHandler.selGroup.getItemList());
+                }).thenRunAsync(() -> {
+                    updateTotal();
+                }).thenRunAsync(() -> {
+                    updateGroup(false);
+                }).thenRunAsync(() -> {
+                    DailyLog.updateJobTotal();
+                });
             }
         });
 
@@ -652,11 +632,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             public void updateItem(CheckBox item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item != null) {
-                    item.setSelected(getTreeTableRow().getTreeItem().getValue().isCompleted_prop());
                     setGraphic(item);
                     item.setOnAction(e -> {
                         updateTotal();
-                        updateGroup(tree, false);
+                        updateGroup(false);
                     });
                 } else {
                     setGraphic(null);
@@ -940,13 +919,14 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                 Label label = new Label();
                                 ImageView view;
                                 Item itemObj = this.getTreeTableRow().getTreeItem().getValue();
+                                boolean exists = itemExists(itemObj);
+                                itemObj.existsProperty().set(exists);
                                 if (itemObj.exists.get() || itemObj.overridden.get()) {
                                     view = ImgFactory.createView(ImgFactory.IMGS.CHECKMARK);
                                     Tooltip.install(label, new Tooltip("Exists"));
                                 } else {
                                     view = ImgFactory.createView(EXMARK);
                                     Tooltip.install(label, new Tooltip("Doesn't Exist!"));
-                                    itemObj.getCompleted().setSelected(false);
                                 }
                                 label.setGraphic(view);
                                 label.setPadding(new Insets(0, 0, 0, 8));
@@ -958,6 +938,15 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                     return cell;
                 }
         );
+    }
+
+    private boolean itemExists(Item itemObj) {
+        File[] files = itemObj.getLocation().getParent().toFile().listFiles();
+        if (files != null) {
+            Optional<File> file = Arrays.stream(files).filter(e -> e.getName().contains(itemObj.getLocation().getFileName().toString())).findAny();
+            return file.isPresent();
+        }
+        return false;
     }
 
     public abstract void updateItem(String paramString1, String paramString2, Item paramItem);
@@ -1001,16 +990,21 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         }
     }
 
-    public void setupCompTask(TreeTableView<? extends Item> tree) {
+    public void setupCompTask() {
         compColumn.getContextMenu().getItems().add(compAll);
         compAll.setOnAction(e -> {
             CompletableFuture.runAsync(() -> {
-                tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
-            }).whenComplete((i, e2) -> {
-                updateAll((JFXTreeTableView<? extends Item>) tree);
-                updateTotal();
+                ControllerHandler.selGroup.getItemList().forEach(e2 -> e2.getCompleted().setSelected(true));
+            }).thenApplyAsync(e2 -> {
+                updateAll(ControllerHandler.selGroup.getItemList());
+                return null;
+            }).whenCompleteAsync((ig, t) -> {
+                Platform.runLater(() -> {
+                    updateTotal();
+                });
             });
         });
+
     }
 
     public List<com.idi.userlogin.JavaBeans.Collection> getCollectionList() {
@@ -1036,7 +1030,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
             }
         }
-
         groupCountProp.setValue(ai.get());
     }
 
@@ -1046,7 +1039,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     }
 
     @Override
-    public void updateGroup(JFXTreeTableView<? extends Item> tree, boolean completed) {
+    public void updateGroup(boolean completed) {
 
         Connection connection = null;
         PreparedStatement ps = null;
@@ -1062,7 +1055,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 ps.setTimestamp(3, null);
             }
 
-            ps.setInt(4, groupCombo.getSelectionModel().getSelectedItem().getID());
+            ps.setInt(4, ControllerHandler.selGroup.getID());
             ps.executeUpdate();
 
         } catch (SQLException | ParseException e) {
