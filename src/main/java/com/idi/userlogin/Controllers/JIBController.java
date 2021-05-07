@@ -4,36 +4,20 @@ import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.utils.Utils;
-import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import impl.org.controlsfx.autocompletion.SuggestionProvider;
-import impl.org.controlsfx.skin.SearchableComboBoxSkin;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ComboBoxTreeTableCell;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Popup;
-import javafx.util.Callback;
 import javafx.util.Duration;
-import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
 import com.idi.userlogin.Main;
 import com.jfoenix.controls.JFXTreeTableColumn;
@@ -50,11 +34,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import org.apache.commons.dbutils.DbUtils;
-import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import javax.annotation.PostConstruct;
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -64,8 +46,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.JsonHandler.trackPath;
@@ -73,7 +53,7 @@ import static com.idi.userlogin.Main.*;
 
 public class JIBController extends BaseEntryController<JIBController.JIBEntryItem> implements Initializable {
     private final ArrayList<String> STATUS = new ArrayList<>(Arrays.asList("LIVING", "DECEASED"));
-    private final String addDocHelper = "ADD NEW DOC TYPE";
+    private final String addDocLabel = "Add New Doc Type";
     private final ObservableList<String> DOC_TYPES = FXCollections.observableArrayList();
     private final JIBEntryItem treeRoot = new JIBEntryItem();
     private final RecursiveTreeItem<JIBEntryItem> rootItem = new RecursiveTreeItem<>(treeRoot, RecursiveTreeObject::getChildren);
@@ -163,7 +143,6 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             ps = connection.prepareStatement("SELECT m.overridden,m.ss,m.doc_type,m.full_name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id  WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
-
                 final JIBEntryItem item = new JIBEntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("m.full_name"), set.getString("ss"), set.getString("doc_type"), set.getString("status"), set.getInt("m.total"), set.getInt("m.completed") == 1, "Multi-Paged", null, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), Utils.intToBoolean(set.getInt("m.overridden")));
                 String condition = set.getString("m.conditions");
                 if (condition != null && !condition.isEmpty()) {
@@ -292,10 +271,9 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         tree.setRoot(rootItem);
         afterInitialize();
         DOC_TYPES.addAll(getDocTypes());
-        dtCombo.getItems().addAll(DOC_TYPES);
         FXCollections.sort(DOC_TYPES);
-        FXCollections.sort(dtCombo.getItems());
-        dtCombo.getItems().add(addDocHelper);
+        dtCombo.getItems().addAll(DOC_TYPES);
+        dtCombo.getItems().set(dtCombo.getItems().size() - 1, addDocLabel);
         dtCombo.setCellFactory(e -> {
             ListCell<String> cell = new ListCell<String>() {
                 @Override
@@ -304,7 +282,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
                     if (item != null && !item.isEmpty()) {
                         setText(item);
                         setContentDisplay(ContentDisplay.TEXT_ONLY);
-                        if (!item.equals(addDocHelper)) {
+                        if (!item.equals(addDocLabel)) {
                             StackPane stackPane = new StackPane();
                             Label text = new Label(item);
                             HBox left = new HBox(text);
@@ -359,6 +337,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
                                         dtCombo.showingProperty().removeListener(listViewShowListener);
                                     }
                                 });
+
                                 setGraphic(pane2);
                             });
                             HBox right = new HBox(edit);
@@ -378,19 +357,20 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
                 if (!cell.getItem().isEmpty() && !cell.isEmpty()) {
 
-                    if (cell.getItem().equals(addDocHelper)) {
+                    if (cell.getItem().equals(addDocLabel)) {
                         TextInputDialog dialog = new TextInputDialog();
                         dialog.setContentText("Enter Type");
 
                         dialog.showAndWait().ifPresent(text -> {
-                            boolean match = dtCombo.getItems().contains(text);
-                            if (!match) {
-                                final int index = dtCombo.getItems().size() - 1;
-                                newDocType(text);
-                                DOC_TYPES.add(text);
-                                dtCombo.getItems().add(text);
-                                FXCollections.sort(dtCombo.getItems());
+                            String textUpper = text.toUpperCase();
+                            boolean noMatch = dtCombo.getItems().stream().noneMatch(e3 -> e3.toUpperCase().equals(textUpper));
+                            if (noMatch) {
+                                newDocType(textUpper);
                                 Platform.runLater(() -> {
+                                    DOC_TYPES.add(textUpper);
+                                    dtCombo.getItems().set(dtCombo.getItems().size() - 2, textUpper);
+                                    sortDTList();
+                                    final int index = dtCombo.getItems().indexOf(textUpper);
                                     dtCombo.getSelectionModel().select(index);
                                 });
 
@@ -493,6 +473,19 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 legalDocumentHelper();
+            }
+        });
+    }
+
+    private void sortDTList() {
+        FXCollections.sort(dtCombo.getItems(), new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                //Keep the "add new doc type" cell at the last index
+                if (o1.equals(addDocLabel) || o2.equals(addDocLabel)) {
+                    return 0;
+                }
+                return o1.compareTo(o2);
             }
         });
     }
@@ -614,6 +607,10 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
             super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
 
+
+            if (super.id.get() > 0) {
+                super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
+            }
             //This is required for newly inserted items -- The id is updated to the new row id once the new item is inserted into the db. For this project, the file name
             // is the id. The id would be "0" if it's not updated after inserting.
             super.idProperty().addListener((ob, ov, nv) -> {
@@ -622,7 +619,6 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
                 }
             });
         }
-
 
         public String getFullName() {
             return fullName.get();
@@ -761,7 +757,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             item.started_On.bindBidirectional(checklistItem.started_On);
             item.overridden.bindBidirectional(checklistItem.overridden);
             item.conditions.bindBidirectional(checklistItem.conditions);
-            item.setLocation(checklistItem.getLocation());
+            checklistItem.setLocation(item.getLocation());
             checkListController.getClAllTable().getItems().add(checklistItem);
             ObservableList<JIBEntryItem> items = (ObservableList<JIBEntryItem>) group.getItemList();
             items.add(item);

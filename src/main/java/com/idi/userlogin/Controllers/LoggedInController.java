@@ -1,5 +1,6 @@
 package com.idi.userlogin.Controllers;
 
+import com.idi.userlogin.utils.DailyLog;
 import com.jfoenix.controls.JFXDrawer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,10 +19,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static com.idi.userlogin.Controllers.ControllerHandler.*;
 import static com.idi.userlogin.Main.jsonHandler;
@@ -118,8 +116,13 @@ public class LoggedInController implements Initializable {
             }
 
             if (getMainTreeView() != null) {
-                updateAll(selGroup.getItemList());
+                CompletableFuture.runAsync(() -> {
+                    updateAll(selGroup.getItemList());
+                }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
+                    updateGroup(false);
+                }).thenRunAsync(DailyLog::updateJobTotal);
             }
+
             ControllerHandler.getOpaqueOverlay().setVisible(false);
         }
     }
@@ -154,7 +157,11 @@ public class LoggedInController implements Initializable {
                 break;
             case "Pause":
                 if (getMainTreeView() != null) {
-                    updateAll(selGroup.getItemList());
+                    CompletableFuture.runAsync(() -> {
+                        updateAll(selGroup.getItemList());
+                    }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
+                        updateGroup(false);
+                    }).thenRunAsync(DailyLog::updateJobTotal);
                 }
                 pause_resume.setText("Resume");
                 ControllerHandler.getOpaqueOverlay().setVisible(true);

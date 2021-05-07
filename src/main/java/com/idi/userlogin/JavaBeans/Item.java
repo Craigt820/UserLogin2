@@ -85,26 +85,11 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.nonFeeder.set(non_feeder);
         this.type.setText(type);
         setupType(type);
-        this.completed.selectedProperty().set(completed);
+        this.completed.setSelected(completed);
         this.comments.set(comments);
         this.started_On.set(startedOn);
         this.completed_On.set(completedOn);
 
-        this.completed.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
-            completeHandler();
-        });
-    }
-
-    public void completeHandler(){
-        this.completed.selectedProperty().set(this.completed.isSelected()?false:true);
-//            this.completed.setSelected(this.completed.selectedProperty().get());
-        if (this.completed.isSelected()) {
-            this.completed_On.set(LocalDateTime.now().toString());
-        } else {
-            this.completed_On.set(null);
-        }
-
-        updateSelected(this);
     }
 
     public void setupType(String type) {

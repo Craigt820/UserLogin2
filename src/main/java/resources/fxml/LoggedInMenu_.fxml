@@ -205,7 +205,7 @@
                         </ScrollPane>
                             </children>
                             <padding>
-                                <Insets bottom="16.0" left="24.0" right="24.0" top="24.0" />
+                                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                             </padding>
                         </VBox>
                         <VBox alignment="CENTER" prefHeight="221.0" prefWidth="299.0" spacing="18.0">

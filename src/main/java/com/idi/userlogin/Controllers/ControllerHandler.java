@@ -104,7 +104,7 @@ public abstract class ControllerHandler {
         PreparedStatement ps = null;
         ResultSet set = null;
         try {
-            String sql = "SELECT folder_structure as structure FROM projects WHERE job_id=" + "'" + jsonHandler.getSelJobID() + "'";
+            String sql = "SELECT folder_structure as structure FROM projects WHERE job_id='" + jsonHandler.getSelJobID() + "'";
             connection = ConnectionHandler.createDBConnection();
             ps = connection.prepareStatement(sql);
             set = ps.executeQuery(sql);
@@ -255,9 +255,12 @@ public abstract class ControllerHandler {
     public abstract int insertHelper(Item<? extends Item> item);
 
     public static Date formatDateTime(String dateTime) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Date now = format.parse(dateTime);
-        return now;
+        if (!dateTime.isEmpty()) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date now = format.parse(dateTime);
+            return now;
+        }
+        return null;
     }
 
     public static ImageView adjustFitSize(Image image) {
@@ -295,11 +298,11 @@ public abstract class ControllerHandler {
 
     public static void opaquePOS() {
         if (opaqueOverlay.isVisible()) {
-            opaqueOverlay.toFront();
+//            opaqueOverlay.toFront();
             Pane root = (Pane) opaqueOverlay.getParent();
             opaqueOverlay.setMinSize(root.getWidth(), root.getHeight());
         } else {
-            opaqueOverlay.toBack();
+//            opaqueOverlay.toBack();
             opaqueOverlay.setMinSize(0, 0);
         }
     }
@@ -325,11 +328,14 @@ public abstract class ControllerHandler {
                     if (files != null) {
                         Optional<File> file = Arrays.stream(files).filter(e -> e.getName().contains(path.getFileName().toString())).findAny();
                         if (file.isPresent()) {
+                            File file1 = file.get();
                             exists = true;
-                            if (file.get().toString().contains(".pdf")) {
-                                pages = countPDF(file.get());
-                            } else if (file.get().toString().contains(".tif") || file.get().toString().contains(".tiff")) {
-                                pages = countTiff(file.get());
+                            if (file1.renameTo(file1)) {
+                                if (file1.toString().contains(".pdf")) {
+                                    pages = countPDF(file.get());
+                                } else if (file.get().toString().contains(".tif") || file.get().toString().contains(".tiff")) {
+                                    pages = countTiff(file.get());
+                                }
                             }
                         }
                     }
@@ -422,19 +428,18 @@ public abstract class ControllerHandler {
     public abstract void resetFields();
 
     public static void updateSelected(Item item) {
-        if (!item.overridden.get()) {
-            CompletableFuture.supplyAsync(() -> {
-                Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
-                item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
-                item.existsProperty().set((Boolean) pages.values().toArray()[0]);
-                return item;
-            }).whenCompleteAsync((ig, e) -> {
-                updateItemDB(item);
-            });
-        }
+        CompletableFuture.supplyAsync(() -> {
+            Map<Integer, Boolean> pages = countHandler(item.getLocation(), item.type.getText());
+            item.totalProperty().set((Integer) pages.keySet().toArray()[0]);
+            item.existsProperty().set((Boolean) pages.values().toArray()[0]);
+            return item;
+        }).thenRunAsync(() -> {
+            updateItemDB(item);
+        }).join();
     }
 
-    public abstract void updateGroup(boolean completed);
+    public static void updateGroup(boolean completed) {
+    }
 
     public static void updateItemDB(final Item item, String sql) {
         Connection connection = null;
@@ -446,7 +451,11 @@ public abstract class ControllerHandler {
             ps.setInt(2, booleanToInt(item.getCompleted().isSelected()));
             if (item.getCompleted().isSelected()) {
                 Date now = formatDateTime(item.getCompleted_On().replace(" ", "T"));
-                ps.setString(3, new Timestamp(now.toInstant().toEpochMilli()).toString());
+                if (now == null) {
+                    ps.setString(3, null);
+                } else {
+                    ps.setString(3, new Timestamp(now.toInstant().toEpochMilli()).toString());
+                }
             } else {
                 ps.setString(3, null);
             }
@@ -503,8 +512,8 @@ public abstract class ControllerHandler {
         } catch (IOException e) {
             e.printStackTrace();
             Main.LOGGER.log(Level.SEVERE, "There was an error reading a pdf file!", e);
-
         }
+
         return numPages;
     }
 

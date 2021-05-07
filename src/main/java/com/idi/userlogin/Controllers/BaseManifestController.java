@@ -39,11 +39,6 @@ public class BaseManifestController  extends ControllerHandler implements Initia
 
 
     @Override
-    public void updateGroup( boolean completed) {
-
-    }
-
-    @Override
     public void legalTextTest(boolean isLegal, CustomTextField node) {
 
     }

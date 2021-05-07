@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 
+import java.util.Objects;
+
 public class Group extends ListCell<Group> {
     private IntegerProperty id;
     private Collection collection;
@@ -27,6 +29,12 @@ public class Group extends ListCell<Group> {
         this.started_On = started_On;
         this.completed_On = completed_On;
         this.itemList = FXCollections.observableArrayList();
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, collection, name);
     }
 
     public int getID() {
