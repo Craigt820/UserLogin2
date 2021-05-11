@@ -9,14 +9,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.logging.Level;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import org.apache.commons.dbutils.DbUtils;
 
 public abstract class DailyLog {
     public static int scanLogID = 0;
+    public static IntegerProperty dailyTotal;
 
     public static void insertNewDailyLog() {
         Connection connection = null;
@@ -40,11 +44,12 @@ public abstract class DailyLog {
                 if (set.next())
                     scanLogID = set.getInt(1);
             } catch (SQLException e) {
-                Main.LOGGER.log(Level.SEVERE, "There was an error trying to generating a key!", e);
+                Main.LOGGER.log(Level.SEVERE, "There was an error trying to generate  key!", e);
             }
             DbUtils.closeQuietly(set);
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(connection);
+            dailyTotal = new SimpleIntegerProperty(0);
         }
     }
 
@@ -56,7 +61,7 @@ public abstract class DailyLog {
             PreparedStatement ps = null;
             try {
                 connection = ConnectionHandler.createDBConnection();
-                ps = connection.prepareStatement("UPDATE `ul_scan` SET total=(SELECT IF(ISNULL(total),0,SUM(total)) FROM `" + Main.jsonHandler.getSelJobID() + "` WHERE total IS NOT NULL AND employee_id=(SELECT id FROM employees WHERE name='" + Main.jsonHandler.getName() + "') AND started_on LIKE '%2021-04-23%' OR total IS NOT NULL AND employee_id=(SELECT id FROM employees WHERE name='" + Main.jsonHandler.getName() + "') AND completed_on LIKE '%2021-04-23%') WHERE id=" + scanLogID);
+                ps = connection.prepareStatement("UPDATE `ul_scan` SET total=(SELECT IF(ISNULL(total),0,SUM(total)) FROM `" + Main.jsonHandler.getSelJobID() + "` WHERE employee_id=(SELECT id FROM employees WHERE name='" + Main.jsonHandler.getName() + "') AND started_on LIKE '%" + LocalDate.now().toString() + "%' OR total IS NOT NULL AND employee_id=(SELECT id FROM employees WHERE name='" + Main.jsonHandler.getName() + "') AND completed_on LIKE '%" + LocalDate.now().toString() + "%') WHERE id=" + scanLogID);
                 ps.executeUpdate();
                 ps = connection.prepareStatement("SELECT total FROM `ul_scan` WHERE id=" + scanLogID);
                 set = ps.executeQuery();

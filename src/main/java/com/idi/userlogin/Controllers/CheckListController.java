@@ -25,7 +25,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.idi.userlogin.Main.devices;
+import static com.idi.userlogin.Main.DEVICE_LIST;
 import static com.idi.userlogin.utils.Utils.DATE_FORMAT;
 
 public class CheckListController extends BaseEntryController<BaseEntryController.EntryItem> implements Initializable {

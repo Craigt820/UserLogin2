@@ -23,19 +23,19 @@
                     <children>
                         <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="299.0" spacing="12.0">
                             <children>
-                                <Label styleClass="labels" text="Time" textFill="#113a68">
+                                <Label styleClass="labels" text="Time" style="-fx-font-size:1.2em" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
                                 </Label>
                                 <HBox alignment="CENTER_LEFT">
                                     <children>
-                                        <Label fx:id="hour" style="-fx-font-size: 1.3em;" text="00" textFill="#07265c">
+                                        <Label fx:id="hour" style="-fx-font-size: 1.2em;" text="00" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label style="-fx-font-size: 1.3em;" text=":" textFill="#07265c">
+                                        <Label style="-fx-font-size: 1.2em;" text=":" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="16.0" />
                                             </font>
@@ -43,12 +43,12 @@
                                                 <Insets left="4.0" right="4.0" />
                                             </HBox.margin>
                                         </Label>
-                                        <Label fx:id="min" style="-fx-font-size: 1.3em;" text="00" textFill="#07265c">
+                                        <Label fx:id="min" style="-fx-font-size: 1.2em;" text="00" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label style="-fx-font-size: 1.3em;" text=":" textFill="#07265c">
+                                        <Label style="-fx-font-size: 1.2em;" text=":" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="16.0" />
                                             </font>
@@ -56,12 +56,12 @@
                                                 <Insets left="4.0" right="4.0" />
                                             </HBox.margin>
                                         </Label>
-                                        <Label fx:id="sec" style="-fx-font-size: 1.3em;" text="00" textFill="#07265c">
+                                        <Label fx:id="sec" style="-fx-font-size: 1.2em;" text="00" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label style="-fx-font-size: 1.3em;" textFill="#07265c">
+                                        <Label style="-fx-font-size: 1.2em;" textFill="#07265c">
                                             <font>
                                                 <Font name="Segoe UI" size="16.0" />
                                             </font>
@@ -76,7 +76,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
-                                <Label styleClass="labels" text="Status" textFill="#113a68">
+                                <Label styleClass="labels" text="Status" style="-fx-font-size:1.2em" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -101,7 +101,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
-                                <Label styleClass="labels" text="Name" textFill="#113a68">
+                                <Label styleClass="labels" text="Name" style="-fx-font-size:1.2em" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -109,7 +109,7 @@
                                         <Insets top="8.0" />
                                     </VBox.margin>
                                 </Label>
-                                <Label fx:id="name" ellipsisString="." prefHeight="25.0" style="-fx-font-size: 1.3em;" text="Name" textFill="#07265c">
+                                <Label fx:id="name" ellipsisString="." prefHeight="25.0" style="-fx-font-size: 1.2em;" text="Name" textFill="#07265c">
                                     <font>
                                         <Font name="Segoe UI" size="15.0" />
                                     </font>
@@ -126,7 +126,7 @@
                            <children>
                               <HBox>
                                  <children>
-                                            <Label alignment="CENTER" styleClass="labels" text="Project(s)" textFill="#113a68">
+                                            <Label alignment="CENTER" styleClass="labels" text="Project(s)" style="-fx-font-size:1.2em" textFill="#113a68">
                                                 <font>
                                                     <Font name="Segoe UI Bold" size="16.0" />
                                                 </font>
@@ -152,7 +152,7 @@
                                        <children>
                                           <HBox>
                                              <children>
-                                                        <Label fx:id="jobID" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.3em;" text="JOB001" textFill="#07265c">
+                                                        <Label fx:id="jobID" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.2em;" text="JOB001" textFill="#07265c">
                                                             <font>
                                                                 <Font name="Segoe UI" size="15.0" />
                                                             </font>
@@ -164,7 +164,7 @@
                                           </HBox>
                                           <HBox alignment="BOTTOM_RIGHT">
                                              <children>
-                                                <Label fx:id="job1Total" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.3em;" text="0" textFill="#07265c">
+                                                <Label fx:id="job1Total" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.2em;" text="0" textFill="#07265c">
                                                    <font>
                                                       <Font name="Segoe UI" size="15.0" />
                                                    </font>
@@ -176,7 +176,7 @@
                                           </HBox>
                                           <HBox alignment="BOTTOM_LEFT">
                                              <children>
-                                                        <Label fx:id="desc" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.3em;" text="Job 1" textFill="#07265c">
+                                                        <Label fx:id="desc" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.2em;" text="Job 1" textFill="#07265c">
                                                             <font>
                                                                 <Font name="Segoe UI" size="15.0" />
                                                             </font>

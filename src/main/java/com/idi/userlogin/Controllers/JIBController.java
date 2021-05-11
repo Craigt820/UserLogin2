@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import static com.idi.userlogin.JsonHandler.comp_name;
 import static com.idi.userlogin.JsonHandler.trackPath;
 import static com.idi.userlogin.Main.*;
 
@@ -214,7 +215,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
     public class CustomJIBTableCell<S, T> extends TreeTableCell<JIBEntryItem, T> {
         protected void updateItem(T item, boolean empty) {
             super.updateItem(item, empty);
-            if (getTreeTableRow().getTreeItem() != null) {
+            if (item != null) {
 
                 if (item instanceof Label) {
                     setText(((Label) item).getText());
@@ -786,7 +787,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + Main.jsonHandler.getName() + "'),?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status,comp_name) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + Main.jsonHandler.getName() + "'),?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
@@ -797,6 +798,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             ps.setString(7, entryItem.getSs());
             ps.setString(8, entryItem.getDocType());
             ps.setString(9, entryItem.getStatus());
+            ps.setString(10,comp_name);
             ps.executeUpdate();
             set = ps.getGeneratedKeys();
 

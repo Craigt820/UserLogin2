@@ -42,7 +42,7 @@
 }
 
 .tree-table-view .tree-table-row-cell .text-field{
-  -fx-background-color: #f0f0f0;
+  -fx-background-color: #fefefe;
 }
 
 .tree-table-view .tree-table-row-cell .table-column .label .text{
@@ -254,6 +254,10 @@
 
 .combo-box .text{
    -fx-font-size:16;
+}
+
+.tree-table-row-cell .combo-box .text{
+  -fx-font-size: 1.2em;
 }
 
 /* Tab Pane */

@@ -121,9 +121,10 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         details.setFitHeight(20);
         this.details.setGraphic(details);
         this.details.setTranslateX(0);
+        this.details.setLayoutY(-2);
         this.details.setTooltip(new Tooltip("Details"));
-        this.details.getGraphic().maxHeight(8);
-        this.details.getGraphic().maxWidth(8);
+        this.details.getGraphic().maxHeight(12);
+        this.details.getGraphic().maxWidth(12);
         this.details.getStyleClass().add("detailBtn");
         this.id = new SimpleIntegerProperty(0);
         this.name = new SimpleStringProperty();
@@ -142,7 +143,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.type = new Label();
         this.delete = new Label("Remove");
         this.delete.getStyleClass().add("detailBtn");
-        this.delete.setStyle("-fx-text-fill: red; -fx-opacity: .8;");
+        this.delete.setStyle("-fx-font-size:1em;-fx-text-fill: red; -fx-opacity: .8;");
         this.completed.setPadding(new Insets(24, 24, 24, 24));
         this.total = new SimpleIntegerProperty(0);
         this.conditions = new SimpleListProperty<>();

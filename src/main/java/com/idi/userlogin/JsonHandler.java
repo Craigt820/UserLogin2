@@ -5,6 +5,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,8 +14,9 @@ import java.util.logging.Level;
 
 public class JsonHandler {
 
-    public static final String userDir = System.getProperty("user.dir");
-    public static final String userHomePath = System.getProperty("user.home");
+    public static final String USER_DIR = System.getProperty("user.dir");
+    public static final String USER_HOME = System.getProperty("user.home");
+    public static String comp_name;
     public String selJobID;
     public String selJobDesc;
     public String name;
@@ -26,7 +29,12 @@ public class JsonHandler {
 
     //Initializes properties
     static {
-        final File file = new File(userDir + "\\properties.json");
+        try {
+            comp_name = Inet4Address.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        final File file = new File(USER_DIR + "\\properties.json");
         if (file.exists()) {
             exists = true;
         } else {
@@ -49,7 +57,7 @@ public class JsonHandler {
 
     private static void initFolderStruct() {
         Path trackPath = null;
-        trackPath = Paths.get(Paths.get(userHomePath).getRoot().toString() + "\\Projects");
+        trackPath = Paths.get(Paths.get(USER_HOME).getRoot().toString() + "\\Projects");
         property.put("TrackPath", trackPath);
 
         if (!trackPath.toFile().exists()) {
@@ -66,7 +74,7 @@ public class JsonHandler {
 
         Object obj = null;
         try {
-            obj = new JSONParser().parse(new FileReader(userDir + "\\properties.json"));
+            obj = new JSONParser().parse(new FileReader(USER_DIR + "\\properties.json"));
         } catch (ParseException | IOException e) {
             e.printStackTrace();
             Main.LOGGER.log(Level.SEVERE, "There was an error reading the properties file!", e);
@@ -78,7 +86,7 @@ public class JsonHandler {
 
     public static void writeJson() {
         try {
-            PrintWriter pw = new PrintWriter(userDir + "\\properties.json");
+            PrintWriter pw = new PrintWriter(USER_DIR + "\\properties.json");
             pw.write(property.toJSONString());
             pw.flush();
             pw.close();

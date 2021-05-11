@@ -23,6 +23,7 @@ import java.util.concurrent.*;
 
 import static com.idi.userlogin.Controllers.ControllerHandler.*;
 import static com.idi.userlogin.Main.jsonHandler;
+import static com.idi.userlogin.utils.DailyLog.updateDailyStatus;
 
 public class LoggedInController implements Initializable {
 
@@ -70,7 +71,7 @@ public class LoggedInController implements Initializable {
 
     @FXML
     void showSpecs() throws IOException {
-        specsDrawer.setPrefSize(315, 630);
+        specsDrawer.setPrefSize(315, 680);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Specs.fxml"));
         AnchorPane content = loader.load();
         SpecsController controller = loader.getController();
@@ -105,6 +106,7 @@ public class LoggedInController implements Initializable {
         final Optional<ButtonType> wait = alert.showAndWait();
         if (wait.isPresent()) {
             if (wait.get().equals(ButtonType.YES)) {
+                DailyLog.updateDailyStatus("Offline");
                 if (ControllerHandler.getMainMenuPop().isShowing()) {
                     ControllerHandler.getMainMenuPop().hide();
                 }
@@ -120,7 +122,11 @@ public class LoggedInController implements Initializable {
                     updateAll(selGroup.getItemList());
                 }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
                     updateGroup(false);
-                }).thenRunAsync(DailyLog::updateJobTotal);
+                }).thenRunAsync(DailyLog::updateJobTotal).thenRunAsync(() -> {
+                    DailyLog.updateDailyStatus("Offline");
+                }).thenRunAsync(()->{
+                    DailyLog.endDailyLog();
+                });
             }
 
             ControllerHandler.getOpaqueOverlay().setVisible(false);
@@ -147,12 +153,13 @@ public class LoggedInController implements Initializable {
                 if (timeClock.isCancelled()) {
                     setTimeService();
                 }
+                DailyLog.updateDailyStatus("Online");
                 ControllerHandler.getOpaqueOverlay().setVisible(false);
                 ImageView pause = new ImageView(new Image(getClass().getResource("/images/pause.png").toURI().toString()));
-                pause.setX(8);
                 pause.setEffect(new ColorAdjust(0, 0, 1.0, 0.0));
-                pause.setFitHeight(12);
-                pause.setFitWidth(12);
+                pause.setTranslateX(62.0);
+                pause.setFitHeight(16);
+                pause.setFitWidth(16);
                 pause_resume.setGraphic(pause);
                 break;
             case "Pause":
@@ -161,7 +168,9 @@ public class LoggedInController implements Initializable {
                         updateAll(selGroup.getItemList());
                     }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
                         updateGroup(false);
-                    }).thenRunAsync(DailyLog::updateJobTotal);
+                    }).thenRunAsync(DailyLog::updateJobTotal).thenRunAsync(() -> {
+                        DailyLog.updateDailyStatus("Away");
+                    });
                 }
                 pause_resume.setText("Resume");
                 ControllerHandler.getOpaqueOverlay().setVisible(true);
@@ -171,8 +180,9 @@ public class LoggedInController implements Initializable {
                 status.setStyle("-fx-font-size: 14;-fx-font-weight:bold;-fx-text-fill:#bC2414;");
                 ImageView play = new ImageView(new Image(getClass().getResource("/images/play.png").toURI().toString()));
                 play.setEffect(new ColorAdjust(0, 0, 1.0, 0.0));
-                play.setFitHeight(12);
-                play.setFitWidth(12);
+                play.setFitHeight(16);
+                play.setFitWidth(16);
+                play.setTranslateX(60.0);
                 pause_resume.setGraphic(play);
                 break;
         }

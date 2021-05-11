@@ -254,8 +254,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         no.setPadding(new Insets(8, 0, 8, 2));
         yes.setPrefWidth(40);
         no.setPrefWidth(40);
-        yes.setStyle("-fx-font-size:0.85em;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0;");
-        no.setStyle("-fx-font-size:0.85em;-fx-text-fill:black;-fx-background-color: #fefefe66;");
+        yes.setStyle("-fx-font-size:.9em;-fx-text-fill:black; -fx-background-color: #fefefe66; -fx-border-color: #afafaf; -fx-border-width: 0 .3 0 0;");
+        no.setStyle("-fx-font-size:.9em;-fx-text-fill:black;-fx-background-color: #fefefe66;");
         item.delete.setGraphic(new HBox(yes, no));
         item.delete.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
@@ -288,7 +288,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }).thenRunAsync(() -> {
                     tree.refresh();
                 });
-
                 if (chkitem.isPresent()) {
                     checkListController.getClAllTable().getItems().remove(chkitem.get());
                 }
@@ -431,8 +430,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             }
         }
 
-        if (!devices.isEmpty()) {
-            detailPopCont.scannerCombo.getItems().addAll(devices);
+        if (!DEVICE_LIST.isEmpty()) {
+            detailPopCont.scannerCombo.getItems().addAll(DEVICE_LIST);
             if (item.scanners != null) {
                 for (Object s : item.scanners) {
                     detailPopCont.scannerCombo.getItemBooleanProperty(s.toString()).set(true);
@@ -618,11 +617,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             typeColumn.setPrefWidth(150);
             typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("type"));
         }
-        settings.setOnMousePressed(e -> {
-            mainMenuPop.setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
-            mainMenuPop.setAutoHide(true);
-            mainMenuPop.show(settings, e.getScreenX(), e.getScreenY() + 20);
-        });
 
         delColumn.setPrefWidth(100);
         delColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("delete"));
@@ -1009,12 +1003,13 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `sc_groups` (name,collection_id,job_id,started_on,employees) VALUES(?,?,(SELECT id FROM projects WHERE job_id='" + jsonHandler.getSelJobID() + "'),?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `sc_groups` (name,collection_id,job_id,started_on,employees,status_id) VALUES(?,?,(SELECT id FROM projects WHERE job_id='" + jsonHandler.getSelJobID() + "'),?,?,(SELECT id FROM `sc_group_status` WHERE name=?))", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, group.getName());
             ps.setInt(2, group.getCollection().getID());
             Date now = formatDateTime(group.getStarted_On());
             ps.setTimestamp(3, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setString(4, jsonHandler.getName());
+            ps.setString(5,"Scanning");
             ps.executeUpdate();
             set = ps.getGeneratedKeys();
 
@@ -1085,17 +1080,20 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `sc_groups` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Completed') WHERE id=?");
-            ps.setInt(1, groupCountProp.get());
-            ps.setInt(2, booleanToInt(completed));
+
             if (completed) {
+                ps = connection.prepareStatement("Update `sc_groups` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Completed') WHERE id=?");
+                ps.setInt(1, groupCountProp.get());
+                ps.setInt(2, booleanToInt(completed));
                 final Date now = formatDateTime(LocalDateTime.now().toString());
                 ps.setTimestamp(3, new Timestamp(now.toInstant().toEpochMilli()));
+                ps.setInt(4, ControllerHandler.selGroup.getID());
             } else {
-                ps.setTimestamp(3, null);
+                ps = connection.prepareStatement("Update `sc_groups` SET total=? WHERE id=?");
+                ps.setInt(1, groupCountProp.get());
+                ps.setInt(2, ControllerHandler.selGroup.getID());
             }
 
-            ps.setInt(4, ControllerHandler.selGroup.getID());
             ps.executeUpdate();
 
         } catch (SQLException | ParseException e) {

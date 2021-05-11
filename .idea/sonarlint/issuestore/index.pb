@@ -39,3 +39,29 @@ c
 3src/main/deploy/package/windows/UserLogin2-1.12.iss,3\6\367ff7630388e67477612279e33a4bf9964ca8d7
 7
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
+u
+Esrc/main/java/com/idi/userlogin/Controllers/DetailsPopController.java,f\e\fe44c4216c3a4ef166b7d3c6c12432a391eb8210
+M
+Logs/2021-05-05 Error Log.txt,a\d\ad4d45713bce998bb93f00860534116de4445a94
+Y
+)src/main/java/resources/css/loginMenu.css,a\7\a7dd3aac53d04aad72c7da1539566cea68bbb4e3
+Z
+*src/main/java/resources/fxml/Settings.fxml,c\c\cc12cdda500c0ba4bfae09c5c21db8f2d7db709d
+i
+9src/main/java/com/idi/userlogin/JavaBeans/Collection.java,e\6\e66cd52921c76d8c6005be63786cf0eedb415a58
+u
+Esrc/main/java/com/idi/userlogin/Controllers/AccessCodeController.java,e\1\e169e5d5d3a486db60b760e4ca0d44d13d46aa9d
+M
+Logs/2021-05-06 Error Log.txt,c\f\cf2b2e5108d58807a197262e95bc82a83627e5ef
+M
+Logs/2021-05-07 Error Log.txt,1\8\187a26fa26763f0b9d152195f5ca2e9ec388a063
+w
+Gsrc/main/java/com/idi/userlogin/Controllers/BaseManifestController.java,b\4\b4eb74783c09269202992d90dfdf67b53d4e6848
+f
+6src/main/java/com/idi/userlogin/utils/Comparators.java,1\7\17a20894ed9fee324b9f5c32de0c3a2c7a69a8fc
+d
+4src/main/java/com/idi/userlogin/JavaBeans/Group.java,8\f\8f1086d1a22c560b4f2cf349ade429d43b3b507d
+s
+Csrc/main/java/com/idi/userlogin/Controllers/LoggedInController.java,9\a\9a285e636f267ef658c3381eba5e343ea087d04b
+_
+/src/main/java/resources/fxml/LoggedInMenu_.fxml,3\0\30d8545e30ef7e0b3cf9c526a528c6d40b92a6e9
