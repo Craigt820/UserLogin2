@@ -20,7 +20,7 @@
 
 
 .button{
-  -fx-font-size:1.20em;
+  -fx-font-size:1.1em;
   -fx-font-weight:bold;
 }
 
@@ -49,6 +49,7 @@
     -fx-background-radius:6;
     -fx-text-fill:white;
     -fx-background-color: #063a80;
+    -fx-font-size:1.1em;
 }
 
 .secondaryBtn:pressed,

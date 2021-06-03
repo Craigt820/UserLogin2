@@ -1,5 +1,6 @@
-package com.idi.userlogin;
+package com.idi.userlogin.Handlers;
 
+import com.idi.userlogin.Main;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -16,7 +17,7 @@ public class JsonHandler {
 
     public static final String USER_DIR = System.getProperty("user.dir");
     public static final String USER_HOME = System.getProperty("user.home");
-    public static String comp_name;
+    public static String COMP_NAME;
     public String selJobID;
     public String selJobDesc;
     public String name;
@@ -30,7 +31,7 @@ public class JsonHandler {
     //Initializes properties
     static {
         try {
-            comp_name = Inet4Address.getLocalHost().getHostName();
+            COMP_NAME = Inet4Address.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

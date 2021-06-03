@@ -1,5 +1,6 @@
-package com.idi.userlogin.Controllers;
+package com.idi.userlogin.Handlers;
 
+import com.idi.userlogin.Controllers.*;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.Main;
@@ -8,11 +9,8 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -44,11 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Main.fxTrayIcon;
@@ -61,16 +55,16 @@ public abstract class ControllerHandler {
     public static Region opaqueOverlay = new Region();
     public static MainMenuController mainMenuController;
     public static JIBController jibController;
-    public static EntryCheckListController entryController;
+    public static UserEntryViewController entryController;
+    public static ManifestViewController maniViewController;
     public static LoggedInController loggedInController;
     public static Group selGroup = null;
     public com.idi.userlogin.JavaBeans.Collection selColItem = null;
-    public static CheckListController checkListController;
     public static PopOver mainMenuPop;
     public static SimpleIntegerProperty totalCountProp = new SimpleIntegerProperty(0); //For Total Count
     public static SimpleIntegerProperty groupCountProp = new SimpleIntegerProperty(0); //For Total Count
     public static JFXTreeTableView mainTree;
-    public static HBox checkListScene;
+    public static final String addGroupLabel = "Add New Group";
 
     static {
         final FXMLLoader loader = new FXMLLoader(ControllerHandler.class.getResource("/fxml/LoggedInMenu_.fxml"));
@@ -295,6 +289,8 @@ public abstract class ControllerHandler {
             DbUtils.closeQuietly(connection);
         }
     }
+
+    public abstract void groupSelectTask(Group nv, JFXTreeTableView<? extends Item> tree);
 
     public static void opaquePOS() {
         if (opaqueOverlay.isVisible()) {

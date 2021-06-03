@@ -5,15 +5,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-import org.controlsfx.control.CheckComboBox;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static com.idi.userlogin.Controllers.EntryCheckListController.CONDITION_LIST;
 
 public class GroupPopController implements Initializable {
 

@@ -17,13 +17,13 @@
 
 <AnchorPane fx:id="root" prefHeight="680.0" prefWidth="315.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.LoggedInController">
     <children>
-        <VBox minHeight="680.0" prefHeight="680.0" prefWidth="315.0" style="-fx-background-color: #fefefe;" stylesheets="@../css/loginMenu.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox minHeight="680.0" prefHeight="680.0" prefWidth="315.0" style="-fx-background-color: #f9f9f9;" stylesheets="@../css/loginMenu.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <VBox prefWidth="299.0" style="-fx-border-radius: 6; -fx-border-width: 2;">
                     <children>
                         <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="299.0" spacing="12.0">
                             <children>
-                                <Label styleClass="labels" text="Time" style="-fx-font-size:1.2em" textFill="#113a68">
+                                <Label style="-fx-font-size:1.2em" styleClass="labels" text="Time" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -76,7 +76,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
-                                <Label styleClass="labels" text="Status" style="-fx-font-size:1.2em" textFill="#113a68">
+                                <Label style="-fx-font-size:1.2em" styleClass="labels" text="Status" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -101,7 +101,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
-                                <Label styleClass="labels" text="Name" style="-fx-font-size:1.2em" textFill="#113a68">
+                                <Label style="-fx-font-size:1.2em" styleClass="labels" text="Name" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -126,7 +126,7 @@
                            <children>
                               <HBox>
                                  <children>
-                                            <Label alignment="CENTER" styleClass="labels" text="Project(s)" style="-fx-font-size:1.2em" textFill="#113a68">
+                                            <Label alignment="CENTER" style="-fx-font-size:1.2em" styleClass="labels" text="Project(s)" textFill="#113a68">
                                                 <font>
                                                     <Font name="Segoe UI Bold" size="16.0" />
                                                 </font>
@@ -210,7 +210,7 @@
                         </VBox>
                         <VBox alignment="CENTER" prefHeight="221.0" prefWidth="299.0" spacing="18.0">
                             <children>
-                                <Button fx:id="pause_resume" contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#pause_Resume" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="secondaryBtn" text="Pause" wrapText="true">
+                                <Button fx:id="pause_resume" contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#pause_Resume" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa; -fx-font-size: 1.1em;" styleClass="secondaryBtn" text="Pause" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -228,7 +228,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </Button>
-                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#changeJob" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="secondaryBtn" text="Change Project" wrapText="true">
+                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#changeJob" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa; -fx-font-size: 1.1em;" styleClass="secondaryBtn" text="Change Project" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -246,7 +246,7 @@
                               <Insets />
                            </VBox.margin>
                                 </Button>
-                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#showSpecs" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="secondaryBtn" text="Show Specs" wrapText="true">
+                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#showSpecs" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa; -fx-font-size: 1.1em;" styleClass="secondaryBtn" text="Show Specs" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -261,7 +261,7 @@
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#signOut" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa;" styleClass="primaryBtn" text="Sign Out" textFill="WHITE" wrapText="true">
+                                <Button contentDisplay="RIGHT" graphicTextGap="16.0" maxHeight="40.0" minHeight="38.0" mnemonicParsing="false" onAction="#signOut" prefHeight="40.0" prefWidth="256.0" style="-fx-text-fill: #fafafa; -fx-font-size: 1.1em;" styleClass="primaryBtn" text="Sign Out" textFill="WHITE" wrapText="true">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>

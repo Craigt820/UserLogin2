@@ -1,7 +1,6 @@
 package com.idi.userlogin.utils;
 
 
-import com.idi.userlogin.Controllers.ControllerHandler;
 import javafx.scene.image.ImageView;
 
 public class ImgFactory {

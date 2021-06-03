@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckComboBox?>
+
+<VBox prefHeight="780.0" spacing="24.0" style="-fx-background-color: #f9f9f9;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.DetailsPopController">
+   <children>
+      <TitledPane styleClass="inner-titled-pane" stylesheets="@../css/ProjectSpecs_.css" text="Location">
+         <content>
+            <HBox alignment="CENTER_LEFT" spacing="80.0">
+               <children>
+                  <VBox spacing="8.0">
+                     <children>
+                        <StackPane alignment="CENTER_LEFT">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label style="-fx-font-size: 1em;" styleClass="labels" text="Workstation" textFill="#07255eed">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label fx:id="browseInfo" onMouseClicked="#browseLoc" />
+                                 </children>
+                                 <StackPane.margin>
+                                    <Insets left="64.0" />
+                                 </StackPane.margin>
+                              </HBox>
+                           </children>
+                        </StackPane>
+                        <Label fx:id="station" style="-fx-text-fill: black;" text="IDIPC02" textFill="#07255eed">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <StackPane alignment="CENTER_LEFT">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label style="-fx-font-size: 1em;" styleClass="labels" text="Path" textFill="#07255eed">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label fx:id="browseInfo1" onMouseClicked="#browseLoc">
+                                       <graphic>
+                                          <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../images/info.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                                 <StackPane.margin>
+                                    <Insets left="32.0" />
+                                 </StackPane.margin>
+                              </HBox>
+                           </children>
+                        </StackPane>
+                        <Label fx:id="location1" style="-fx-text-fill: black;" text="C:\IDI\TestProject" textFill="#07255eed">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="16.0" left="40.0" />
+               </padding>
+            </HBox>
+         </content>
+      </TitledPane>
+      <TitledPane text="Properties" textFill="#fefefe" VBox.vgrow="ALWAYS">
+         <content>
+            <ScrollPane fitToHeight="true" fitToWidth="true">
+               <content>
+                  <VBox spacing="16.0" style="-fx-background-color: #fdfdfd;">
+                     <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                     </padding>
+                     <children>
+                        <VBox>
+                           <children>
+                              <Label styleClass="labels" text="Condition" textFill="#07255eed" translateX="4.0">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minHeight="36.0" prefHeight="40.0" showCheckedCount="true">
+                                 <VBox.margin>
+                                    <Insets top="8.0" />
+                                 </VBox.margin>
+                              </CheckComboBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="16.0" right="16.0" top="8.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label styleClass="labels" text="Scanner" textFill="#07255eed" translateX="4.0">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <CheckComboBox fx:id="scannerCombo" maxWidth="1.7976931348623157E308" minHeight="32.0" prefHeight="40.0" showCheckedCount="true">
+                                 <VBox.margin>
+                                    <Insets top="8.0" />
+                                 </VBox.margin>
+                              </CheckComboBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="16.0" right="16.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <VBox VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="labels" text="Comments" textFill="#07255eed" translateX="4.0">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="commentsField" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="8.0" />
+                                 </VBox.margin>
+                              </TextArea>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="16.0" left="16.0" right="16.0" />
+                           </VBox.margin>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </content>
+      </TitledPane>
+   </children>
+   <padding>
+      <Insets bottom="24.0" left="40.0" right="40.0" top="32.0" />
+   </padding>
+</VBox>

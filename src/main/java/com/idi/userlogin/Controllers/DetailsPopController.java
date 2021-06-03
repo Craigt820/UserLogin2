@@ -13,14 +13,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static com.idi.userlogin.Controllers.EntryCheckListController.CONDITION_LIST;
+import static com.idi.userlogin.Controllers.UserEntryViewController.CONDITION_LIST;
 
 public class DetailsPopController implements Initializable {
 
     @FXML
     public Label browseInfo;
     @FXML
-    public Label location, startedOn, compOn;
+    public Label workstation,location, startedOn, compOn;
     @FXML
     public TextArea commentsField;
     @FXML

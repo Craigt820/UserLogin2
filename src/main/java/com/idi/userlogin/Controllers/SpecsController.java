@@ -7,7 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import org.apache.commons.dbutils.DbUtils;
-import com.idi.userlogin.JsonHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 
 import java.net.URL;
 import java.sql.*;

@@ -1,5 +1,7 @@
 package com.idi.userlogin.Controllers;
 
+import com.idi.userlogin.Handlers.ConnectionHandler;
+import com.idi.userlogin.Handlers.ControllerHandler;
 import com.idi.userlogin.utils.DailyLog;
 import com.jfoenix.controls.JFXDrawer;
 import javafx.application.Platform;
@@ -13,17 +15,21 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import com.idi.userlogin.Main;
 import com.idi.userlogin.utils.CustomAlert;
+import org.apache.commons.dbutils.DbUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
+import java.util.logging.Level;
 
-import static com.idi.userlogin.Controllers.ControllerHandler.*;
+import static com.idi.userlogin.Handlers.ControllerHandler.*;
 import static com.idi.userlogin.Main.jsonHandler;
-import static com.idi.userlogin.utils.DailyLog.updateDailyStatus;
 
 public class LoggedInController implements Initializable {
 
@@ -98,6 +104,22 @@ public class LoggedInController implements Initializable {
         }
     }
 
+    public static void updateStatus(String status) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("UPDATE `employees` SET status=(SELECT id from ul_status WHERE name='" + status + "') WHERE id=(SELECT id FROM employees WHERE name='" + jsonHandler.getName() + "')");
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating the scan log", e);
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+    }
+
     @FXML
     void signOut() {
         ControllerHandler.getOpaqueOverlay().setVisible(true);
@@ -105,30 +127,30 @@ public class LoggedInController implements Initializable {
         alert.setHeaderText("Sign Out");
         final Optional<ButtonType> wait = alert.showAndWait();
         if (wait.isPresent()) {
+            final String elapsed = hour.getText() + " : " + min.getText() + " : " + sec.getText();
             if (wait.get().equals(ButtonType.YES)) {
-                DailyLog.updateDailyStatus("Offline");
+                updateStatus("Offline");
                 if (ControllerHandler.getMainMenuPop().isShowing()) {
                     ControllerHandler.getMainMenuPop().hide();
                 }
 
-                final String elapsed = hour.getText() + " : " + min.getText() + " : " + sec.getText();
-                Main.fxTrayIcon.showInfoMessage(" " + jsonHandler.getName() + " signed out \n Time Elapsed: " + elapsed);
                 ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/MainMenu.fxml"), false);
                 resetTime();
-            }
 
-            if (getMainTreeView() != null) {
-                CompletableFuture.runAsync(() -> {
-                    updateAll(selGroup.getItemList());
-                }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
-                    updateGroup(false);
-                }).thenRunAsync(DailyLog::updateJobTotal).thenRunAsync(() -> {
-                    DailyLog.updateDailyStatus("Offline");
-                }).thenRunAsync(()->{
-                    DailyLog.endDailyLog();
-                });
-            }
+                if (getMainTreeView() != null) {
+                    CompletableFuture.runAsync(() -> {
+                        updateAll(selGroup.getItemList());
+                    }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
+                        updateGroup(false);
+                    }).thenRunAsync(()->DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
+                        updateStatus("Offline");
+                    }).thenRunAsync(() -> {
+                        DailyLog.endDailyLog();
+                    }).join();
 
+                    Main.fxTrayIcon.showInfoMessage("Time Elapsed: " + elapsed + "\nToday's Total: " + jsonHandler.getSelJobID() + ": " + getJob1Total().getText());
+                }
+            }
             ControllerHandler.getOpaqueOverlay().setVisible(false);
         }
     }
@@ -153,7 +175,7 @@ public class LoggedInController implements Initializable {
                 if (timeClock.isCancelled()) {
                     setTimeService();
                 }
-                DailyLog.updateDailyStatus("Online");
+                updateStatus("Online");
                 ControllerHandler.getOpaqueOverlay().setVisible(false);
                 ImageView pause = new ImageView(new Image(getClass().getResource("/images/pause.png").toURI().toString()));
                 pause.setEffect(new ColorAdjust(0, 0, 1.0, 0.0));
@@ -168,14 +190,13 @@ public class LoggedInController implements Initializable {
                         updateAll(selGroup.getItemList());
                     }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
                         updateGroup(false);
-                    }).thenRunAsync(DailyLog::updateJobTotal).thenRunAsync(() -> {
-                        DailyLog.updateDailyStatus("Away");
+                    }).thenRunAsync(()->DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
+                        updateStatus("Away");
                     });
                 }
                 pause_resume.setText("Resume");
                 ControllerHandler.getOpaqueOverlay().setVisible(true);
                 timeClock.cancel(true);
-                pause_resume.setText("Resume");
                 status.setText("Away");
                 status.setStyle("-fx-font-size: 14;-fx-font-weight:bold;-fx-text-fill:#bC2414;");
                 ImageView play = new ImageView(new Image(getClass().getResource("/images/play.png").toURI().toString()));
@@ -196,14 +217,14 @@ public class LoggedInController implements Initializable {
             }
 
             if (s >= 60) {
-                s = 00;
+                s = 0;
                 m++;
                 sec.setText(String.format("%02d", s));
                 min.setText(String.format("%02d", m));
             }
 
             if (m >= 60) {
-                m = 00;
+                m = 0;
                 h++;
                 min.setText(String.format("%02d", m));
                 hour.setText(String.format("%02d", h));

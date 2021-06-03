@@ -1,8 +1,12 @@
 
+.root{
+  -fx-font-size:1em;
+}
+
 /* PopOver */
 
 .popover .title .label{
-  -fx-font-size: 13;
+  -fx-font-size: 1em;
 }
 
 .popover .jfx-button .text{
@@ -19,6 +23,7 @@
 .tooltip .text{
   -fx-font-size: 0.80em;
 }
+
 .labels{
  -fx-text-fill:#07255e;
  -fx-font-weight:bold;
@@ -115,10 +120,16 @@
 
 /* Button */
 
+.button{
+   -fx-font-size:1.3em;
+   -fx-font-weight:bold;
+}
+
 .confirmBtn{
   -fx-background-color: #266cfc;
    -fx-background-radius: 6;
    -fx-border-radius: 6;
+
 }
 
 .confirmBtn:hover{
@@ -202,19 +213,18 @@
 
 .titled-pane > .title{
     -fx-background-color: #063f80;
-    -fx-font-family:'Roboto medium';
-    -fx-font-size:16;
     -fx-padding: 4;
 }
 
 .titled-pane > .title .text{
     -fx-text-fill:white;
-    -fx-translate-x:12;
+    -fx-translate-x:8;
+    -fx-font-size:1.1em;
 }
 
 .titled-pane > .title> .arrow-button .arrow{
     -fx-background-color: white;
-    -fx-padding:5;
+    -fx-padding:4;
     -fx-translate-x:8;
 }
 
@@ -307,6 +317,7 @@
       -fx-border-color: #d0d0d0;
       -fx-background-radius: 6;
       -fx-border-radius: 6;
+      -fx-font-size:1.1em;
 }
 
 /* List View */
@@ -354,6 +365,7 @@
   -fx-border-width: 0 0 .2 0;
 }
 
+
 /* Hamburger */
 
 .hamburger > StackPane {
@@ -361,4 +373,12 @@
     -fx-background-radius: 6px;
     -fx-background-color:#0141a0;
 }
+
+
+.hamburger:pressed,
+.hamburger:hover{
+  -fx-background: transparent;
+}
+
+
 

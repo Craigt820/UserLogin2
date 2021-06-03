@@ -31,12 +31,12 @@
               <tabs>
                   <Tab closable="false" disable="true" style="-fx-background-color: none;">
                      <graphic>
-                        <Button fx:id="settings" graphicTextGap="8.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Main">
+                        <Button fx:id="settings" focusTraversable="false" graphicTextGap="8.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Main">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
                            <graphic>
-                              <JFXHamburger styleClass="hamburger" />
+                              <JFXHamburger fx:id="burger" styleClass="hamburger" />
                            </graphic>
                         </Button>
                      </graphic>
@@ -410,7 +410,7 @@
                                                       <Insets left="16.0" />
                                                    </padding>
                                                 </HBox>
-                                                <JFXTreeTableView fx:id="tree" editable="true" fixedCellSize="56.0" showRoot="false" style="-fx-font-family: Segoe UI; -fx-border-color: #e0e0e0;" VBox.vgrow="ALWAYS">
+                                                <JFXTreeTableView fx:id="tree" editable="true" fixedCellSize="56.0" showRoot="false" style="-fx-font-family: Segoe UI; -fx-border-color: #e0e0e0;" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                   <columns>
                                                       <JFXTreeTableColumn fx:id="existColumn" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: Center;" />
                                                       <JFXTreeTableColumn fx:id="compColumn" maxWidth="90.0" minWidth="70.0" prefWidth="90.0" text="Complete" />

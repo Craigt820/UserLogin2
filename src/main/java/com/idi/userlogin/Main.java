@@ -1,6 +1,7 @@
 package com.idi.userlogin;
 
 import com.dustinredmond.fxtrayicon.FXTrayIcon;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.utils.ImgFactory;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -34,7 +35,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        com.sun.javafx.util.Logging.getCSSLogger().setLevel(sun.util.logging.PlatformLogger.Level.OFF);
+//        com.sun.javafx.util.Logging.getCSSLogger().setLevel(sun.util.logging.PlatformLogger.Level.OFF);
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/MainMenu.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);

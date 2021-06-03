@@ -53,7 +53,7 @@
                   </HBox>
                   <HBox alignment="TOP_CENTER">
                      <children>
-                        <VBox maxHeight="392.0" minHeight="392.0" prefHeight="392.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #a0a0a0;" HBox.hgrow="NEVER">
+                        <VBox maxHeight="400.0" minHeight="372.0" prefHeight="392.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #a0a0a0;" HBox.hgrow="NEVER">
                            <children>
                               <StackPane prefHeight="20.0">
                                  <VBox.margin>
@@ -83,7 +83,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                                        <StackPane.margin>
-                                          <Insets left="60.0" right="60.0" top="16.0" />
+                                          <Insets left="60.0" right="60.0" top="8.0" />
                                        </StackPane.margin>
                                        <children>
                                           <SearchableComboBox fx:id="jobID" editable="true" minHeight="48.0" prefHeight="48.0" HBox.hgrow="ALWAYS" />
@@ -94,7 +94,7 @@
                                     <Insets />
                                  </VBox.margin>
                               </StackPane>
-                              <Button minHeight="54.0" mnemonicParsing="false" onAction="#confirm" prefHeight="54.0" prefWidth="444.0" styleClass="confirmBtn" text="Confirm" textFill="#fcfcfc">
+                              <Button minHeight="48.0" mnemonicParsing="false" onAction="#confirm" prefHeight="48.0" prefWidth="444.0" styleClass="confirmBtn" text="Confirm" textFill="#fcfcfc">
                                  <VBox.margin>
                                     <Insets left="60.0" top="54.0" />
                                  </VBox.margin>
@@ -102,7 +102,7 @@
                                     <Font name="System Bold" size="15.0" />
                                  </font>
                               </Button>
-                              <Button minHeight="54.0" minWidth="147.0" mnemonicParsing="false" onAction="#toMain" prefHeight="54.0" prefWidth="444.0" styleClass="backBtn" text="Back" textFill="#226cfc">
+                              <Button minHeight="48.0" minWidth="147.0" mnemonicParsing="false" onAction="#toMain" prefHeight="48.0" prefWidth="444.0" styleClass="backBtn" text="Back" textFill="#226cfc">
                                  <font>
                                     <Font name="Segoe UI Bold" size="15.0" />
                                  </font>

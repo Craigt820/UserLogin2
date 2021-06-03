@@ -1,5 +1,6 @@
 package com.idi.userlogin.Controllers;
 
+import com.idi.userlogin.Handlers.ControllerHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -8,7 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.apache.commons.dbutils.DbUtils;
 import com.idi.userlogin.utils.FXUtils;
-import com.idi.userlogin.JsonHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 
 import java.io.IOException;
 import java.net.URL;

@@ -130,7 +130,7 @@
                                 </StackPane>
                                 <TextField fx:id="user" minHeight="50.0" promptText="Username">
                                     <VBox.margin>
-                                        <Insets left="60.0" right="60.0" top="16.0" />
+                                        <Insets left="60.0" right="60.0" top="8.0" />
                                     </VBox.margin>
                            <font>
                               <Font name="Segoe UI" size="14.0" />
@@ -149,7 +149,7 @@
                                         <Font name="Segoe UI" size="14.0" />
                                     </font>
                                     <VBox.margin>
-                                        <Insets left="60.0" top="16.0" />
+                                        <Insets left="60.0" top="8.0" />
                                     </VBox.margin>
                                 </Label>
                         <VBox alignment="CENTER">
@@ -246,7 +246,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT">
                <children>
-                  <Label style="-fx-font-size: 1.4em;" text="4/19/2021 v 1.1" textFill="#686868">
+                  <Label style="-fx-font-size: 1.4em;" text="5/12/2021 v 1.13" textFill="#686868">
                      <font>
                         <Font name="Segoe UI" size="19.0" />
                      </font>

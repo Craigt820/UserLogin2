@@ -1,6 +1,4 @@
-package com.idi.userlogin.Controllers;
-
-import com.idi.userlogin.JsonHandler;
+package com.idi.userlogin.Handlers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

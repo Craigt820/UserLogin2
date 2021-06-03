@@ -1,5 +1,6 @@
 package com.idi.userlogin.Controllers;
 
+import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.utils.ImgFactory;
 import com.idi.userlogin.utils.Utils;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -9,7 +10,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.dbutils.DbUtils;
@@ -33,11 +33,12 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
+import static com.idi.userlogin.Handlers.JsonHandler.COMP_NAME;
 import static com.idi.userlogin.Main.fxTrayIcon;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.CHECKMARK;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.EXMARK;
 
-public class EntryCheckListController extends BaseEntryController<BaseEntryController.EntryItem> {
+public class UserEntryViewController extends BaseEntryController<BaseEntryController.EntryItem> {
 
     private final EntryItem treeRoot = new EntryItem();
     private final RecursiveTreeItem rootItem = new RecursiveTreeItem<>(treeRoot, RecursiveTreeObject::getChildren);
@@ -63,6 +64,22 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
     @Override
     public void afterInitialize() {
         super.afterInitialize();
+        groupCombo.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
+            groupSelectTask(nv, tree);
+        });
+
+        colCombo.setCellFactory(e -> {
+            ListCell<com.idi.userlogin.JavaBeans.Collection> col = new ListCell<com.idi.userlogin.JavaBeans.Collection>() {
+                @Override
+                protected void updateItem(com.idi.userlogin.JavaBeans.Collection item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item != null && !item.getName().isEmpty()) {
+                        setText(item.getName());
+                    }
+                }
+            };
+            return col;
+        });
     }
 
     @Override
@@ -124,7 +141,7 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         if (!isPresent) {
             if (!name.isEmpty()) {
                 nameField.setRight(ImgFactory.createView(CHECKMARK));
-                final EntryItem item = new EntryItem(0, group.getCollection(), group, StringUtils.trim(name), 0, 0, type, false, comments, LocalDateTime.now().toString(), "", false);
+                final EntryItem item = new EntryItem(0, group.getCollection(), group, StringUtils.trim(name), 0, 0, type, false, comments, LocalDateTime.now().toString(), "", COMP_NAME, false);
                 final TreeItem newItem = new TreeItem<>(item);
                 item.setComments(commentsField.getText());
                 item.getConditions().setAll(conditions);
@@ -134,17 +151,6 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
                 typeCombo.getSelectionModel().selectFirst();
                 conditCombo.getCheckModel().clearChecks();
                 errorLbl.setVisible(false);
-                final EntryItem checklistItem = new EntryItem(item.getId(), item.getCollection(), item.getGroup(), item.getName(), item.getTotal(), item.getNonFeeder(), item.getType().getText(), item.getCompleted().isSelected(), item.getComments(), item.getStarted_On(), item.getCompleted_On(), item.isOverridden());
-                checklistItem.totalProperty().bindBidirectional(item.totalProperty());
-                checklistItem.completed.selectedProperty().bindBidirectional(item.completed.selectedProperty());
-                checklistItem.name.bindBidirectional(item.name);
-                checklistItem.comments.bindBidirectional(item.comments);
-                checklistItem.completed_On.bindBidirectional(item.completed_On);
-                checklistItem.started_On.bindBidirectional(item.started_On);
-                checklistItem.conditions.bindBidirectional(item.conditions);
-                checklistItem.overridden.bindBidirectional(item.overridden);
-                checklistItem.setLocation(item.getLocation());
-                checkListController.getClAllTable().getItems().add(checklistItem);
                 final ObservableList items = group.getItemList();
                 items.add(item);
                 fxTrayIcon.showInfoMessage("Item: " + item.getName() + " Inserted");
@@ -190,7 +196,6 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
             } catch (SQLException e) {
                 e.printStackTrace();
                 Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new item!", e);
-
             }
             DbUtils.closeQuietly(set);
             DbUtils.closeQuietly(ps);
@@ -209,10 +214,10 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.overridden,m.id,g.id as group_id, g.name group_name, m.name as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE group_id=" + group.getID() + "");
+            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.id,g.id as group_id, g.name as group_name, m.name as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
-                final EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), Utils.intToBoolean(set.getInt("m.overridden")));
+                final EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"),set.getString("m.workstation"), Utils.intToBoolean(set.getInt("m.overridden")));
                 String condition = set.getString("m.conditions");
                 if (condition != null && !condition.isEmpty()) {
                     String[] splitConditions = condition.split(", ");
@@ -256,17 +261,8 @@ public class EntryCheckListController extends BaseEntryController<BaseEntryContr
         return groupCombo;
     }
 
-    public VBox getCheckListRoot() {
-        return checkListRoot;
-    }
-
-    public void setCheckListRoot(VBox checkListRoot) {
-        this.checkListRoot = checkListRoot;
-    }
-
     public JFXTreeTableView<?> getTree() {
         return tree;
     }
-
 
 }

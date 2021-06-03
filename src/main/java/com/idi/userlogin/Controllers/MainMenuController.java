@@ -1,6 +1,8 @@
 package com.idi.userlogin.Controllers;
 
-import com.idi.userlogin.JsonHandler;
+import com.idi.userlogin.Handlers.ConnectionHandler;
+import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;

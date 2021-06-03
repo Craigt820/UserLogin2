@@ -1,5 +1,6 @@
 package com.idi.userlogin.Controllers;
 
+import com.idi.userlogin.Handlers.ControllerHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -8,7 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
-import com.idi.userlogin.JsonHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 
 import java.io.File;
 import java.io.IOException;

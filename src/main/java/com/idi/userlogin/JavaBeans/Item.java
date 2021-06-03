@@ -8,9 +8,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import org.apache.commons.dbutils.DbUtils;
-import com.idi.userlogin.Controllers.ConnectionHandler;
+import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Main;
 
 import java.nio.file.Path;
@@ -18,11 +17,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.idi.userlogin.Controllers.ControllerHandler.updateSelected;
+import static com.idi.userlogin.Handlers.ControllerHandler.updateSelected;
 
 public abstract class Item<K> extends RecursiveTreeObject<K> {
 
@@ -48,6 +46,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
     public Path location;
     public List<Image> previews;
     public SimpleMapProperty<String, String> projColumns;
+    public SimpleStringProperty workstation;
 
     public SimpleIntegerProperty countProperty() {
         if (total == null) {
@@ -73,7 +72,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         }
     }
 
-    public Item(int id, Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String startedOn, String completedOn, boolean overridden) {
+    public Item(int id, Collection collection, Group group, String name, int total, int non_feeder, String type, boolean completed, String comments, String startedOn, String completedOn,String workstation, boolean overridden) {
         this();
         this.overridden.set(overridden);
         this.exists = new SimpleBooleanProperty(false);
@@ -89,7 +88,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.comments.set(comments);
         this.started_On.set(startedOn);
         this.completed_On.set(completedOn);
-
+        this.workstation.set(workstation);
     }
 
     public void setupType(String type) {
@@ -117,8 +116,8 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.details = new Label("Details");
         this.details.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         ImageView details = new ImageView(getClass().getResource("/images/info.png").toExternalForm());
-        details.setFitWidth(20);
-        details.setFitHeight(20);
+        details.setFitWidth(24);
+        details.setFitHeight(24);
         this.details.setGraphic(details);
         this.details.setTranslateX(0);
         this.details.setLayoutY(-2);
@@ -152,6 +151,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.projColumns.set(FXCollections.observableHashMap());
         this.started_On = new SimpleStringProperty();
         this.completed_On = new SimpleStringProperty();
+        this.workstation = new SimpleStringProperty();
         this.previews = new ArrayList<>();
     }
 
@@ -345,6 +345,18 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
 
     public void setTotal(int total) {
         this.total.set(total);
+    }
+
+    public String getWorkstation() {
+        return workstation.get();
+    }
+
+    public SimpleStringProperty workstationProperty() {
+        return workstation;
+    }
+
+    public void setWorkstation(String workstation) {
+        this.workstation.set(workstation);
     }
 
     public List<Image> getPreviews() {
