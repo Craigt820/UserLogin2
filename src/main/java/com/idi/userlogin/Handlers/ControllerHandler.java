@@ -3,6 +3,7 @@ package com.idi.userlogin.Handlers;
 import com.idi.userlogin.Controllers.*;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
+import com.idi.userlogin.JavaBeans.Job;
 import com.idi.userlogin.Main;
 import com.idi.userlogin.utils.Utils;
 import com.itextpdf.text.pdf.PdfReader;
@@ -59,6 +60,7 @@ public abstract class ControllerHandler {
     public static ManifestViewController maniViewController;
     public static LoggedInController loggedInController;
     public static Group selGroup = null;
+    public static Job selJob;
     public com.idi.userlogin.JavaBeans.Collection selColItem = null;
     public static PopOver mainMenuPop;
     public static SimpleIntegerProperty totalCountProp = new SimpleIntegerProperty(0); //For Total Count

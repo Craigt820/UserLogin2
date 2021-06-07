@@ -12,13 +12,13 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.JobSelectController">
    <children>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #fafafa;" stylesheets="@../css/ProjectSpecs__.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: RGB(249,249,248);" stylesheets="@../css/ProjectSpecs__.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <StackPane alignment="CENTER_RIGHT" prefHeight="120.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
                <children>
                   <HBox alignment="BOTTOM_LEFT">
                      <children>
-                        <Label contentDisplay="RIGHT" graphicTextGap="8.0" style="-fx-font-size: 2.0em;" text="Job Selection" textFill="#686868">
+                        <Label contentDisplay="RIGHT" graphicTextGap="8.0" styleClass="Title" text="Job Selection" textFill="#091b3acc">
                            <font>
                               <Font name="Segoe UI" size="24.0" />
                            </font>
@@ -37,7 +37,7 @@
                <children>
                   <HBox alignment="TOP_CENTER" StackPane.alignment="TOP_CENTER">
                      <children>
-                        <VBox fx:id="greetPane" alignment="CENTER" maxHeight="80.0" minHeight="80.0" prefHeight="70.0" prefWidth="564.0" style="-fx-background-color: #226CFC20; -fx-background-radius: 6;" HBox.hgrow="NEVER">
+                        <VBox fx:id="greetPane" alignment="CENTER" maxHeight="80.0" minHeight="80.0" prefHeight="70.0" prefWidth="564.0" style="-fx-background-color: #226CFC10; -fx-background-radius: 6;" HBox.hgrow="NEVER">
                            <children>
                               <Label fx:id="greetLbl" alignment="CENTER" textFill="#226cfc">
                                  <font>
@@ -53,11 +53,11 @@
                   </HBox>
                   <HBox alignment="TOP_CENTER">
                      <children>
-                        <VBox maxHeight="400.0" minHeight="372.0" prefHeight="392.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #a0a0a0;" HBox.hgrow="NEVER">
+                        <VBox maxHeight="400.0" minHeight="376.0" prefHeight="392.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #3660a333;" HBox.hgrow="NEVER">
                            <children>
                               <StackPane prefHeight="20.0">
                                  <VBox.margin>
-                                    <Insets left="60.0" top="60.0" />
+                                    <Insets left="60.0" top="64.0" />
                                  </VBox.margin>
                                  <children>
                                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
@@ -86,7 +86,7 @@
                                           <Insets left="60.0" right="60.0" top="8.0" />
                                        </StackPane.margin>
                                        <children>
-                                          <SearchableComboBox fx:id="jobID" editable="true" minHeight="48.0" prefHeight="48.0" HBox.hgrow="ALWAYS" />
+                                          <SearchableComboBox fx:id="jobID" editable="true" minHeight="52.0" prefHeight="52.0" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>
                                  </children>
@@ -96,7 +96,7 @@
                               </StackPane>
                               <Button minHeight="48.0" mnemonicParsing="false" onAction="#confirm" prefHeight="48.0" prefWidth="444.0" styleClass="confirmBtn" text="Confirm" textFill="#fcfcfc">
                                  <VBox.margin>
-                                    <Insets left="60.0" top="54.0" />
+                                    <Insets left="60.0" top="64.0" />
                                  </VBox.margin>
                                  <font>
                                     <Font name="System Bold" size="15.0" />
@@ -107,7 +107,7 @@
                                     <Font name="Segoe UI Bold" size="15.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets left="60.0" top="16.0" />
+                                    <Insets left="60.0" top="8.0" />
                                  </VBox.margin>
                               </Button>
                            </children>

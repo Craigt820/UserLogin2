@@ -50,8 +50,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
-import static com.idi.userlogin.Handlers.JsonHandler.COMP_NAME;
 import static com.idi.userlogin.Handlers.JsonHandler.trackPath;
+import static com.idi.userlogin.JavaBeans.User.COMP_NAME;
 import static com.idi.userlogin.Main.*;
 
 public class JIBController extends BaseEntryController<JIBController.JIBEntryItem> implements Initializable {
@@ -181,7 +181,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `" + column + "`=? WHERE employee_id=(SELECT id from employees WHERE name='" + Main.jsonHandler.getName() + "') AND id=?");
+            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `" + column + "`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND id=?");
             ps.setString(1, newValue);
             ps.setInt(2, item.getId());
             ps.executeUpdate();
@@ -200,7 +200,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `full_name`=? WHERE employee_id=(SELECT id from employees WHERE name='" + Main.jsonHandler.getName() + "') AND full_name=?");
+            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `full_name`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND full_name=?");
             ps.setString(1, newValue);
             ps.setString(2, oldValue);
             ps.executeUpdate();
@@ -777,7 +777,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + Main.jsonHandler.getName() + "'),?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));

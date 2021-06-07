@@ -29,7 +29,7 @@ public abstract class DailyLog {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `ul_scan2` (u_id,job_id,start_time,total,rescan,group_id) VALUES((SELECT id FROM employees WHERE employees.name='" + Main.jsonHandler.getName() + "'),(SELECT id FROM projects WHERE projects.job_id='" + Main.jsonHandler.getSelJobID() + "'),?,?,?,?)", 1);
+            ps = connection.prepareStatement("INSERT INTO `ul_scan2` (u_id,job_id,start_time,total,rescan,group_id) VALUES((SELECT id FROM employees WHERE employees.name='" + ConnectionHandler.user.getName() + "'),(SELECT id FROM projects WHERE projects.job_id='" + Main.jsonHandler.getSelJobID() + "'),?,?,?,?)", 1);
             Date now = ControllerHandler.formatDateTime(LocalDateTime.now().toString());
             ps.setTimestamp(1, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setInt(2, 0);
@@ -63,8 +63,8 @@ public abstract class DailyLog {
             PreparedStatement ps = null;
             try {
                 connection = ConnectionHandler.createDBConnection();
-                ps = connection.prepareStatement("UPDATE `ul_scan2` SET total=(SELECT IF(ISNULL(total),0,SUM(total)) FROM `" + Main.jsonHandler.getSelJobID() + "` WHERE group_id=? AND employee_id=(SELECT id FROM employees WHERE name='" + Main.jsonHandler.getName() + "') AND started_on LIKE '%" + LocalDate.now().toString() + "%' OR total IS NOT NULL AND employee_id=(SELECT id FROM employees WHERE name='" + Main.jsonHandler.getName() + "') AND completed_on LIKE '%" + LocalDate.now().toString() + "%') WHERE id=" + scanLogID);
-                ps.setInt(1,group_id);
+                ps = connection.prepareStatement("UPDATE `ul_scan2` SET total=(SELECT IF(ISNULL(total),0,SUM(total)) FROM `" + Main.jsonHandler.getSelJobID() + "` WHERE group_id=? AND employee_id=(SELECT id FROM employees WHERE name='" + ConnectionHandler.user.getName() + "') AND started_on LIKE '%" + LocalDate.now().toString() + "%' OR total IS NOT NULL AND employee_id=" + ConnectionHandler.user.getId() + " AND completed_on LIKE '%" + LocalDate.now().toString() + "%') WHERE id=" + scanLogID);
+                ps.setInt(1, group_id);
                 ps.executeUpdate();
                 ps = connection.prepareStatement("SELECT total FROM `ul_scan2` WHERE id=" + scanLogID);
                 set = ps.executeQuery();

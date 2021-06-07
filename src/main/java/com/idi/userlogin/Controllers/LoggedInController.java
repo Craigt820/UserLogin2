@@ -109,7 +109,7 @@ public class LoggedInController implements Initializable {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `employees` SET status=(SELECT id from ul_status WHERE name='" + status + "') WHERE id=(SELECT id FROM employees WHERE name='" + jsonHandler.getName() + "')");
+            ps = connection.prepareStatement("UPDATE `employees` SET status=(SELECT id from ul_status WHERE name='" + status + "') WHERE id=" + ConnectionHandler.user.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -142,7 +142,7 @@ public class LoggedInController implements Initializable {
                         updateAll(selGroup.getItemList());
                     }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
                         updateGroup(false);
-                    }).thenRunAsync(()->DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
+                    }).thenRunAsync(() -> DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
                         updateStatus("Offline");
                     }).thenRunAsync(() -> {
                         DailyLog.endDailyLog();
@@ -190,7 +190,7 @@ public class LoggedInController implements Initializable {
                         updateAll(selGroup.getItemList());
                     }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
                         updateGroup(false);
-                    }).thenRunAsync(()->DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
+                    }).thenRunAsync(() -> DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
                         updateStatus("Away");
                     });
                 }

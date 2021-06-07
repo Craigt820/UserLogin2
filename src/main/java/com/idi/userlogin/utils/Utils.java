@@ -64,7 +64,7 @@ public class Utils {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT g.id,p.job_id, g.name as groupName,c.id as Collection_id,c.name as CollectionName,g.scanned as Completed,g.started_on,g.completed_on FROM tracking.sc_groups g INNER JOIN tracking.sc_collections c ON g.collection_id = c.id INNER JOIN tracking.projects p ON g.job_id = p.id WHERE p.job_id ='" + Main.jsonHandler.getSelJobID() + "' AND c.name='" + collection.getName() + "' AND employees LIKE '%" + Main.jsonHandler.getName() + "%' OR p.job_id ='" + Main.jsonHandler.getSelJobID() + "' AND c.name='" + collection.getName() + "' AND employees IS NULL");
+            ps = connection.prepareStatement("SELECT g.id,p.job_id, g.name as groupName,c.id as Collection_id,c.name as CollectionName,g.scanned as Completed,g.started_on,g.completed_on FROM tracking.sc_groups g INNER JOIN tracking.sc_collections c ON g.collection_id = c.id INNER JOIN tracking.projects p ON g.job_id = p.id WHERE p.job_id ='" + Main.jsonHandler.getSelJobID() + "' AND c.name='" + collection.getName() + "' AND employees LIKE '%" +  ConnectionHandler.user.getName() + "%' OR p.job_id ='" + Main.jsonHandler.getSelJobID() + "' AND c.name='" + collection.getName() + "' AND employees IS NULL");
             set = ps.executeQuery();
             while (set.next()) {
                 final String started_On = (set.getString("g.started_on")) != null ? set.getString("g.started_on") : "";

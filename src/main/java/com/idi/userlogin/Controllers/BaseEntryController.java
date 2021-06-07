@@ -148,16 +148,14 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         }
     }
 
-
     public class TypeCell extends ListCell<Label> {
         @Override
         protected void updateItem(Label item, boolean isEmpty) {
 
             super.updateItem(item, isEmpty);
-            if (item != null) {
-
+            if (item != null && !item.getText().isEmpty()) {
                 final ImageView view = new ImageView();
-                switch (getText()) {
+                switch (item.getText()) {
                     case "Folder":
                     case "Root":
                         view.setImage(Item.folderIcon);
@@ -166,12 +164,16 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                         view.setImage(Item.fileIcon);
                         break;
                 }
-                view.setFitWidth(20);
-                view.setFitHeight(20);
+                view.setFitWidth(22);
+                view.setFitHeight(22);
                 setGraphic(view);
-                setGraphicTextGap(16);
+                setGraphicTextGap(8);
+                setText(item.getText());
+
+            } else {
+                setText(null);
+                setGraphic(null);
             }
-            setText(item == null ? "" : item.getText());
         }
     }
 
@@ -268,27 +270,35 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
         yes.setOnMousePressed(e3 -> {
             if (item != null) {
-                Item.removeItem(item);
-                fxTrayIcon.showInfoMessage("Item: '" + item.getName().trim() + "' Has Been Removed");
-
-                //Remove from group item list
-                final Optional<?> groupItem = ControllerHandler.selGroup.getItemList().stream().filter(e -> e.getId() == item.getId()).findAny();
-                if (groupItem.isPresent()) {
-                    ControllerHandler.selGroup.getItemList().remove(groupItem.get());
+                if (selJob.isUserEntry()) {
+                    Item.removeItem(item);
+                    fxTrayIcon.showInfoMessage("Item: '" + item.getName().trim() + "' Has Been Removed");
+                    //Remove from group item list
+                    final Optional<?> groupItem = ControllerHandler.selGroup.getItemList().stream().filter(e -> e.getId() == item.getId()).findAny();
+                    groupItem.ifPresent(o -> ControllerHandler.selGroup.getItemList().remove(o));
+                } else {
+                    Platform.runLater(() -> {
+                        ControllerHandler.maniViewController.getItemCombo().getItems().add((BaseEntryController.EntryItem) item);
+                        ControllerHandler.maniViewController.sortItems(ControllerHandler.maniViewController.getItemCombo().getItems());
+                    });
+                    ControllerHandler.maniViewController.resetItemStatus(item);
                 }
 
+                //Remove from Tree View
                 boolean remove = tree.getRoot().getChildren().removeIf(e -> e.getValue().id.get() == item.getId());
-                CompletableFuture.runAsync(() -> {
-                    Platform.runLater(() -> {
-                        groupCountProp.set(countGroupTotal());
+                if (remove) {
+                    CompletableFuture.runAsync(() -> {
+                        Platform.runLater(() -> {
+                            groupCountProp.set(countGroupTotal());
+                        });
+                    }).thenRunAsync(() -> {
+                        updateGroup(false);
+                    }).thenRunAsync(() -> {
+                        DailyLog.updateTotal(ControllerHandler.selGroup.getID());
+                    }).thenRunAsync(() -> {
+                        tree.refresh();
                     });
-                }).thenRunAsync(() -> {
-                    updateGroup(false);
-                }).thenRunAsync(() -> {
-                    DailyLog.updateTotal(ControllerHandler.selGroup.getID());
-                }).thenRunAsync(() -> {
-                    tree.refresh();
-                });
+                }
             }
         });
     }
@@ -468,7 +478,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         hbabt = new HamburgerSlideCloseTransition(burger);
         totalCount.textProperty().bind(groupCountProp.asString());
         groupCombo.setEditable(true);
-
         tree.getColumns().forEach(e -> e.setContextMenu(new ContextMenu()));
         setupCompTask();
         tree.setShowRoot(false);
@@ -605,7 +614,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             typeCombo.getItems().addAll(Arrays.asList(new Label("Folder", adjustFitSize(Item.folderIcon)), new Label("Multi-Paged", adjustFitSize(Item.fileIcon))));
             typeCombo.getSelectionModel().selectFirst();
             typeCombo.setButtonCell(new TypeCell());
-            typeColumn.setPrefWidth(150);
+            typeCombo.setCellFactory(e -> {
+                return new TypeCell();
+            });
             typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("type"));
         }
 
@@ -922,15 +933,20 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                 itemObj.existsProperty().set(exists);
                                 if (itemObj.exists.get()) {
                                     view = ImgFactory.createView(ImgFactory.IMGS.CHECKMARK);
+
                                     Tooltip.install(label, new Tooltip("Exists"));
                                 } else {
                                     view = ImgFactory.createView(EXMARK);
                                     Tooltip.install(label, new Tooltip("Doesn't Exist!"));
                                 }
+                                view.setFitHeight(20);
+                                view.setFitWidth(20);
                                 label.setGraphic(view);
                                 label.setPadding(new Insets(0, 0, 0, 8));
                                 setGraphic(label);
                                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            }else{
+                                setGraphic(null);
                             }
                         }
                     };
@@ -1006,7 +1022,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             ps.setInt(2, group.getCollection().getID());
             Date now = formatDateTime(group.getStarted_On());
             ps.setTimestamp(3, new Timestamp(now.toInstant().toEpochMilli()));
-            ps.setString(4, jsonHandler.getName());
+            ps.setString(4, ConnectionHandler.user.getName());
             ps.setString(5, "Scanning");
             ps.executeUpdate();
             set = ps.getGeneratedKeys();

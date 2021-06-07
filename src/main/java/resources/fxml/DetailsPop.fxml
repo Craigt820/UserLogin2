@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -15,11 +16,11 @@
 
 <VBox prefHeight="780.0" spacing="16.0" style="-fx-background-color: #f9f9f9;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.DetailsPopController">
    <children>
-      <TitledPane prefHeight="440.0" prefWidth="625.0" text="Info" textFill="#fefefe" VBox.vgrow="ALWAYS">
+      <TitledPane maxHeight="-Infinity" prefWidth="625.0" text="Info" textFill="#fefefe" VBox.vgrow="ALWAYS">
         <content>
-            <ScrollPane fitToHeight="true" fitToWidth="true">
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="420.0">
                <content>
-                  <VBox spacing="24.0" style="-fx-background-color: #fdfdfd;">
+                  <VBox spacing="20.0" style="-fx-background-color: #fefefe;">
                      <children>
                         <VBox spacing="8.0">
                            <children>
@@ -27,7 +28,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
-                                          <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Workstation" textFill="#07255eed">
+                                          <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Workstation" textFill="#07255c">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -44,11 +45,12 @@
                                     </HBox>
                                  </children>
                               </StackPane>
-                              <Label fx:id="workstation" style="-fx-text-fill: black; -fx-font-size: 1.1em;" textFill="#07255eed">
+                              <Label fx:id="workstation" style="-fx-text-fill: #072550; -fx-font-size: 1.1em;" textFill="#07255eed">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
+                              <AnchorPane opacity="0.79" prefHeight="0.1" prefWidth="200.0" style="-fx-background-color: RGB(242,242,242);" />
                            </children>
                            <VBox.margin>
                               <Insets left="16.0" top="8.0" />
@@ -60,7 +62,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
-                                          <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Location" textFill="#07255eed">
+                                          <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Location" textFill="#07255c">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -80,68 +82,75 @@
                                           </Label>
                                        </children>
                                        <StackPane.margin>
-                                          <Insets left="64.0" />
+                                          <Insets left="56.0" />
                                        </StackPane.margin>
                                     </HBox>
                                  </children>
                               </StackPane>
-                              <Label fx:id="location" style="-fx-text-fill: black; -fx-font-size: 1.1em;" textFill="#07255eed">
+                              <Label fx:id="location" style="-fx-text-fill: #072550; -fx-font-size: 1.1em;" textFill="#07255eed">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
+                              <AnchorPane opacity="0.79" prefHeight="0.1" prefWidth="200.0" style="-fx-background-color: RGB(242,242,242);" />
                            </children>
                            <VBox.margin>
                               <Insets left="16.0" />
                            </VBox.margin>
                         </VBox>
-                        <HBox spacing="104.0">
-                           <children>
-                              <VBox spacing="8.0">
-                                 <children>
-                                    <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Started On" textFill="#07255eed">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="startedOn" style="-fx-text-fill: black; -fx-font-size: 1.1em;" textFill="#07255eed">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <VBox spacing="8.0">
-                                 <children>
-                                    <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Completed On" textFill="#07255eed">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="compOn" style="-fx-text-fill: black; -fx-font-size: 1.1em;" textFill="#07255eed">
-                                       <font>
-                                          <Font name="Segoe UI" size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                           </children>
+                        <VBox prefHeight="48.0">
                            <VBox.margin>
                               <Insets left="16.0" />
                            </VBox.margin>
-                        </HBox>
+                           <children>
+                              <HBox minHeight="48.0" prefHeight="48.0" spacing="240.0">
+                                 <children>
+                                    <VBox spacing="8.0">
+                                       <children>
+                                          <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Started" textFill="#07255c">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="startedOn" style="-fx-text-fill: #072550; -fx-font-size: 1.1em;" textFill="#07255eed">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="8.0">
+                                       <children>
+                                          <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Completed" textFill="#07255c">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="compOn" style="-fx-text-fill: #072550; -fx-font-size: 1.1em;" textFill="#07255eed">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <AnchorPane opacity="0.79" prefHeight="0.1" prefWidth="200.0" style="-fx-background-color: RGB(242,242,242);" />
+                           </children>
+                        </VBox>
                         <VBox spacing="8.0">
                            <children>
-                              <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Overridden" textFill="#07255eed">
+                              <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Overridden" textFill="#07255c">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="overridden" style="-fx-text-fill: black; -fx-font-size: 1.1em;" textFill="#07255eed">
+                              <Label fx:id="overridden" style="-fx-text-fill: #072550; -fx-font-size: 1.1em;" textFill="#07255eed">
                                  <font>
                                     <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
+                              <AnchorPane opacity="0.79" prefHeight="0.1" prefWidth="200.0" style="-fx-background-color: RGB(242,242,242);" />
                            </children>
                            <VBox.margin>
                               <Insets left="16.0" />
@@ -160,19 +169,19 @@
          <content>
             <ScrollPane fitToHeight="true" fitToWidth="true">
                <content>
-                  <VBox spacing="16.0" style="-fx-background-color: #fdfdfd;">
+                  <VBox spacing="16.0" style="-fx-background-color: #fefefe;">
                      <padding>
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                      </padding>
                      <children>
                         <VBox>
                            <children>
-                              <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Condition" textFill="#07255eed" translateX="4.0">
+                              <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Condition" textFill="#07255c" translateX="4.0">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" prefHeight="48.0" showCheckedCount="true">
+                              <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" prefHeight="40.0" showCheckedCount="true">
                                  <VBox.margin>
                                     <Insets top="8.0" />
                                  </VBox.margin>
@@ -184,12 +193,12 @@
                         </VBox>
                         <VBox>
                            <children>
-                              <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Scanner" textFill="#07255eed" translateX="4.0">
+                              <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Scanner" textFill="#07255c" translateX="4.0">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <CheckComboBox fx:id="scannerCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" prefHeight="48.0" showCheckedCount="true">
+                              <CheckComboBox fx:id="scannerCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" prefHeight="40.0" showCheckedCount="true">
                                  <VBox.margin>
                                     <Insets top="8.0" />
                                  </VBox.margin>
@@ -201,7 +210,7 @@
                         </VBox>
                         <VBox VBox.vgrow="ALWAYS">
                            <children>
-                              <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Comments" textFill="#07255eed" translateX="4.0">
+                              <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Comments" textFill="#07255c" translateX="4.0">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>

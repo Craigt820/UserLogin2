@@ -103,8 +103,8 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
                 break;
         }
         this.type.setGraphic(view);
-        view.setFitWidth(20);
-        view.setFitHeight(20);
+        view.setFitWidth(24);
+        view.setFitHeight(24);
         this.type.setGraphicTextGap(16);
         this.type.setGraphic(view);
         this.type.setTooltip(new Tooltip(type));
@@ -122,8 +122,8 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.details.setTranslateX(0);
         this.details.setLayoutY(-2);
         this.details.setTooltip(new Tooltip("Details"));
-        this.details.getGraphic().maxHeight(12);
-        this.details.getGraphic().maxWidth(12);
+        this.details.getGraphic().maxHeight(8);
+        this.details.getGraphic().maxWidth(8);
         this.details.getStyleClass().add("detailBtn");
         this.id = new SimpleIntegerProperty(0);
         this.name = new SimpleStringProperty();

@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
-import static com.idi.userlogin.Handlers.JsonHandler.COMP_NAME;
+import static com.idi.userlogin.JavaBeans.User.COMP_NAME;
 import static com.idi.userlogin.Main.fxTrayIcon;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.CHECKMARK;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.EXMARK;
@@ -173,7 +173,7 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,type_id,comments) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + Main.jsonHandler.getName() + "'),?,?,(SELECT id FROM item_types WHERE item_types.name = '" + item.getType().getText() + "'),?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,type_id,comments) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" +  ConnectionHandler.user.getName() + "'),?,?,(SELECT id FROM item_types WHERE item_types.name = '" + item.getType().getText() + "'),?)", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));

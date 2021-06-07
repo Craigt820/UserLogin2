@@ -3,6 +3,7 @@ package com.idi.userlogin.Controllers;
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
 import com.idi.userlogin.Handlers.JsonHandler;
+import com.idi.userlogin.JavaBeans.User;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -49,21 +50,20 @@ public class MainMenuController implements Initializable {
             prop.put("user", JsonHandler.user);
             prop.put("password", JsonHandler.pass);
             connection = DriverManager.getConnection(ConnectionHandler.CONN, prop);
-            String getLogin = "SELECT Name FROM employees WHERE Name=? AND Password=? LIMIT 1";
+            String getLogin = "SELECT id,Name FROM employees WHERE Name=? AND Password=? LIMIT 1";
             preparedStatement = connection.prepareStatement(getLogin); //Recommended for running SQL queries multiple times implements Statement interface
             preparedStatement.setString(1, user.getText());
             preparedStatement.setString(2, password.getText());
             set = preparedStatement.executeQuery(); //The term "result set" refers to the row and column data contained in a ResultSet object.
             if (set.next()) {
                 success = true;
-                jsonHandler.setName(set.getString("Name"));
+                ConnectionHandler.user = new User(set.getString("Name"), set.getInt("id"));
             } else {
                 Platform.runLater(() -> {
                     statusLbl.setStyle("-fx-text-fill:#d01515; -fx-font-weight: bold;");
                     statusLbl.setText("Your Credentials Are Incorrect, Please Try Again.");
                     FXUtils.fadeOut(statusLbl, Duration.seconds(2));
                 });
-
             }
 
         } catch (SQLException e) {
@@ -83,14 +83,9 @@ public class MainMenuController implements Initializable {
 
             e.printStackTrace();
         } finally {
-            try {
-                DbUtils.close(connection);
-                DbUtils.close(set);
-                DbUtils.close(preparedStatement);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-
+            DbUtils.closeQuietly(connection);
+            DbUtils.closeQuietly(set);
+            DbUtils.closeQuietly(preparedStatement);
         }
         return success;
     }

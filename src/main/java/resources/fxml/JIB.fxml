@@ -335,7 +335,7 @@
                                                                   <Insets left="4.0" />
                                                                </HBox.margin>
                                                             </Label>
-                                                            <Label fx:id="totalCount" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" text="0" textFill="#07255eed">
+                                                            <Label fx:id="totalCount" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" text="0" textFill="#011d2eed">
                                                                <font>
                                                                   <Font name="System Bold" size="16.0" />
                                                                </font>
@@ -368,7 +368,7 @@
                                                                   <Insets left="4.0" />
                                                                </HBox.margin>
                                                             </Label>
-                                                            <Label fx:id="selCol" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" textFill="#07255eed">
+                                                            <Label fx:id="selCol" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" textFill="#011d2eed">
                                                                <font>
                                                                   <Font name="System Bold" size="16.0" />
                                                                </font>
@@ -395,7 +395,7 @@
                                                                   <Insets left="4.0" />
                                                                </HBox.margin>
                                                             </Label>
-                                                            <Label fx:id="selGroup" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" textFill="#07255eed">
+                                                            <Label fx:id="selGroup" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" textFill="#011d2eed">
                                                                <font>
                                                                   <Font name="System Bold" size="16.0" />
                                                                </font>
@@ -449,15 +449,6 @@
                               </SplitPane>
                            </content>
                         </ScrollPane>
-                     </content>
-                  </Tab>
-                <Tab closable="false" text="Checklist">
-                     <content>
-                        <HBox>
-                           <children>
-                              <VBox fx:id="checkListRoot" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
                      </content>
                   </Tab>
               </tabs>

@@ -10,13 +10,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #fafafa;" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.SettingsController">
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: RGB(249,249,248);" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.SettingsController">
    <children>
-      <StackPane alignment="CENTER_RIGHT" prefHeight="160.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
+      <StackPane alignment="CENTER_RIGHT" prefHeight="160.0" prefWidth="200.0" style="-fx-background-color: RGB(249,249,248);">
          <children>
             <HBox alignment="BOTTOM_LEFT" minHeight="80.0">
                <children>
-                  <Label alignment="BOTTOM_LEFT" contentDisplay="RIGHT" graphicTextGap="8.0" style="-fx-font-size: 2.0em;" text="Settings" textFill="#686868">
+                  <Label alignment="BOTTOM_LEFT" contentDisplay="RIGHT" graphicTextGap="8.0" styleClass="Title" text="Settings" textFill="#091b38cb">
                      <font>
                         <Font name="Segoe UI" size="24.0" />
                      </font>
@@ -34,11 +34,11 @@
             </HBox>
          </children>
       </StackPane>
-      <StackPane minHeight="0.0" style="-fx-background-color: #fafafa;">
+      <StackPane minHeight="0.0" style="-fx-background-color: RGB(249,249,248);">
          <children>
             <HBox alignment="TOP_CENTER" prefHeight="740.0" prefWidth="1920.0">
                <children>
-                  <VBox maxHeight="600.0" minHeight="640.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-color: #a0a0a0;">
+                  <VBox maxHeight="600.0" minHeight="640.0" prefWidth="566.0" style="-fx-border-radius: 6; -fx-background-color: #FEFEFE; -fx-background-radius: 6; -fx-border-width: .8; -fx-border-color: #3660a333;">
                      <children>
                         <StackPane prefHeight="20.0">
                            <VBox.margin>
@@ -47,7 +47,7 @@
                            <children>
                               <HBox alignment="CENTER_LEFT" prefHeight="100.0" StackPane.alignment="CENTER_LEFT">
                                  <children>
-                                    <Label style="-fx-font-weight: Bold; -fx-font-size: 1.1em;" text="Track Path" textFill="#3660a3">
+                                    <Label style="-fx-font-weight: Bold; -fx-font-size: 1em;" text="Track Path" textFill="#3660a3">
                                        <font>
                                           <Font name="Segoe UI" size="14.0" />
                                        </font>
@@ -59,7 +59,7 @@
                               </HBox>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Label onMousePressed="#browseTrack" style="-fx-font-weight: bold; -fx-font-size: 1.03em;" text="Browse" textFill="#3660a3">
+                                    <Label onMousePressed="#browseTrack" style="-fx-font-weight: bold; -fx-font-size: 1em;" text="Browse" textFill="#3660a3">
                                        <font>
                                           <Font name="Segoe UI" size="14.0" />
                                        </font>
@@ -74,7 +74,7 @@
                               </HBox>
                            </children>
                         </StackPane>
-                        <TextField fx:id="trackPath" minHeight="40.0" prefHeight="48.0">
+                        <TextField fx:id="trackPath" minHeight="52.0" prefHeight="48.0">
                            <VBox.margin>
                               <Insets left="60.0" right="60.0" top="8.0" />
                            </VBox.margin>
@@ -84,14 +84,14 @@
                         </TextField>
                         <VBox spacing="8.0">
                            <children>
-                              <StackPane prefHeight="32.0">
+                              <StackPane prefHeight="16.0">
                                  <children>
                                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                                        <StackPane.margin>
-                                          <Insets right="60.0" top="12.0" />
+                                          <Insets right="60.0" />
                                        </StackPane.margin>
                                        <children>
-                                          <Label style="-fx-font-weight: Bold; -fx-font-size: 1.1em;" text="Host Name" textFill="#3660a3">
+                                          <Label style="-fx-font-weight: Bold; -fx-font-size: 1em;" text="Host Name" textFill="#3660a3">
                                              <font>
                                                 <Font name="Segoe UI" size="14.0" />
                                              </font>
@@ -100,17 +100,17 @@
                                     </HBox>
                                  </children>
                                  <VBox.margin>
-                                    <Insets top="16.0" />
+                                    <Insets />
                                  </VBox.margin>
                               </StackPane>
-                              <TextField fx:id="hostName" minHeight="40.0" prefHeight="48.0">
+                              <TextField fx:id="hostName" minHeight="52.0" prefHeight="48.0">
                                  <font>
                                     <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </TextField>
                            </children>
                            <VBox.margin>
-                              <Insets left="60.0" right="60.0" top="8.0" />
+                              <Insets left="60.0" right="60.0" top="16.0" />
                            </VBox.margin>
                         </VBox>
                         <VBox spacing="8.0">
@@ -122,7 +122,7 @@
                                           <Insets right="60.0" top="16.0" />
                                        </StackPane.margin>
                                        <children>
-                                          <Label style="-fx-font-weight: Bold; -fx-font-size: 1.1em;" text="Username" textFill="#3660a3">
+                                          <Label style="-fx-font-weight: Bold; -fx-font-size: 1em;" text="Username" textFill="#3660a3">
                                              <font>
                                                 <Font name="Segoe UI" size="14.0" />
                                              </font>
@@ -131,7 +131,7 @@
                                     </HBox>
                                  </children>
                               </StackPane>
-                              <TextField fx:id="user" minHeight="40.0" prefHeight="48.0">
+                              <TextField fx:id="user" minHeight="52.0" prefHeight="48.0">
                                  <font>
                                     <Font name="Segoe UI" size="14.0" />
                                  </font>
@@ -140,6 +140,9 @@
                            <VBox.margin>
                               <Insets left="60.0" right="60.0" />
                            </VBox.margin>
+                           <padding>
+                              <Insets top="4.0" />
+                           </padding>
                         </VBox>
                         <VBox spacing="8.0">
                            <children>
@@ -150,7 +153,7 @@
                                           <Insets right="60.0" top="16.0" />
                                        </StackPane.margin>
                                        <children>
-                                          <Label style="-fx-font-weight: Bold; -fx-font-size: 1.1em;" text="Password" textFill="#3660a3">
+                                          <Label style="-fx-font-weight: Bold; -fx-font-size: 1em;" text="Password" textFill="#3660a3">
                                              <font>
                                                 <Font name="Segoe UI" size="14.0" />
                                              </font>
@@ -158,8 +161,11 @@
                                        </children>
                                     </HBox>
                                  </children>
+                                 <padding>
+                                    <Insets top="4.0" />
+                                 </padding>
                               </StackPane>
-                              <PasswordField fx:id="password" minHeight="40.0" prefHeight="48.0">
+                              <PasswordField fx:id="password" minHeight="52.0" prefHeight="48.0">
                                  <font>
                                     <Font name="Segoe UI" size="14.0" />
                                  </font>
@@ -171,7 +177,7 @@
                         </VBox>
                         <VBox alignment="CENTER">
                            <VBox.margin>
-                              <Insets top="32.0" />
+                              <Insets bottom="16.0" top="32.0" />
                            </VBox.margin>
                            <children>
                               <Label fx:id="savedLbl" opacity="0.0" style="-fx-font-weight: bold; -fx-font-size: 14;" text="Settings Saved" textFill="#3660a3">
@@ -197,9 +203,6 @@
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
-                           <padding>
-                              <Insets bottom="48.0" />
-                           </padding>
                         </VBox>
                      </children>
                      <HBox.margin>
@@ -213,7 +216,7 @@
             </HBox>
          </children>
       </StackPane>
-      <StackPane prefHeight="80.0" prefWidth="200.0" style="-fx-background-color: #fafafa;">
+      <StackPane prefHeight="80.0" prefWidth="200.0" style="-fx-background-color: RGB(249,249,248);">
          <VBox.margin>
             <Insets />
          </VBox.margin>

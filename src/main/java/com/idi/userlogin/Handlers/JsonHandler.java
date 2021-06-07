@@ -17,10 +17,8 @@ public class JsonHandler {
 
     public static final String USER_DIR = System.getProperty("user.dir");
     public static final String USER_HOME = System.getProperty("user.home");
-    public static String COMP_NAME;
     public String selJobID;
     public String selJobDesc;
-    public String name;
     public static String trackPath;
     public static String hostName;
     public static String user;
@@ -30,11 +28,7 @@ public class JsonHandler {
 
     //Initializes properties
     static {
-        try {
-            COMP_NAME = Inet4Address.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+
         final File file = new File(USER_DIR + "\\properties.json");
         if (file.exists()) {
             exists = true;
@@ -108,14 +102,6 @@ public class JsonHandler {
 
     public static void setTrackPath(String trackPath) {
         JsonHandler.trackPath = trackPath;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getSelJobID() {
