@@ -42,6 +42,7 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
 
     private final EntryItem treeRoot = new EntryItem();
     private final RecursiveTreeItem rootItem = new RecursiveTreeItem<>(treeRoot, RecursiveTreeObject::getChildren);
+    private String groupCol;
 
     @Override
     public void legalTextTest(boolean isLegal, CustomTextField node) {
@@ -265,4 +266,11 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
         return tree;
     }
 
+    public String getGroupCol() {
+        return groupCol;
+    }
+
+    public void setGroupCol(String groupCol) {
+        this.groupCol = groupCol;
+    }
 }

@@ -76,6 +76,7 @@ public class JobSelectController implements Initializable {
                     ControllerHandler.entryController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
                     ControllerHandler.entryController.getCollectionList().addAll(collections);
                     ControllerHandler.entryController.getColCombo().getItems().addAll(collections);
+                    ControllerHandler.entryController.setGroupCol(selJob.getGroupCol());
                 } else {
                     ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/ManifestView.fxml"), true);
                     ControllerHandler.maniViewController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
