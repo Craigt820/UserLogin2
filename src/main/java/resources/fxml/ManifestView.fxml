@@ -12,6 +12,8 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -57,7 +59,7 @@
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
                                                                     </Label>
-                                                                    <SearchableComboBox fx:id="colCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="438.0" prefHeight="48.0">
+                                                                    <SearchableComboBox fx:id="colCombo" maxWidth="1.7976931348623157E308" minHeight="42.0" minWidth="438.0" prefHeight="48.0">
                                                          <VBox.margin>
                                                             <Insets />
                                                          </VBox.margin>
@@ -71,7 +73,7 @@
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
                                                                     </Label>
-                                                                    <SearchableComboBox fx:id="groupCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="438.0" prefHeight="48.0" />
+                                                                    <SearchableComboBox fx:id="groupCombo" maxWidth="1.7976931348623157E308" minHeight="42.0" minWidth="438.0" prefHeight="48.0" />
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="24.0" />
@@ -101,7 +103,7 @@
                                                                             </HBox>
                                                                         </children>
                                                                     </StackPane>
-                                                      <SearchableComboBox fx:id="itemCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="0.0" prefHeight="48.0" />
+                                                      <SearchableComboBox fx:id="itemCombo" maxWidth="1.7976931348623157E308" minHeight="42.0" minWidth="0.0" prefHeight="48.0" />
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="24.0" />
@@ -114,7 +116,7 @@
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
                                                                     </Label>
-                                                                    <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="0.0" prefHeight="48.0" showCheckedCount="true" />
+                                                                    <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minHeight="42.0" minWidth="0.0" prefHeight="48.0" showCheckedCount="true" />
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="24.0" />
@@ -127,31 +129,54 @@
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
                                                                     </Label>
-                                                                    <ComboBox fx:id="typeCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="0.0" prefHeight="48.0" style="-fx-background-color: #fdfdfd;" />
+                                                                    <ComboBox fx:id="typeCombo" maxWidth="1.7976931348623157E308" minHeight="42.0" minWidth="0.0" prefHeight="48.0" style="-fx-background-color: #fdfdfd;" />
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="24.0" />
                                                    </VBox.margin>
                                                 </VBox>
-                                                              <Label styleClass="labels" text="Comments" textFill="#07255eed" translateX="4.0">
-                                                                  <VBox.margin>
-                                                                      <Insets bottom="8.0" top="24.0" />
-                                                                  </VBox.margin>
-                                                                  <font>
-                                                                      <Font name="Segoe UI Bold" size="14.0" />
-                                                                  </font>
-                                                              </Label>
-                                                              <TextArea fx:id="commentsField" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="200.0" wrapText="true" VBox.vgrow="ALWAYS">
-                                                                  <VBox.margin>
-                                                                      <Insets bottom="14.0" />
-                                                                  </VBox.margin>
-                                                              </TextArea>
+                                                <VBox spacing="8.0">
+                                                   <children>
+                                                                    <Label styleClass="labels" text="Comments" textFill="#07255eed" translateX="4.0">
+                                                                        <font>
+                                                                            <Font name="Segoe UI Bold" size="14.0" />
+                                                                        </font>
+                                                                    </Label>
+                                                                    <TextArea fx:id="commentsField" maxWidth="1.7976931348623157E308" minHeight="150.0" prefHeight="200.0" prefWidth="562.0" wrapText="true">
+                                                         <VBox.margin>
+                                                            <Insets />
+                                                         </VBox.margin>
+                                                                    </TextArea>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="24.0" />
+                                                   </VBox.margin>
+                                                </VBox>
+                                                <TitledPane collapsible="false" text="Item Info" textFill="WHITE">
+                                                   <VBox.margin>
+                                                      <Insets bottom="24.0" top="24.0" />
+                                                   </VBox.margin>
+                                                   <content>
+                                                      <VBox spacing="8.0">
+                                                         <children>
+                                                            <TreeView fx:id="itemInfo" showRoot="false">
+                                                               <VBox.margin>
+                                                                  <Insets left="4.0" />
+                                                               </VBox.margin>
+                                                            </TreeView>
+                                                         </children>
+                                                         <padding>
+                                                            <Insets top="8.0" />
+                                                         </padding>
+                                                      </VBox>
+                                                   </content>
+                                                </TitledPane>
                                                 <HBox>
                                                    <VBox.margin>
-                                                      <Insets bottom="32.0" left="80.0" right="80.0" top="24.0" />
+                                                      <Insets bottom="32.0" left="80.0" right="80.0" />
                                                    </VBox.margin>
                                                    <children>
-                                                                    <Button fx:id="insertBtn" contentDisplay="RIGHT" disable="true" maxWidth="1.7976931348623157E308" minWidth="340.0" mnemonicParsing="false" onAction="#insert" prefHeight="40.0" prefWidth="340.0" styleClass="thirdBtn" text="Insert" textFill="#063f80" HBox.hgrow="ALWAYS" />
+                                                                    <Button fx:id="insertBtn" contentDisplay="RIGHT" disable="true" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="340.0" mnemonicParsing="false" onAction="#insert" prefHeight="40.0" prefWidth="340.0" styleClass="thirdBtn" text="Insert" textFill="#063f80" HBox.hgrow="ALWAYS" />
                                                    </children>
                                                 </HBox>
                                                           </children>

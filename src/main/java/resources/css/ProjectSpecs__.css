@@ -33,6 +33,22 @@
   -fx-font-size: 0.80em;
 }
 
+/* Tree View */
+
+.tree-cell{
+  -fx-padding: 8 0 0 0;
+}
+
+.tree-cell,
+.tree-view{
+ -fx-background-color: #fdfdfd;
+ -fx-background-color: #fdfdfd;
+}
+
+.tree-cell:focused{
+  -fx-text-fill: black;
+}
+
 
 /* Table View */
 
@@ -212,28 +228,37 @@
 
 /* Titled Pane */
 
+.titled-pane{
+  -fx-border-color: none;
+  -fx-border-radius: 6;
+  -fx-background-radius 6;
+  -fx-border-width .3;
+}
+
 .titled-pane > .title{
-    -fx-background-color: #063f80;
-    -fx-padding: 4;
+    -fx-background-color:transparent,transparent,transparent,transparent;
+    -fx-padding:0 0 8 4;
 }
 
 .titled-pane > .title .text{
-    -fx-text-fill:white;
-    -fx-translate-x:8;
-    -fx-font-size:1.1em;
+    -fx-fill:#07255eed;
+    -fx-font-size:1.2em;
+    -fx-font-weight:bold;
 }
-
-
 
 .titled-pane .content{
   -fx-background-radius:6;
   -fx-border-radius:6;
+  -fx-border-color:gray;
+  -fx-border-width:.3;
+  -fx-background-color:white;
 }
 
+.tree-view .tree-cell .arrow,
 .titled-pane > .title> .arrow-button .arrow{
-    -fx-background-color: white;
+    -fx-background-color: #07255eed;
     -fx-padding:4;
-    -fx-translate-x:8;
+    -fx-translate-y:2;
 }
 
 /* Check Box */
