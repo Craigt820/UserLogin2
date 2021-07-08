@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckComboBox?>
+<?import org.controlsfx.control.SearchableComboBox?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+
+<AnchorPane fx:id="root" style="-fx-background-color: rgb(250,250,250);" stylesheets="@../css/ProjectSpecs__.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.userlogin.Controllers.GileadController">
+   <children>
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+              <tabs>
+                  <Tab closable="false" disable="true" style="-fx-background-color: none;">
+                     <graphic>
+                        <Button fx:id="settings" focusTraversable="false" graphicTextGap="8.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Main">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <graphic>
+                              <JFXHamburger fx:id="burger" styleClass="hamburger" />
+                           </graphic>
+                        </Button>
+                     </graphic>
+                  </Tab>
+                <Tab closable="false" text="Overview">
+                     <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true">
+                           <content>
+                              <SplitPane dividerPositions="0.4449188727583262">
+                                <items>
+                                    <VBox style="-fx-background-color: #f9f9f9;">
+                                       <children>
+                                          <VBox style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <HBox minWidth="0.0" spacing="4.0">
+                                                   <children>
+                                                      <VBox minWidth="0.0" prefWidth="197.0" HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <Label styleClass="labels" text="Collection" textFill="#07255eed" translateX="4.0">
+                                                               <font>
+                                                                  <Font name="System Bold" size="14.0" />
+                                                               </font>
+                                                               <VBox.margin>
+                                                                  <Insets bottom="8.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <SearchableComboBox fx:id="colCombo" minHeight="40.0" prefHeight="48.0" style="-fx-background-color: #fdfdf;" VBox.vgrow="ALWAYS" />
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                                <HBox minWidth="0.0" spacing="4.0">
+                                                   <children>
+                                                      <VBox prefWidth="197.0" HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <Label styleClass="labels" text="Box #" textFill="#07255eed" translateX="4.0">
+                                                               <font>
+                                                                  <Font name="System Bold" size="14.0" />
+                                                               </font>
+                                                               <VBox.margin>
+                                                                  <Insets bottom="8.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <SearchableComboBox fx:id="groupCombo" minHeight="40.0" prefHeight="48.0" style="-fx-background-color: #fdfdf;" VBox.vgrow="ALWAYS" />
+                                                         </children>
+                                                         <HBox.margin>
+                                                            <Insets top="24.0" />
+                                                         </HBox.margin>
+                                                      </VBox>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets bottom="24.0" />
+                                                   </VBox.margin>
+                                                </HBox>
+                                                <HBox minWidth="0.0" spacing="24.0">
+                                                   <children>
+                                                      <VBox maxWidth="140.0" prefWidth="140.0" HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <HBox>
+                                                               <children>
+                                                                  <Label styleClass="labels" text="PC" textFill="#07255eed" translateX="4.0">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="14.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                               <VBox.margin>
+                                                                  <Insets bottom="8.0" />
+                                                               </VBox.margin>
+                                                            </HBox>
+                                                            <HBox minWidth="100.0" VBox.vgrow="ALWAYS">
+                                                               <children>
+                                                                  <CustomTextField fx:id="pcField" minHeight="40.0" prefHeight="48.0" HBox.hgrow="ALWAYS">
+                                                                     <font>
+                                                                        <Font name="Segoe UI" size="14.0" />
+                                                                     </font>
+                                                                  </CustomTextField>
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox minWidth="0.0" HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <StackPane>
+                                                               <VBox.margin>
+                                                                  <Insets bottom="8.0" />
+                                                               </VBox.margin>
+                                                               <children>
+                                                                  <HBox>
+                                                                     <children>
+                                                                        <Label styleClass="labels" text="Doc Type" textFill="#07255eed" translateX="4.0">
+                                                                           <font>
+                                                                              <Font name="System Bold" size="14.0" />
+                                                                           </font>
+                                                                        </Label>
+                                                                     </children>
+                                                                  </HBox>
+                                                               </children>
+                                                            </StackPane>
+                                                            <SearchableComboBox fx:id="dtCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="438.0" prefHeight="48.0" />
+                                                         </children>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </VBox>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                </HBox>
+                                                <HBox minWidth="0.0" spacing="24.0">
+                                                   <children>
+                                                      <VBox prefWidth="140.0">
+                                                         <children>
+                                                            <HBox>
+                                                               <children>
+                                                                  <Label styleClass="labels" text="MCN" textFill="#07255eed" translateX="4.0">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="14.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                               <VBox.margin>
+                                                                  <Insets bottom="8.0" />
+                                                               </VBox.margin>
+                                                            </HBox>
+                                                            <HBox fx:id="mcn" VBox.vgrow="ALWAYS">
+                                                               <children>
+                                                                  <CustomTextField fx:id="mcnField" disable="true" minHeight="40.0" prefHeight="48.0" HBox.hgrow="ALWAYS" />
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox minWidth="0.0" HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <Label styleClass="labels" text="Folder" textFill="#07255eed" translateX="4.0">
+                                                               <font>
+                                                                  <Font name="System Bold" size="14.0" />
+                                                               </font>
+                                                               <VBox.margin>
+                                                                  <Insets bottom="8.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <SearchableComboBox fx:id="folderCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" prefHeight="48.0" VBox.vgrow="ALWAYS" />
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox minWidth="0.0">
+                                                         <children>
+                                                            <Label styleClass="labels" text="Status" textFill="#07255eed" translateX="4.0">
+                                                               <font>
+                                                                  <Font name="System Bold" size="14.0" />
+                                                               </font>
+                                                               <VBox.margin>
+                                                                  <Insets bottom="8.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <SearchableComboBox fx:id="statusCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" prefHeight="48.0" VBox.vgrow="ALWAYS" />
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="24.0" />
+                                                   </VBox.margin>
+                                                </HBox>
+                                                <Label styleClass="labels" text="Condition" textFill="#07255eed" translateX="4.0">
+                                                   <VBox.margin>
+                                                      <Insets bottom="8.0" top="24.0" />
+                                                   </VBox.margin>
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <CheckComboBox fx:id="conditCombo" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="437.0" prefHeight="48.0" prefWidth="438.0" showCheckedCount="true" style="-fx-background-color: #fdfdfd;" VBox.vgrow="ALWAYS" />
+                                                <VBox minWidth="0.0" VBox.vgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="labels" text="Comments" textFill="#07255eed">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                         <VBox.margin>
+                                                            <Insets bottom="8.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                      <TextArea fx:id="commentsField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" style="-fx-background-color: #f0f0f0;" wrapText="true" VBox.vgrow="ALWAYS">
+                                                         <font>
+                                                            <Font name="Segoe UI" size="14.0" />
+                                                         </font>
+                                                      </TextArea>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="24.0" />
+                                                   </VBox.margin>
+                                                </VBox>
+                                                <VBox alignment="CENTER" minWidth="0.0" VBox.vgrow="ALWAYS">
+                                                   <VBox.margin>
+                                                      <Insets bottom="32.0" left="80.0" right="80.0" top="16.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                                                         <children>
+                                                            <Label fx:id="errorLbl" opacity="0.0" text="Item Already Exists!" textFill="#bc2414">
+                                                               <font>
+                                                                  <Font name="Segoe UI Bold" size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                         <VBox.margin>
+                                                            <Insets bottom="8.0" />
+                                                         </VBox.margin>
+                                                      </HBox>
+                                                      <HBox>
+                                                         <children>
+                                                            <Button fx:id="insertBtn" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="340.0" mnemonicParsing="false" onAction="#insert" prefHeight="40.0" prefWidth="340.0" styleClass="thirdBtn" text="Insert" textFill="#063f80" HBox.hgrow="ALWAYS" />
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <padding>
+                                                <Insets left="40.0" right="40.0" top="24.0" />
+                                             </padding>
+                                             <VBox.margin>
+                                                <Insets left="16.0" right="16.0" />
+                                             </VBox.margin>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                  <AnchorPane fx:id="treePaneRoot">
+                                       <children>
+                                          <VBox fx:id="entryPane" layoutX="-14.0" style="-fx-background-color: #f9f9f9;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <HBox layoutX="18.0" layoutY="18.0" style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;">
+                                                   <children>
+                                                      <HBox alignment="CENTER">
+                                                         <children>
+                                                            <Label opacity="0.92" style="-fx-font-size: 1.1em; -fx-font-weight: bold;" text="Total:" textFill="#07255eed">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="4.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                            <Label fx:id="totalCount" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" text="0" textFill="#011d2eed">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="8.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="16.0" />
+                                                   </padding>
+                                                   <VBox.margin>
+                                                      <Insets top="24.0" />
+                                                   </VBox.margin>
+                                                </HBox>
+                                                <HBox style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;">
+                                                   <VBox.margin>
+                                                      <Insets bottom="8.0" top="8.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <HBox alignment="CENTER">
+                                                         <children>
+                                                            <Label opacity="0.92" style="-fx-font-size: 1.1em; -fx-font-weight: bold;" text="Collection:" textFill="#07255eed">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="4.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                            <Label fx:id="selCol" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" textFill="#011d2eed">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="8.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="16.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="60.0" style="-fx-background-color: #f9f9f9; -fx-background-radius: 6;">
+                                                   <children>
+                                                      <HBox alignment="CENTER">
+                                                         <children>
+                                                            <Label opacity="0.92" style="-fx-font-size: 1.1em; -fx-font-weight: bold;" text="Group:" textFill="#07255eed">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="4.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                            <Label fx:id="selGroup" opacity="0.92" style="-fx-font-size: 1.1em;" styleClass="labels" textFill="#011d2eed">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="8.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="16.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <JFXTreeTableView fx:id="tree" editable="true" fixedCellSize="56.0" showRoot="false" style="-fx-font-family: Segoe UI; -fx-border-color: #e0e0e0;" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                  <columns>
+                                                      <JFXTreeTableColumn fx:id="existColumn" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: Center;" />
+                                                      <JFXTreeTableColumn fx:id="compColumn" maxWidth="90.0" minWidth="70.0" prefWidth="90.0" text="Complete" />
+                                                      <JFXTreeTableColumn fx:id="nameColumn" maxWidth="600.0" minWidth="100.0" prefWidth="133.0" text="Name" />
+                                                      <JFXTreeTableColumn fx:id="pcColumn" maxWidth="100.0" minWidth="83.0" prefWidth="88.0" text="PC" />
+                                                      <JFXTreeTableColumn fx:id="dtColumn" maxWidth="400.0" minWidth="100.0" prefWidth="151.0" text="DT" />
+                                                      <JFXTreeTableColumn fx:id="statusColumn" maxWidth="100.0" minWidth="83.0" prefWidth="88.0" text="Status" />
+                                                      <JFXTreeTableColumn fx:id="mcnColumn" maxWidth="200.0" minWidth="90.0" prefWidth="114.0" text="MCN" />
+                                                      <JFXTreeTableColumn fx:id="countColumn" maxWidth="73.0" minWidth="60.0" prefWidth="73.0" text="Count" />
+                                                     <JFXTreeTableColumn fx:id="detailsColumn" maxWidth="50.0" minWidth="37.0" prefWidth="37.0" style="-fx-alignment: Center;" />
+                                                      <JFXTreeTableColumn fx:id="delColumn" maxWidth="72.0" minWidth="72.0" prefWidth="72.0" style="-fx-alignment: Center;" />
+                                                  </columns>
+                                                   <VBox.margin>
+                                                      <Insets bottom="40.0" left="16.0" right="16.0" top="16.0" />
+                                                   </VBox.margin>
+                                                   <columnResizePolicy>
+                                                      <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                   </columnResizePolicy>
+                                                </JFXTreeTableView>
+                                                <HBox>
+                                                   <VBox.margin>
+                                                      <Insets left="180.0" right="180.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <Button fx:id="compBtn" disable="true" maxWidth="1.7976931348623157E308" minWidth="340.0" mnemonicParsing="false" onAction="#complete" prefHeight="40.0" prefWidth="340.0" styleClass="primaryBtn" text="Complete" HBox.hgrow="ALWAYS" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="32.0" left="16.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                </items>
+                              </SplitPane>
+                           </content>
+                        </ScrollPane>
+                     </content>
+                  </Tab>
+              </tabs>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </TabPane>
+         </children>
+      </VBox>
+      <Region fx:id="opaque" style="-fx-background-color: #00000033;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+   </children>
+</AnchorPane>

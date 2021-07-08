@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 
+import static com.idi.userlogin.Controllers.BaseEntryController.updateGroup;
 import static com.idi.userlogin.Handlers.ControllerHandler.*;
 import static com.idi.userlogin.Main.jsonHandler;
 
@@ -141,8 +142,8 @@ public class LoggedInController implements Initializable {
                     CompletableFuture.runAsync(() -> {
                         updateAll(selGroup.getItemList());
                     }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
-                        updateGroup(false);
-                    }).thenRunAsync(() -> DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
+                        updateGroup(selGroup, false);
+                    }).thenRunAsync(() -> DailyLog.updateLog(selGroup)).thenRunAsync(() -> {
                         updateStatus("Offline");
                     }).thenRunAsync(() -> {
                         DailyLog.endDailyLog();
@@ -188,11 +189,19 @@ public class LoggedInController implements Initializable {
                 if (getMainTreeView() != null) {
                     CompletableFuture.runAsync(() -> {
                         updateAll(selGroup.getItemList());
-                    }).thenRunAsync(BaseEntryController::countGroupTotal).thenRunAsync(() -> {
-                        updateGroup(false);
-                    }).thenRunAsync(() -> DailyLog.updateTotal(selGroup.getID())).thenRunAsync(() -> {
-                        updateStatus("Away");
-                    });
+                    }).thenApply(e2 -> {
+                        int gTotal = ControllerHandler.getGroupTotal(ControllerHandler.selGroup);
+                        ControllerHandler.selGroup.setTotal(gTotal);
+                        return ControllerHandler.selGroup;
+                    }).thenAccept(group -> {
+                        Platform.runLater(() -> {
+                            groupCountProp.set(group.getTotal());
+                        });
+                        updateGroup(group, true);
+                    }).thenRunAsync(() -> DailyLog.updateLog(selGroup)).
+                            thenRunAsync(() -> {
+                                updateStatus("Away");
+                            });
                 }
                 pause_resume.setText("Resume");
                 ControllerHandler.getOpaqueOverlay().setVisible(true);

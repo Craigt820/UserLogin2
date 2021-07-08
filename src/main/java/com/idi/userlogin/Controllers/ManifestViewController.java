@@ -16,10 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import org.apache.commons.dbutils.DbUtils;
@@ -41,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.idi.userlogin.JavaBeans.User.COMP_NAME;
 import static com.idi.userlogin.Main.fxTrayIcon;
+import static com.idi.userlogin.Main.jsonHandler;
 import static com.idi.userlogin.utils.DailyLog.scanLogID;
 
 public class ManifestViewController extends BaseEntryController<BaseEntryController.EntryItem> implements Initializable {
@@ -78,7 +76,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
             item.getConditions().setAll(conditions);
             insertHelper(item);
             if (tree.getRoot().getChildren().isEmpty()) {
-                updateGroup(group);
+                initSelGroup(group);
             }
             tree.getRoot().getChildren().add(newItem);
             typeCombo.getSelectionModel().selectFirst();
@@ -86,75 +84,16 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
             fxTrayIcon.showInfoMessage("Item: " + item.getName() + " Inserted");
             Platform.runLater(() -> {
                 itemCombo.getSelectionModel().clearSelection();
-                itemCombo.getItems().remove(item);
+                try {
+                    itemCombo.getItems().remove(item);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
             resetFields();
         }
     }
 
-    public ObservableList<TreeItem<String>> getItemInfo(EntryItem item) {
-        Connection connection = null;
-        ResultSet set = null;
-        PreparedStatement ps = null;
-        ObservableList<TreeItem<String>> treeItems = FXCollections.observableArrayList();
-        try {
-            connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT * FROM `" + Main.jsonHandler.getSelJobID() + "` m WHERE id=? LIMIT 1");
-            ps.setInt(1, item.getId());
-            set = ps.executeQuery();
-            ResultSet cols = connection.getMetaData().getColumns(null, null, ControllerHandler.selJob.getName(), null);
-            List<String> colNames = new ArrayList<>();
-            while (cols.next()) {
-                String columnName = cols.getString("COLUMN_NAME");
-                colNames.add(columnName);
-            }
-            while (set.next()) {
-                for (int i = 0; i < colNames.size(); i++) {
-                    TreeItem col = new TreeItem(colNames.get(i));
-                    col.setExpanded(true);
-                    String data = set.getString(i + 1);
-                    TreeItem item_ = new TreeItem<String>(data);
-                    col.getChildren().add(item_);
-                    treeItems.add(col);
-                }
-            }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e);
-
-        } finally {
-            DbUtils.closeQuietly(set);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(connection);
-        }
-
-        return treeItems;
-
-    }
-
-    public void updateGroup(Group group) {
-
-        Connection connection = null;
-        ResultSet set = null;
-        PreparedStatement ps = null;
-        try {
-            connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `sc_groups` SET employees='" + ConnectionHandler.user.getName() + "', started_on='" + LocalDateTime.now().toString() + "',status_id=(SELECT id FROM `sc_group_status` WHERE name='Scanning') WHERE id=?");
-            ps.setInt(1, group.getID());
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error inserting a new group!", e);
-
-        } finally {
-            DbUtils.closeQuietly(set);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(connection);
-        }
-    }
 
     @Override
     public int insertHelper(Item<? extends Item> item) {
@@ -164,7 +103,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `" + Main.jsonHandler.getSelJobID() + "` SET employee_id=" + ConnectionHandler.user.getId() + ", type_id=(SELECT id FROM item_types WHERE name = '" + item.getType().getText() + "'),started_On=?,collection_id=?,group_id=?,comments=?,workstation=? WHERE id=?");
+            ps = connection.prepareStatement("UPDATE `" + jsonHandler.getSelJobID() + "` SET employee_id=" + ConnectionHandler.user.getId() + ", type_id=(SELECT id FROM item_types WHERE name = '" + item.getType().getText() + "'),started_On=?,collection_id=?,group_id=?,comments=?,workstation=? WHERE id=?");
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(1, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setInt(2, item.getCollection().getID());
@@ -215,12 +154,17 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
                         //Parent
                         if (!getTreeItem().isLeaf()) {
                             setAlignment(Pos.CENTER_LEFT);
-                            setStyle("-fx-font-weight:bold;-fx-padding:8;-fx-font-size: 1.2em;");
+                            setStyle("-fx-font-weight:bold;-fx-padding:8 0 0 2;-fx-font-size: 1.0em;");
                         } else {
-                            setAlignment(Pos.CENTER_RIGHT);
-                            setStyle("-fx-font-weight:none;-fx-padding:4 40 0 0;-fx-font-size: 1.3em;");
+                            setAlignment(Pos.CENTER_LEFT);
+                            setStyle("-fx-font-weight:none;-fx-padding:8 24 4 0;-fx-font-size: 1.1em;");
                         }
-                        setText(item);
+                        Label label = new Label(item);
+                        label.setWrapText(true);
+                        label.setMaxWidth(1000);
+                        label.textOverrunProperty().set(OverrunStyle.CLIP);
+                        setGraphic(label);
+                        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                     } else {
                         setGraphic(null);
                         setText(null);
@@ -236,8 +180,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
 
         itemCombo.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
             if (nv != null) {
-                itemInfo.getRoot().getChildren().clear();
-                ObservableList<TreeItem<String>> cols = getItemInfo(nv);
+                ObservableList<TreeItem<String>> cols = Utils.getItemInfo(nv);
                 Platform.runLater(() -> {
                     itemInfo.getRoot().getChildren().setAll(cols);
                 });
@@ -359,7 +302,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         ObservableList<EntryItem> group_items = FXCollections.observableArrayList();
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.id," + uid + " as item FROM `" + Main.jsonHandler.getSelJobID() + "` m WHERE employee_id IS NULL AND `" + groupCol + "`='" + group.getName() + "'");
+            ps = connection.prepareStatement("SELECT m.id,TRIM(m.`" + uid + "`) as item FROM `" + jsonHandler.getSelJobID() + "` m WHERE employee_id IS NULL AND TRIM(`" + groupCol + "`)='" + group.getName() + "'");
             set = ps.executeQuery();
             while (set.next()) {
                 EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), 0, 0, "", false, "", "", "", "", false);
@@ -388,7 +331,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.id,g.id as group_id, g.name as group_name, m." + uid + " as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE m.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
+            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.id,g.id as group_id, g.name as group_name, TRIM(m.`" + uid + "`) as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE m.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
             set = ps.executeQuery();
             while (set.next()) {
                 final EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"), Utils.intToBoolean(set.getInt("m.overridden")));
@@ -420,6 +363,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
     @Override
     public void resetFields() {
         conditCombo.getCheckModel().clearChecks();
+        itemInfo.getRoot().getChildren().clear();
     }
 
     public void resetItemStatus(Item item) {
@@ -428,7 +372,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `" + Main.jsonHandler.getSelJobID() + "` SET employee_id=NULL, type_id=NULL,started_On=NULL,total=0,comments=NULL,workstation=NULL WHERE id=?");
+            ps = connection.prepareStatement("UPDATE `" + jsonHandler.getSelJobID() + "` SET employee_id=NULL, type_id=NULL,started_On=NULL,total=0,comments=NULL,workstation=NULL WHERE id=?");
             ps.setInt(1, item.getId());
             ps.executeUpdate();
 

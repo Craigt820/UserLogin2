@@ -5,11 +5,13 @@ import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.JavaBeans.Job;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.DailyLog;
 import com.idi.userlogin.utils.Utils;
 import com.itextpdf.text.pdf.PdfReader;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -18,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
@@ -40,6 +41,7 @@ import java.nio.file.Path;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.*;
@@ -56,6 +58,7 @@ public abstract class ControllerHandler {
     public static Region opaqueOverlay = new Region();
     public static MainMenuController mainMenuController;
     public static JIBController jibController;
+    public static GileadController gileadController;
     public static UserEntryViewController entryController;
     public static ManifestViewController maniViewController;
     public static LoggedInController loggedInController;
@@ -414,7 +417,7 @@ public abstract class ControllerHandler {
                 e2.existsProperty().set((Boolean) count.values().toArray()[0]);
                 return e2;
             }).thenAcceptAsync(item1 -> {
-                updateItemDB(item1);
+                updateItem(item1);
             });
             futures.add(future);
         });
@@ -432,14 +435,11 @@ public abstract class ControllerHandler {
             item.existsProperty().set((Boolean) pages.values().toArray()[0]);
             return item;
         }).thenRunAsync(() -> {
-            updateItemDB(item);
+            updateItem(item);
         }).join();
     }
 
-    public static void updateGroup(boolean completed) {
-    }
-
-    public static void updateItemDB(final Item item, String sql) {
+    public static void updateItem(final Item item, String sql) {
         Connection connection = null;
         PreparedStatement ps = null;
         try {
@@ -470,7 +470,104 @@ public abstract class ControllerHandler {
         }
     }
 
-    public static void updateItemDB(final Item item) {
+    public static void initSelGroup(Group group) {
+
+        Connection connection = null;
+        ResultSet set = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("UPDATE `" + jsonHandler.getSelJobID() + "_g` SET employee=" + ConnectionHandler.user.getId() + ", started_on='" + LocalDateTime.now().toString() + "',status_id=(SELECT id FROM `sc_group_status` WHERE name='Scanning') WHERE id=?");
+            ps.setInt(1, group.getID());
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating group " + group.getName() + "!", e);
+
+        } finally {
+            DbUtils.closeQuietly(set);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+    }
+
+
+
+    public static void updateGroup(final Group group, boolean completed) {
+
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+
+            if (completed) {
+                ps = connection.prepareStatement("Update `" + jsonHandler.getSelJobID() + "_g` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Completed') WHERE id=?");
+                ps.setInt(1, group.getTotal());
+                ps.setInt(2, booleanToInt(completed));
+                final Date now = formatDateTime(LocalDateTime.now().toString());
+                ps.setTimestamp(3, new Timestamp(now.toInstant().toEpochMilli()));
+                ps.setInt(4, group.getID());
+            } else {
+                ps = connection.prepareStatement("Update ``" + jsonHandler.getSelJobID() + "_g`` SET employee= total=? WHERE id=?");
+                ps.setInt(1, group.getTotal());
+                ps.setInt(2, group.getID());
+            }
+
+            ps.executeUpdate();
+
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating a group!", e);
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+    }
+
+    public static CompletableFuture updateGroupHandler(boolean completed) {
+        CompletableFuture future = CompletableFuture.supplyAsync(() -> {
+            int gTotal = getGroupTotal(selGroup);
+            selGroup.setTotal(gTotal);
+            return ControllerHandler.selGroup;
+        }).thenApplyAsync(group -> {
+            Platform.runLater(() -> {
+                groupCountProp.set(group.getTotal());
+            });
+            updateGroup(group, completed);
+            return group;
+        }).thenAccept(group -> {
+            DailyLog.updateLog(group);
+        });
+        return future;
+    }
+
+    public static int getGroupTotal(final Group group) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        int gTotal = 0;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("SELECT SUM(total) as gTotal FROM `" + jsonHandler.getSelJobID() + "` WHERE group_id=?");
+            ps.setInt(1, group.getID());
+            set = ps.executeQuery();
+            while (set.next()) {
+                gTotal = set.getInt("gTotal");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error parsing the group total!", e);
+
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+
+        return gTotal;
+    }
+
+    public static void updateItem(final Item item) {
         Connection connection = null;
         PreparedStatement ps = null;
         try {

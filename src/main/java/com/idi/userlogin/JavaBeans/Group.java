@@ -9,6 +9,7 @@ import java.util.Objects;
 
 public class Group extends ListCell<Group> {
     private IntegerProperty id;
+    private IntegerProperty total;
     private Collection collection;
     private StringProperty name;
     private String started_On;
@@ -20,9 +21,10 @@ public class Group extends ListCell<Group> {
         this.name = new SimpleStringProperty(name);
     }
 
-    public Group(int id, Collection collection, String name, boolean complete, String started_On, String completed_On) {
+    public Group(int id, int total, Collection collection, String name, boolean complete, String started_On, String completed_On) {
 
         this.id = new SimpleIntegerProperty(id);
+        this.total = new SimpleIntegerProperty(total);
         this.collection = collection;
         this.name = new SimpleStringProperty(name);
         this.complete = new SimpleBooleanProperty(complete);
@@ -39,6 +41,22 @@ public class Group extends ListCell<Group> {
 
     public int getID() {
         return id.get();
+    }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public int getTotal() {
+        return total.get();
+    }
+
+    public IntegerProperty totalProperty() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total.set(total);
     }
 
     public IntegerProperty IDProperty() {

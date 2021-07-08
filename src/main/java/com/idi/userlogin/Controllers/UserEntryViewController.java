@@ -6,6 +6,7 @@ import com.idi.userlogin.utils.Utils;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,6 +36,7 @@ import java.util.logging.Level;
 
 import static com.idi.userlogin.JavaBeans.User.COMP_NAME;
 import static com.idi.userlogin.Main.fxTrayIcon;
+import static com.idi.userlogin.Main.jsonHandler;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.CHECKMARK;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.EXMARK;
 
@@ -147,6 +149,9 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
                 item.setComments(commentsField.getText());
                 item.getConditions().setAll(conditions);
                 insertHelper(item);
+                if (tree.getRoot().getChildren().isEmpty()) {
+                    initSelGroup(group);
+                }
                 tree.getRoot().getChildren().add(newItem);
                 nameField.clear();
                 typeCombo.getSelectionModel().selectFirst();
@@ -174,7 +179,7 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,type_id,comments) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" +  ConnectionHandler.user.getName() + "'),?,?,(SELECT id FROM item_types WHERE item_types.name = '" + item.getType().getText() + "'),?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,type_id,comments) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" +  ConnectionHandler.user.getName() + "'),?,?,(SELECT id FROM item_types WHERE item_types.name = '" + item.getType().getText() + "'),?)", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
@@ -215,7 +220,7 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.id,g.id as group_id, g.name as group_name, m.name as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE group_id=" + group.getID() + "");
+            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.id,g.id as group_id, g.name as group_name, m.name as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
                 final EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"),set.getString("m.workstation"), Utils.intToBoolean(set.getInt("m.overridden")));
@@ -225,7 +230,9 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
                     item.getConditions().setAll(Arrays.asList(splitConditions));
                 }
                 group_items.add(item);
-                indicator.setProgress(progress.get());
+                Platform.runLater(()->{
+                    indicator.setProgress(progress.get());
+                });
                 progress.incrementAndGet();
             }
 

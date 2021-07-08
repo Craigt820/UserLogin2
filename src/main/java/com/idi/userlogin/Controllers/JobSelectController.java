@@ -70,6 +70,13 @@ public class JobSelectController implements Initializable {
                 ControllerHandler.jibController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
                 ControllerHandler.jibController.getCollectionList().addAll(collections);
                 ControllerHandler.jibController.getColCombo().getItems().addAll(collections);
+            } else if (selJob.getName().contains("GILEAD")) {
+                ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/Gilead.fxml"), true);
+                ControllerHandler.gileadController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
+                ControllerHandler.gileadController.getCollectionList().addAll(collections);
+                ControllerHandler.gileadController.getColCombo().getItems().addAll(collections);
+                ControllerHandler.gileadController.setUid(selJob.getUid());
+                ControllerHandler.gileadController.setGroupCol(selJob.getGroupCol());
             } else {
                 if (selJob.isUserEntry()) {
                     ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/UserEntry.fxml"), true);
@@ -88,7 +95,7 @@ public class JobSelectController implements Initializable {
             }
 
             ControllerHandler.loggedInController.getDesc().setText(jsonHandler.getSelJobDesc());
-            ControllerHandler.loggedInController.getName().setText( ConnectionHandler.user.getName());
+            ControllerHandler.loggedInController.getName().setText(ConnectionHandler.user.getName());
             ControllerHandler.loggedInController.getJobID().setText(jsonHandler.getSelJobID());
 
         }
@@ -104,10 +111,10 @@ public class JobSelectController implements Initializable {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT id,client_id,user_entry,uid,group_col,complete,job_id,description from Projects");
+            ps = connection.prepareStatement("SELECT p.id,p.client_id,p.user_entry,p.uid,p.group_col,p.complete,p.job_id,c.name from Projects p LEFt JOIN sc_collections c ON p.id = c.job_id");
             set = ps.executeQuery();
             while (set.next()) {
-                jobs.add(new Job(set.getInt("id"), set.getString("job_id"), Utils.intToBoolean(set.getInt("user_entry")), Utils.intToBoolean(set.getInt("complete")), set.getString("uid"), set.getString("group_col"), set.getString("description")));
+                jobs.add(new Job(set.getInt("p.id"), set.getString("p.job_id"), Utils.intToBoolean(set.getInt("p.user_entry")), Utils.intToBoolean(set.getInt("p.complete")), set.getString("p.uid"), set.getString("p.group_col"), set.getString("c.name")));
             }
 
         } catch (SQLException e) {

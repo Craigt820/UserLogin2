@@ -33,10 +33,10 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SearchableComboBox;
@@ -55,6 +55,7 @@ import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.idi.userlogin.Handlers.JsonHandler.trackPath;
 import static com.idi.userlogin.Main.*;
@@ -190,7 +191,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             groupCombo.getSelectionModel().getSelectedItem().setComplete(true);
             CompletableFuture.runAsync(() -> {
                 updateAllHelper(true);
-            }).thenRunAsync(() -> DailyLog.updateTotal(ControllerHandler.selGroup.getID())).thenRunAsync(() -> DailyLog.endDailyLog()).thenRunAsync(() -> {
+            }).thenRunAsync(() -> DailyLog.updateLog(ControllerHandler.selGroup)).thenRunAsync(() -> DailyLog.endDailyLog()).thenRunAsync(() -> {
                 fxTrayIcon.showInfoMessage("Group '" + ControllerHandler.selGroup.getName() + "' has been completed!");
                 Platform.runLater(() -> {
                     tree.getRoot().getChildren().clear();
@@ -287,14 +288,16 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 //Remove from Tree View
                 boolean remove = tree.getRoot().getChildren().removeIf(e -> e.getValue().id.get() == item.getId());
                 if (remove) {
-                    CompletableFuture.runAsync(() -> {
+                    CompletableFuture.supplyAsync(() -> {
+                        int gTotal = ControllerHandler.getGroupTotal(ControllerHandler.selGroup);
+                        ControllerHandler.selGroup.setTotal(gTotal);
+                        return ControllerHandler.selGroup;
+                    }).thenAccept(group -> {
                         Platform.runLater(() -> {
-                            groupCountProp.set(countGroupTotal());
+                            groupCountProp.set(group.getTotal());
                         });
-                    }).thenRunAsync(() -> {
-                        updateGroup(false);
-                    }).thenRunAsync(() -> {
-                        DailyLog.updateTotal(ControllerHandler.selGroup.getID());
+                        updateGroup(group, false);
+                        DailyLog.updateLog(group);
                     }).thenRunAsync(() -> {
                         tree.refresh();
                     });
@@ -431,6 +434,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 detailPopCont.conditCombo.getItemBooleanProperty(s.toString()).set(true);
             }
         }
+
+        detailPopCont.itemInfo.setRoot(new TreeItem<String>());
+        detailPopCont.itemInfo.getRoot().getChildren().setAll(Utils.getItemInfo(item));
 
         if (!DEVICE_LIST.isEmpty()) {
             detailPopCont.scannerCombo.getItems().addAll(DEVICE_LIST);
@@ -624,32 +630,38 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         delColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("delete"));
         countColumn.setPrefWidth(190);
         countColumn.setCellValueFactory(new TreeItemPropertyValueFactory("total"));
-        compColumn.setCellFactory(e -> new CheckBoxTreeTableCell<T, CheckBox>() {
-            public void updateItem(CheckBox item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item != null) {
-                    setGraphic(item);
-                    item.setOnAction(e -> {
-                        CompletableFuture.runAsync(() -> {
-                            if (item.isSelected()) {
-                                getTreeTableRow().getTreeItem().getValue().completed_On.set(LocalDateTime.now().toString());
-                            } else {
-                                getTreeTableRow().getTreeItem().getValue().completed_On.set(null);
-                            }
-                            BaseEntryController.updateSelected(getTreeTableRow().getItem());
-
-                        }).thenRunAsync(() -> {
-                            Platform.runLater(() -> {
-                                groupCountProp.set(countGroupTotal());
-                                updateGroup(false);
+        compColumn.setCellFactory(e -> {
+            return new CheckBoxTreeTableCell<T, CheckBox>() {
+                public void updateItem(CheckBox item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item != null) {
+                        setGraphic(item);
+                        item.setOnAction(e -> {
+                            CompletableFuture.runAsync(() -> {
+                                if (item.isSelected()) {
+                                    getTreeTableRow().getTreeItem().getValue().completed_On.set(LocalDateTime.now().toString());
+                                } else {
+                                    getTreeTableRow().getTreeItem().getValue().completed_On.set(null);
+                                }
+                                BaseEntryController.updateSelected(getTreeTableRow().getItem());
+                            }).thenApply(e2 -> {
+                                int gTotal = ControllerHandler.getGroupTotal(ControllerHandler.selGroup);
+                                ControllerHandler.selGroup.setTotal(gTotal);
+                                return ControllerHandler.selGroup;
+                            }).thenAccept(group -> {
+                                Platform.runLater(() -> {
+                                    groupCountProp.set(group.getTotal());
+                                });
+                                updateGroup(group, false);
+                            }).thenRunAsync(() -> {
                                 tree.refresh();
                             });
                         });
-                    });
-                } else {
-                    setGraphic(null);
+                    } else {
+                        setGraphic(null);
+                    }
                 }
-            }
+            };
         });
         compColumn.setPrefWidth(190);
         compColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("completed"));
@@ -674,6 +686,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 return null;
             }
         });
+
         if (nonFeederCol != null) {
             nonFeederCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("nonFeeder"));
             nonFeederCol.setCellFactory(e -> new TextFieldTreeTableCell<T, Integer>(new IntegerStringConverter() {
@@ -719,6 +732,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 e.getRowValue().getValue().setNonFeeder(e.getNewValue());
                 updateNonFeeder(e.getRowValue().getValue());
             });
+
             nonFeederCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("nonFeeder"));
             nonFeederCol.setCellFactory(e -> new TextFieldTreeTableCell<T, Integer>(new IntegerStringConverter() {
                 @Override
@@ -797,9 +811,12 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                         if (item.completeProperty() != null) {
                             if (item.isComplete()) {
                                 setGraphic(ImgFactory.createView(CHECKMARK));
+                                setGraphicTextGap(8);
+                                setContentDisplay(ContentDisplay.LEFT);
                                 String completed_On = item.getCompleted_On();
                                 if (completed_On != null && !completed_On.isEmpty()) {
                                     setTooltip(new Tooltip("Completed: " + LocalDateTime.parse(completed_On).format(DATE_FORMAT)));
+                                    getTooltip().setStyle("-fx-text-fill:white;");
                                 }
                             } else {
                                 setGraphic(null);
@@ -811,9 +828,12 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                                     if (item.completeProperty() != null && item.isComplete()) {
                                         setGraphic(ImgFactory.createView(CHECKMARK));
+                                        setGraphicTextGap(8);
+                                        setContentDisplay(ContentDisplay.LEFT);
                                         String completed_On = item.getCompleted_On();
                                         if (completed_On != null && !completed_On.isEmpty()) {
                                             setTooltip(new Tooltip("Completed: " + LocalDateTime.parse(completed_On).format(DATE_FORMAT)));
+                                            getTooltip().setStyle("-fx-text-fill:white;");
                                         }
                                     } else {
                                         setGraphic(null);
@@ -836,7 +856,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                         dialog.setContentText("Enter item");
                         dialog.showAndWait().ifPresent(text -> {
                             final int index = groupCombo.getItems().size();
-                            final Group group = new Group(0, getColCombo().getValue(), text, false, LocalDateTime.now().toString(), "");
+                            final Group group = new Group(0, 0, getColCombo().getValue(), text, false, LocalDateTime.now().toString(), "");
                             boolean noMatch = groupCombo.getItems().stream().map(Group::getName).noneMatch(e3 -> e3.toLowerCase().equals(group.getName().toLowerCase()));
                             if (noMatch) {
                                 newGroupHelper(group);
@@ -910,8 +930,8 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
             });
         }
-        groupCombo.getItems().add(new Group(addGroupLabel));
 
+        groupCombo.getItems().add(new Group(addGroupLabel));
         existColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("exists"));
         existColumn.setComparator(new Comparator<Boolean>() {
             @Override
@@ -945,7 +965,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                                 label.setPadding(new Insets(0, 0, 0, 8));
                                 setGraphic(label);
                                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                            }else{
+                            } else {
                                 setGraphic(null);
                             }
                         }
@@ -963,19 +983,33 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 if (o1.getName().equals(addGroupLabel) || o2.getName().equals(addGroupLabel)) {
                     return 1;
                 }
-                String o1StringPart = o1.getName().replaceAll("\\d", "");
-                String o2StringPart = o2.getName().replaceAll("\\d", "");
+                String o1StringPart = o1.getName().replaceAll("\\d", "").trim();
+                String o2StringPart = o2.getName().replaceAll("\\d", "").trim();
 
                 if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
-                    return extractInt(o1.getName()) - extractInt(o2.getName());
+                    int[] o1Int = extractInt(o1.getName());
+                    int[] o2Int = extractInt(o2.getName());
+
+                    for (int i = 0; i < o1Int.length; i++) {
+                        for (int j = 0; j < o2Int.length; j++) {
+                            boolean o = o1Int[i] > o2Int[j];
+                            if (o) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    }
                 }
                 return o1.getName().compareTo(o2.getName());
             }
 
-            int extractInt(String s) {
-                String num = s.replaceAll("\\D", "");
+            int[] extractInt(String s) {
+                String[] num = s.replaceAll("\\D", " ").split(" ");
                 // return 0 if no digits found
-                return num.isEmpty() ? 0 : Integer.parseInt(num);
+                IntStream sum = Arrays.stream(num).filter(e -> !e.isEmpty()).filter(StringUtils::isNumeric).mapToInt(Integer::parseInt);
+                int[] toInt = sum.toArray();
+                return toInt;
             }
         });
     }
@@ -983,17 +1017,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     private void updateAllHelper(boolean completed) {
         CompletableFuture.runAsync(() -> {
             updateAll(ControllerHandler.selGroup.getItemList());
-        }).thenRunAsync(() -> {
-            Platform.runLater(() -> {
-                groupCountProp.set(countGroupTotal());
-            });
-        }).thenRunAsync(() -> {
-            updateGroup(completed);
-        }).thenRunAsync(() -> {
-            DailyLog.updateTotal(ControllerHandler.selGroup.getID());
-        }).thenRunAsync(() -> {
-            tree.refresh();
         }).join();
+        updateGroupHandler(completed).join();
+        tree.refresh();
     }
 
     private boolean itemExists(Item itemObj) {
@@ -1017,7 +1043,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `sc_groups` (name,collection_id,job_id,started_on,employees,status_id) VALUES(?,?,(SELECT id FROM projects WHERE job_id='" + jsonHandler.getSelJobID() + "'),?,?,(SELECT id FROM `sc_group_status` WHERE name=?))", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + jsonHandler.getSelJobID() + "_g` (name,collection_id,job_id,started_on,employees,status_id) VALUES(?,?,(SELECT id FROM projects WHERE job_id='" + jsonHandler.getSelJobID() + "'),?,?,(SELECT id FROM `sc_group_status` WHERE name=?))", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, group.getName());
             ps.setInt(2, group.getCollection().getID());
             Date now = formatDateTime(group.getStarted_On());
@@ -1088,36 +1114,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         return null;
     }
 
-    public static void updateGroup(boolean completed) {
-
-        Connection connection = null;
-        PreparedStatement ps = null;
-        try {
-            connection = ConnectionHandler.createDBConnection();
-
-            if (completed) {
-                ps = connection.prepareStatement("Update `sc_groups` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Completed') WHERE id=?");
-                ps.setInt(1, groupCountProp.get());
-                ps.setInt(2, booleanToInt(completed));
-                final Date now = formatDateTime(LocalDateTime.now().toString());
-                ps.setTimestamp(3, new Timestamp(now.toInstant().toEpochMilli()));
-                ps.setInt(4, ControllerHandler.selGroup.getID());
-            } else {
-                ps = connection.prepareStatement("Update `sc_groups` SET total=? WHERE id=?");
-                ps.setInt(1, groupCountProp.get());
-                ps.setInt(2, ControllerHandler.selGroup.getID());
-            }
-
-            ps.executeUpdate();
-
-        } catch (SQLException | ParseException e) {
-            e.printStackTrace();
-            Main.LOGGER.log(Level.SEVERE, "There was an error updating a group!", e);
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(connection);
-        }
-    }
 
     @Override
     public void legalTextTest(boolean isLegal, CustomTextField node) {

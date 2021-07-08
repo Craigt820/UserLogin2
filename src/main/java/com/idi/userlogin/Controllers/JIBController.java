@@ -143,7 +143,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.ss,m.doc_type,m.full_name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id  WHERE group_id=" + group.getID() + "");
+            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.ss,m.doc_type,m.full_name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id  WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
                 final JIBEntryItem item = new JIBEntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("m.full_name"), set.getString("ss"), set.getString("doc_type"), set.getString("status"), set.getInt("m.total"), set.getInt("m.completed") == 1, "Multi-Paged", null, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"), Utils.intToBoolean(set.getInt("m.overridden")));
@@ -414,7 +414,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             public void commitEdit(String newValue) {
                 JIBEntryItem item = getTreeTableRow().getTreeItem().getValue();
                 item.setDocType(newValue);
-                ControllerHandler.updateItemDB(item, "UPDATE `" + jsonHandler.getSelJobID() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
+                ControllerHandler.updateItem(item, "UPDATE `" + jsonHandler.getSelJobID() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
                 super.commitEdit(newValue);
             }
         });

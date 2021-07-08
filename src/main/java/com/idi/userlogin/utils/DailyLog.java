@@ -2,6 +2,7 @@ package com.idi.userlogin.utils;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.Main;
 
 import java.sql.Connection;
@@ -55,7 +56,7 @@ public abstract class DailyLog {
         }
     }
 
-    public static int updateTotal(int group_id) {
+    public static int updateLog(Group group) {
         int total = 0;
         if (scanLogID != 0) {
             Connection connection = null;
@@ -63,8 +64,9 @@ public abstract class DailyLog {
             PreparedStatement ps = null;
             try {
                 connection = ConnectionHandler.createDBConnection();
-                ps = connection.prepareStatement("UPDATE `ul_scan2` SET total=(SELECT IF(ISNULL(total),0,SUM(total)) FROM `" + Main.jsonHandler.getSelJobID() + "` WHERE group_id=? AND employee_id=(SELECT id FROM employees WHERE name='" + ConnectionHandler.user.getName() + "') AND started_on LIKE '%" + LocalDate.now().toString() + "%' OR total IS NOT NULL AND employee_id=" + ConnectionHandler.user.getId() + " AND completed_on LIKE '%" + LocalDate.now().toString() + "%') WHERE id=" + scanLogID);
-                ps.setInt(1, group_id);
+                ps = connection.prepareStatement("UPDATE `ul_scan2` SET total=? `" + Main.jsonHandler.getSelJobID() + "` WHERE group_id=? AND employee_id=(SELECT id FROM employees WHERE name='" + ConnectionHandler.user.getName() + "' AND started_on LIKE '%" + LocalDate.now().toString() + "%' OR total IS NOT NULL AND employee_id=" + ConnectionHandler.user.getId() + " AND completed_on LIKE '%" + LocalDate.now().toString() + "%') WHERE id=" + scanLogID);
+                ps.setInt(1, group.getTotal());
+                ps.setInt(2, group.getID());
                 ps.executeUpdate();
                 ps = connection.prepareStatement("SELECT total FROM `ul_scan2` WHERE id=" + scanLogID);
                 set = ps.executeQuery();

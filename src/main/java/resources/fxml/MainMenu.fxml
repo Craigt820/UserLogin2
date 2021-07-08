@@ -246,7 +246,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT">
                <children>
-                  <Label style="-fx-font-size: 1.4em;" text="6/07/2021 v 1.2" textFill="#091b38cc">
+                  <Label style="-fx-font-size: 1.4em;" text="6/17/2021 v1.21" textFill="#091b38cc">
                      <font>
                         <Font name="Segoe UI" size="19.0" />
                      </font>

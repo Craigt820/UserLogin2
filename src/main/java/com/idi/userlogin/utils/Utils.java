@@ -1,17 +1,27 @@
 package com.idi.userlogin.utils;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
+import com.idi.userlogin.Handlers.ControllerHandler;
 import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
-import com.idi.userlogin.Handlers.JsonHandler;
+import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TreeItem;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+
+import static com.idi.userlogin.Main.jsonHandler;
 
 public class Utils {
 
@@ -20,7 +30,6 @@ public class Utils {
     public static int booleanToInt(boolean bool) {
         return bool ? 1 : 0;
     }
-
 
     public static boolean intToBoolean(int value) {
         return value == 1;
@@ -39,7 +48,7 @@ public class Utils {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT c.id,c.name,p.job_id FROM sc_collections c INNER JOIN tracking.projects p ON c.job_id = p.id WHERE p.job_id ='" + Main.jsonHandler.getSelJobID() + "'");
+            ps = connection.prepareStatement("SELECT c.id,c.name,p.job_id FROM sc_collections c INNER JOIN projects p ON c.job_id = p.id WHERE p.job_id ='" + Main.jsonHandler.getSelJobID() + "'");
             set = ps.executeQuery();
             while (set.next()) {
                 Collection collection = new Collection(set.getInt("c.id"), set.getString("c.name"));
@@ -56,6 +65,71 @@ public class Utils {
         return collections;
     }
 
+    public static List<String> getHeadersInfo() {
+        List<String> headers = new ArrayList<>();
+        Connection connection = null;
+        ResultSet set = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("SELECT name FROM `" + Main.jsonHandler.getSelJobID() + "_h`");
+            set = ps.executeQuery();
+
+            while (set.next()) {
+                headers.add(set.getString("name"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e);
+
+        } finally {
+            DbUtils.closeQuietly(set);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+
+        return headers;
+    }
+
+    public static ObservableList<TreeItem<String>> getItemInfo(Item item) {
+        Connection connection = null;
+        ResultSet set = null;
+        PreparedStatement ps = null;
+        ObservableList<TreeItem<String>> treeItems = FXCollections.observableArrayList();
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("SELECT * FROM `" + Main.jsonHandler.getSelJobID() + "` m WHERE id=? LIMIT 1");
+            ps.setInt(1, item.getId());
+            set = ps.executeQuery();
+            List<String> headers = getHeadersInfo();
+
+            while (set.next()) {
+                for (int i = 0; i < headers.size(); i++) {
+                    TreeItem col = new TreeItem(headers.get(i));
+                    col.setExpanded(true);
+                    String data = set.getString(headers.get(i));
+                    TreeItem item_ = new TreeItem<String>(data);
+                    col.getChildren().add(item_);
+                    treeItems.add(col);
+                }
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e);
+
+        } finally {
+            DbUtils.closeQuietly(set);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
+
+        return treeItems;
+
+    }
+
     public static ObservableList<Group> getGroups(Collection collection) {
         Connection connection = null;
         ResultSet set = null;
@@ -64,12 +138,13 @@ public class Utils {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT g.id,p.job_id, g.name as groupName,c.id as Collection_id,c.name as CollectionName,g.scanned as Completed,g.started_on,g.completed_on FROM tracking.sc_groups g INNER JOIN tracking.sc_collections c ON g.collection_id = c.id INNER JOIN tracking.projects p ON g.job_id = p.id WHERE p.job_id ='" + Main.jsonHandler.getSelJobID() + "' AND c.name='" + collection.getName() + "' AND employees LIKE '%" +  ConnectionHandler.user.getName() + "%' OR p.job_id ='" + Main.jsonHandler.getSelJobID() + "' AND c.name='" + collection.getName() + "' AND employees IS NULL");
+            ps = connection.prepareStatement("SELECT g.id, g.name as groupName,g.employee,c.id as Collection_id,c.name as colName,g.scanned as completed,g.started_on,g.completed_on FROM `" + jsonHandler.getSelJobID() + "_g` g INNER JOIN sc_collections c ON g.collection_id = c.id  WHERE c.name='" + collection.getName() + "' AND g.employee=" + ConnectionHandler.user.getId() + " OR c.name='" + collection.getName() + "' AND g.employee IS NULL");
             set = ps.executeQuery();
             while (set.next()) {
                 final String started_On = (set.getString("g.started_on")) != null ? set.getString("g.started_on") : "";
                 final String completed_On = (set.getString("g.completed_on")) != null ? set.getString("g.completed_on") : "";
-                final Group group = new Group(set.getInt("g.id"), collection, set.getString("groupName"), intToBoolean(set.getInt("Completed")), started_On.replace(" ", "T"), completed_On.replace(" ", "T"));
+                final Group group = new Group(set.getInt("g.id"), 0, collection, set.getString("groupName"), intToBoolean(set.getInt("completed")), started_On.replace(" ", "T"), completed_On.replace(" ", "T"));
+                group.setTotal(ControllerHandler.getGroupTotal(group));
                 groups.add(group);
             }
 

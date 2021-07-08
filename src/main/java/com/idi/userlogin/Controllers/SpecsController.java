@@ -1,5 +1,7 @@
 package com.idi.userlogin.Controllers;
 
+import com.idi.userlogin.Handlers.ConnectionHandler;
+import com.idi.userlogin.Handlers.ControllerHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,8 +13,10 @@ import com.idi.userlogin.Handlers.JsonHandler;
 
 import java.net.URL;
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static com.idi.userlogin.Main.jsonHandler;
 
@@ -79,7 +83,7 @@ public class SpecsController implements Initializable {
         ObservableList<Specs> specList = FXCollections.observableArrayList();
 
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://" + JsonHandler.hostName + "/Tracking", JsonHandler.user, JsonHandler.pass);
+            connection = ConnectionHandler.createDBConnection();
             ps = connection.prepareStatement("SELECT a.id,a.comments, sf.name, st.name, p.job_id FROM tracking.job_specs a INNER JOIN projects p ON a.job_id=p.id INNER JOIN spec_types st ON a.type_id = st.id INNER JOIN spec_fields sf ON a.field_id = sf.id  WHERE p.job_id='" + jsonHandler.getSelJobID() + "'");
             set = ps.executeQuery();
             while (set.next()) {
@@ -106,8 +110,8 @@ public class SpecsController implements Initializable {
         modeSpec.ifPresent(specs -> mode.setText(specs.getField()));
         Optional<Specs> compressSpec = specList.stream().filter(e -> e.getType().equals("Compression")).findFirst();
         compressSpec.ifPresent(specs -> compress.setText(specs.getField()));
-        Optional<Specs> fileTypeSpec = specList.stream().filter(e -> e.getType().equals("FileType")).findFirst();
-        fileTypeSpec.ifPresent(specs -> fileType.setText(specs.getField()));
+        String fileTypes = specList.stream().filter(e -> e.getType().equals("FileType")).map(e -> e.getField()).collect(Collectors.joining("/"));
+        fileType.setText(fileTypes);
         Optional<Specs> commentSpec = specList.stream().filter(e -> e.getType().equals("Comments")).findFirst();
         commentSpec.ifPresent(specs -> comments.setText(specs.getComments()));
 //        specList.forEach(e -> {

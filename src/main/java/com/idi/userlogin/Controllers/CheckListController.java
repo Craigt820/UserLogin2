@@ -105,7 +105,7 @@
 ////
 ////        try {
 ////            connection = ConnectionHandler.createDBConnection();
-////            ps = connection.prepareStatement("SELECT m.id,g.id as group_id, g.name as group_name,g.scanned as g_completed,g.completed_on, m.name as item_Name,m.non_feeder, m.completed, e.name as employee,c.id as col_id, c.name as collection, m.total, t.name as type,m.comments,m.started_on,m.conditions,m.completed_on FROM `" + jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN sc_groups g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id");
+////            ps = connection.prepareStatement("SELECT m.id,g.id as group_id, g.name as group_name,g.scanned as g_completed,g.completed_on, m.name as item_Name,m.non_feeder, m.completed, e.name as employee,c.id as col_id, c.name as collection, m.total, t.name as type,m.comments,m.started_on,m.conditions,m.completed_on FROM `" + jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id");
 ////            set = ps.executeQuery();
 ////            while (set.next()) {
 ////                final String m_started_on = (set.getString("m.started_on")) == null ? set.getString("m.started_on") : "";
