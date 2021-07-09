@@ -28,14 +28,14 @@
                   <children>
                   <VBox alignment="CENTER_LEFT" spacing="12.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label style="-fx-font-size: 1.0em;" styleClass="labels" text="File Type" textFill="#113a68">
+                        <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="File Type" textFill="#113a68">
                            <font>
                               <Font name="Segoe UI Bold" size="16.0" />
                            </font>
                         </Label>
-                        <Label fx:id="fileType" maxWidth="1.7976931348623157E308" style="-fx-font-size: 14; -fx-font-weight: none;" textFill="#07255ce0">
+                        <Label fx:id="fileType" maxWidth="1.7976931348623157E308" style="-fx-font-size: 1.2em;" textFill="#07265ce0">
                            <font>
-                              <Font name="Segoe UI Bold" size="12.0" />
+                              <Font name="Segoe UI" size="14.0" />
                            </font>
                         </Label>
                         <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #07255e44;">
@@ -43,7 +43,7 @@
                               <Insets />
                            </VBox.margin>
                         </AnchorPane>
-                        <Label style="-fx-font-size: 1.0em;" styleClass="labels" text="DPI" textFill="#113a68">
+                        <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="DPI" textFill="#113a68">
                            <font>
                               <Font name="Segoe UI Bold" size="16.0" />
                            </font>
@@ -51,9 +51,9 @@
                               <Insets top="8.0" />
                            </VBox.margin>
                         </Label>
-                        <Label fx:id="dpi" maxWidth="1.7976931348623157E308" style="-fx-font-size: 14; -fx-font-weight: none;" textFill="#07255ce0">
+                        <Label fx:id="dpi" maxWidth="1.7976931348623157E308" style="-fx-font-size: 1.2em;" textFill="#07265ce0">
                            <font>
-                              <Font name="Segoe UI" size="17.0" />
+                              <Font name="Segoe UI" size="14.0" />
                            </font>
                         </Label>
                         <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #07255e44;">
@@ -61,7 +61,7 @@
                               <Insets />
                            </VBox.margin>
                         </AnchorPane>
-                        <Label style="-fx-font-size: 1.0em;" styleClass="labels" text="Compression" textFill="#113a68">
+                        <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Compression" textFill="#113a68">
                            <font>
                               <Font name="Segoe UI Bold" size="16.0" />
                            </font>
@@ -69,9 +69,9 @@
                               <Insets top="9.0" />
                            </VBox.margin>
                         </Label>
-                        <Label fx:id="compress" ellipsisString="." maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="25.0" style="-fx-font-size: 14; -fx-font-weight: nnone;" textFill="#07255ce0">
+                        <Label fx:id="compress" ellipsisString="." maxHeight="-Infinity" maxWidth="1.7976931348623157E308" style="-fx-font-size: 1.2em;" textFill="#07265ce0">
                            <font>
-                              <Font name="Segoe UI Bold" size="14.0" />
+                              <Font name="Segoe UI" size="14.0" />
                            </font>
                         </Label>
                         <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #07255e44;">
@@ -79,7 +79,7 @@
                               <Insets />
                            </VBox.margin>
                         </AnchorPane>
-                        <Label alignment="CENTER" style="-fx-font-size: 1.0em;" styleClass="labels" text="Color Mode" textFill="#113a68">
+                        <Label alignment="CENTER" style="-fx-font-size: 1.1em;" styleClass="labels" text="Color Mode" textFill="#113a68">
                            <font>
                               <Font name="Segoe UI Bold" size="16.0" />
                            </font>
@@ -87,9 +87,9 @@
                               <Insets top="9.0" />
                            </VBox.margin>
                         </Label>
-                        <Label fx:id="mode" maxWidth="1.7976931348623157E308" prefHeight="25.0" style="-fx-font-size: 14; -fx-font-weight: regular;" textFill="#07255ce0" VBox.vgrow="ALWAYS">
+                        <Label fx:id="mode" maxWidth="1.7976931348623157E308" style="-fx-font-size: 1.2em;" textFill="#07265ce0" VBox.vgrow="ALWAYS">
                            <font>
-                              <Font name="Segoe UI Bold" size="14.0" />
+                              <Font name="Segoe UI" size="14.0" />
                            </font>
                         </Label>
                         <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="260.0" style="-fx-background-color: #07255e44;">
@@ -97,7 +97,7 @@
                               <Insets />
                            </VBox.margin>
                         </AnchorPane>
-                        <Label alignment="CENTER" style="-fx-font-size: 1.0em;" styleClass="labels" text="Comments" textFill="#113a68">
+                        <Label alignment="CENTER" style="-fx-font-size: 1.1em;" styleClass="labels" text="Comments" textFill="#113a68">
                            <font>
                               <Font name="Segoe UI Bold" size="16.0" />
                            </font>
@@ -105,9 +105,9 @@
                               <Insets top="9.0" />
                            </VBox.margin>
                         </Label>
-                        <TextArea fx:id="comments" editable="false" minHeight="150.0" prefHeight="240.0" prefWidth="251.0" wrapText="true">
+                        <TextArea fx:id="comments" editable="false" minHeight="150.0" prefHeight="240.0" prefWidth="260.0" wrapText="true">
                            <VBox.margin>
-                              <Insets top="8.0" />
+                              <Insets bottom="8.0" top="4.0" />
                            </VBox.margin></TextArea>
                      </children>
                      <padding>

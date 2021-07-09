@@ -23,7 +23,7 @@
                     <children>
                         <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="299.0" spacing="12.0">
                             <children>
-                                <Label style="-fx-font-size:1.2em" styleClass="labels" text="Time" textFill="#113a68">
+                                <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Time" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -76,7 +76,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
-                                <Label style="-fx-font-size:1.2em" styleClass="labels" text="Status" textFill="#113a68">
+                                <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Status" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -101,7 +101,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </AnchorPane>
-                                <Label style="-fx-font-size:1.2em" styleClass="labels" text="Name" textFill="#113a68">
+                                <Label style="-fx-font-size: 1.1em;" styleClass="labels" text="Name" textFill="#113a68">
                                     <font>
                                         <Font name="Segoe UI Bold" size="16.0" />
                                     </font>
@@ -126,7 +126,7 @@
                            <children>
                               <HBox>
                                  <children>
-                                            <Label alignment="CENTER" style="-fx-font-size:1.2em" styleClass="labels" text="Project(s)" textFill="#113a68">
+                                            <Label alignment="CENTER" style="-fx-font-size: 1.1em;" styleClass="labels" text="Project(s)" textFill="#113a68">
                                                 <font>
                                                     <Font name="Segoe UI Bold" size="16.0" />
                                                 </font>
@@ -295,6 +295,6 @@
                 <Insets bottom="16.0" left="8.0" right="8.0" top="8.0" />
             </padding>
         </VBox>
-        <JFXDrawer fx:id="specsDrawer" defaultDrawerSize="630.0" direction="TOP" overLayVisible="false" prefHeight="0.0" />
+        <JFXDrawer fx:id="specsDrawer" defaultDrawerSize="680.0" direction="TOP" overLayVisible="false" prefHeight="0.0" />
     </children>
 </AnchorPane>
