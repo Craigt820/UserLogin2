@@ -17,6 +17,7 @@ import com.idi.userlogin.Main;
 import com.idi.userlogin.utils.CustomAlert;
 import org.apache.commons.dbutils.DbUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -110,7 +111,7 @@ public class LoggedInController implements Initializable {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `employees` SET status=(SELECT id from ul_status WHERE name='" + status + "') WHERE id=" + ConnectionHandler.user.getId());
+            ps = connection.prepareStatement("UPDATE `employees` SET status_id=(SELECT id from emp_status WHERE name='" + status + "') WHERE id=" + ConnectionHandler.user.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -186,7 +187,8 @@ public class LoggedInController implements Initializable {
                 pause_resume.setGraphic(pause);
                 break;
             case "Pause":
-                if (getMainTreeView() != null) {
+                updateStatus("Away");
+                if (getMainTreeView() != null) { //The tree cannot be empty
                     CompletableFuture.runAsync(() -> {
                         updateAll(selGroup.getItemList());
                     }).thenApply(e2 -> {
@@ -198,11 +200,9 @@ public class LoggedInController implements Initializable {
                             groupCountProp.set(group.getTotal());
                         });
                         updateGroup(group, true);
-                    }).thenRunAsync(() -> DailyLog.updateLog(selGroup)).
-                            thenRunAsync(() -> {
-                                updateStatus("Away");
-                            });
+                    }).thenRunAsync(() -> DailyLog.updateLog(selGroup)).join();
                 }
+
                 pause_resume.setText("Resume");
                 ControllerHandler.getOpaqueOverlay().setVisible(true);
                 timeClock.cancel(true);

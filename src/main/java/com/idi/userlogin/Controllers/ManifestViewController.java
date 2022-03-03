@@ -5,6 +5,7 @@ import com.idi.userlogin.Handlers.ControllerHandler;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.DBUtils;
 import com.idi.userlogin.utils.DailyLog;
 import com.idi.userlogin.utils.Utils;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -20,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.CustomTextField;
 
@@ -64,7 +66,8 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         final String type = typeCombo.getSelectionModel().getSelectedItem().getText();
         final List<String> conditions = conditCombo.getCheckModel().getCheckedItems();
         final String comments = commentsField.getText();
-        final Group group = groupCombo.getSelectionModel().getSelectedItem();
+
+        final Group group = groupTree.getSelectionModel().getSelectedItem().getValue();
         if (item != null) {
             final TreeItem newItem = new TreeItem<>(item);
             item.setWorkstation(COMP_NAME);
@@ -74,7 +77,8 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
             item.setupType(type);
             item.setComments(comments);
             item.getConditions().setAll(conditions);
-            insertHelper(item);
+            int key = insertHelper(item);
+            item.setId(key);
             if (tree.getRoot().getChildren().isEmpty()) {
                 initSelGroup(group);
             }
@@ -83,17 +87,16 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
             createFoldersFromStruct(item);
             fxTrayIcon.showInfoMessage("Item: " + item.getName() + " Inserted");
             Platform.runLater(() -> {
-                itemCombo.getSelectionModel().clearSelection();
                 try {
-                    itemCombo.getItems().remove(item);
-                } catch (Exception e) {
+                    itemCombo.getItems().removeIf(e -> e.equals(item));
+                    itemCombo.getSelectionModel().clearSelection();
+                } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
             });
             resetFields();
         }
     }
-
 
     @Override
     public int insertHelper(Item<? extends Item> item) {
@@ -103,14 +106,14 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `" + jsonHandler.getSelJobID() + "` SET employee_id=" + ConnectionHandler.user.getId() + ", type_id=(SELECT id FROM item_types WHERE name = '" + item.getType().getText() + "'),started_On=?,collection_id=?,group_id=?,comments=?,workstation=? WHERE id=?");
+            ps = connection.prepareStatement("INSERT INTO `" + DBUtils.DBTable.D.getTable() + "` (manifest_id,type_id,employee_id,started_On,group_id,comments,workstation,location,conditions) VALUES((SELECT id FROM `" + DBUtils.DBTable.M.getTable() + "` WHERE `" + uid + "`='" + itemCombo.getSelectionModel().getSelectedItem().getName() + "'),(SELECT id FROM item_types WHERE name='" + item.getType().getText() + "'),?,?,?,?,(SELECT id FROM workstation WHERE name='" + COMP_NAME + "'),1,?)");
             Date now = formatDateTime(item.getStarted_On());
-            ps.setTimestamp(1, new Timestamp(now.toInstant().toEpochMilli()));
-            ps.setInt(2, item.getCollection().getID());
+            ps.setInt(1, ConnectionHandler.user.getId());
+            ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setInt(3, item.getGroup().getID());
             ps.setString(4, item.getComments());
-            ps.setString(5, COMP_NAME);
-            ps.setInt(6, item.getId());
+            ps.setString(5, item.getConditions().toString().replaceAll("[\\[|\\]]", ""));
+
             ps.executeUpdate();
 
         } catch (SQLException | ParseException e) {
@@ -174,13 +177,13 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         });
         tree.setEditable(false); //The View shouldn't be editable for Manifest Mode
         itemInfo.setRoot(new TreeItem<String>());
-        groupCombo.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
-            groupSelectTask(nv, tree);
+        groupTree.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
+            groupSelectTask(nv.getValue(), tree);
         });
 
         itemCombo.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
             if (nv != null) {
-                ObservableList<TreeItem<String>> cols = Utils.getItemInfo(nv);
+                ObservableList<TreeItem<String>> cols = Utils.getItemInfo("id=" + nv.getId());
                 Platform.runLater(() -> {
                     itemInfo.getRoot().getChildren().setAll(cols);
                 });
@@ -302,10 +305,11 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         ObservableList<EntryItem> group_items = FXCollections.observableArrayList();
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.id,TRIM(m.`" + uid + "`) as item FROM `" + jsonHandler.getSelJobID() + "` m WHERE employee_id IS NULL AND TRIM(`" + groupCol + "`)='" + group.getName() + "'");
+            ps = connection.prepareStatement("SELECT m.id, TRIM(m.`" + uid + "`) as item FROM  `" + DBUtils.DBTable.M.getTable() + "` m LEFT JOIN `" + DBUtils.DBTable.D.getTable() + "` d ON m.id = d.manifest_id WHERE d.employee_id IS NULL AND m.group_id=" + group.getID());
+
             set = ps.executeQuery();
             while (set.next()) {
-                EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), 0, 0, "", false, "", "", "", "", false);
+                EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), 0, 0, "", false, "", "", "", "");
                 group_items.add(item);
             }
 
@@ -331,11 +335,11 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.id,g.id as group_id, g.name as group_name, TRIM(m.`" + uid + "`) as item,m.non_feeder, m.completed, e.name as employee, c.name as collection, m.total, t.name as type,m.conditions,m.comments,m.started_On,m.completed_On FROM `" + jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id WHERE m.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
+            ps = connection.prepareStatement("SELECT d.workstation,d.id,g.id as group_id, g.name as group_name, TRIM(m.`" + uid + "`) as item,d.non_feeder, d.completed, e.name as employee, d.total, t.name as type,d.conditions,d.comments,d.started_On,d.completed_On FROM `" + DBUtils.DBTable.D.getTable() + "` d INNER JOIN employees e ON d.employee_id = e.id INNER JOIN `" + DBUtils.DBTable.G.getTable() + "` g ON d.group_id = g.id INNER JOIN item_types t ON d.type_id = t.id INNER JOIN `" + DBUtils.DBTable.M.getTable() + "` m ON m.id=d.manifest_id  WHERE d.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
             set = ps.executeQuery();
             while (set.next()) {
-                final EntryItem item = new EntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"), Utils.intToBoolean(set.getInt("m.overridden")));
-                final String condition = set.getString("m.conditions");
+                final EntryItem item = new EntryItem(set.getInt("d.id"), group.getCollection(), group, set.getString("item"), set.getInt("d.total"), set.getInt("d.non_feeder"), set.getString("type"), set.getInt("d.completed") == 1, set.getString("d.comments"), set.getString("d.started_On"), set.getString("d.completed_On"), set.getString("d.workstation"));
+                final String condition = set.getString("d.conditions");
                 if (condition != null && !condition.isEmpty()) {
                     final String[] splitConditions = condition.split(", ");
                     item.getConditions().setAll(Arrays.asList(splitConditions));
@@ -366,13 +370,13 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         itemInfo.getRoot().getChildren().clear();
     }
 
-    public void resetItemStatus(Item item) {
+    public void deleteItem(Item item) {
         Connection connection = null;
         ResultSet set = null;
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `" + jsonHandler.getSelJobID() + "` SET employee_id=NULL, type_id=NULL,started_On=NULL,total=0,comments=NULL,workstation=NULL WHERE id=?");
+            ps = connection.prepareStatement("DELETE FROM `" + DBUtils.DBTable.D.getTable() + "` WHERE id=?");
             ps.setInt(1, item.getId());
             ps.executeUpdate();
 
@@ -382,7 +386,6 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
             DbUtils.closeQuietly(set);
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(connection);
-            updateItemProps(item);
         }
     }
 

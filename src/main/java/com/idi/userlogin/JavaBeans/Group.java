@@ -5,10 +5,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 
+import java.util.LinkedList;
 import java.util.Objects;
 
 public class Group extends ListCell<Group> {
+    private LinkedList subGroups;
     private IntegerProperty id;
+    private Group g_Parent;
     private IntegerProperty total;
     private Collection collection;
     private StringProperty name;
@@ -17,12 +20,18 @@ public class Group extends ListCell<Group> {
     private BooleanProperty complete;
     private ObservableList itemList;
 
-    public Group(String name) {
+    public Group(Group g_Parent, String name) {
+        this.g_Parent = g_Parent;
         this.name = new SimpleStringProperty(name);
+        this.itemList = FXCollections.observableArrayList();
+        this.id = new SimpleIntegerProperty();
+        this.total = new SimpleIntegerProperty();
+        this.complete = new SimpleBooleanProperty();
+        this.itemList = FXCollections.observableArrayList();
     }
 
     public Group(int id, int total, Collection collection, String name, boolean complete, String started_On, String completed_On) {
-
+        this.subGroups = new LinkedList();
         this.id = new SimpleIntegerProperty(id);
         this.total = new SimpleIntegerProperty(total);
         this.collection = collection;
@@ -45,6 +54,22 @@ public class Group extends ListCell<Group> {
 
     public void setId(int id) {
         this.id.set(id);
+    }
+
+    public LinkedList<Group> getSubGroup() {
+        return subGroups;
+    }
+
+    public Group getG_Parent() {
+        return g_Parent;
+    }
+
+    public void setG_Parent(Group g_Parent) {
+        this.g_Parent = g_Parent;
+    }
+
+    public void setSubGroup(LinkedList<Group> subGroup) {
+        this.subGroups = subGroup;
     }
 
     public int getTotal() {

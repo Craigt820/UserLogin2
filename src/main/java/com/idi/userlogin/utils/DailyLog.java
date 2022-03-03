@@ -64,7 +64,7 @@ public abstract class DailyLog {
             PreparedStatement ps = null;
             try {
                 connection = ConnectionHandler.createDBConnection();
-                ps = connection.prepareStatement("UPDATE `ul_scan2` SET total=? `" + Main.jsonHandler.getSelJobID() + "` WHERE group_id=? AND employee_id=(SELECT id FROM employees WHERE name='" + ConnectionHandler.user.getName() + "' AND started_on LIKE '%" + LocalDate.now().toString() + "%' OR total IS NOT NULL AND employee_id=" + ConnectionHandler.user.getId() + " AND completed_on LIKE '%" + LocalDate.now().toString() + "%') WHERE id=" + scanLogID);
+                ps = connection.prepareStatement("UPDATE `ul_scan2` SET total=? WHERE group_id=? AND u_id=" + ConnectionHandler.user.getId() + " AND start_time LIKE '%" + LocalDate.now().toString() + "%' OR total IS NOT NULL AND u_id=" + ConnectionHandler.user.getId() + " AND end_time LIKE '%" + LocalDate.now().toString() + "%' AND id=" + scanLogID);
                 ps.setInt(1, group.getTotal());
                 ps.setInt(2, group.getID());
                 ps.executeUpdate();

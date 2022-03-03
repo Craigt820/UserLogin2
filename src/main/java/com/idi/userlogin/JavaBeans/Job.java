@@ -1,8 +1,8 @@
 package com.idi.userlogin.JavaBeans;
 
 public class Job {
-    private String desc;
     private String name;
+    private String project;
     private int id;
     private boolean userEntry;
     private boolean complete;
@@ -13,22 +13,22 @@ public class Job {
     private String groupCol;
     private String description;
 
-    public Job(int id, String name, boolean entry, boolean complete, String uid, String groupCol, String desc) {
+    public Job(int id, String job_id, String project, boolean entry, boolean complete, String uid, String groupCol) {
         this.id = id;
-        this.name = name;
-        this.desc = desc;
+        this.name = job_id;
+        this.project = project;
         this.uid = uid;
         this.groupCol = groupCol;
         this.userEntry = entry;
         this.complete = complete;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getProject() {
+        return project;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setProject(String project) {
+        this.project = project;
     }
 
     public String getName() {

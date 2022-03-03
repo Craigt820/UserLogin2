@@ -239,7 +239,10 @@
                   </TitledPane>
                   <TitledPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="300.0" styleClass="pop-pane" text="Item Info" textFill="#fefefe" VBox.vgrow="ALWAYS">
                      <content>
-                        <TreeView fx:id="itemInfo" />
+                        <TreeView fx:id="itemInfo">
+                           <padding>
+                              <Insets bottom="8.0" top="8.0" />
+                           </padding></TreeView>
                      </content>
                      <VBox.margin>
                         <Insets left="40.0" right="40.0" />
@@ -247,7 +250,7 @@
                   </TitledPane>
                </children>
                <padding>
-                  <Insets bottom="24.0" left="8.0" right="8.0" top="24.0" />
+                  <Insets bottom="32.0" left="8.0" right="8.0" top="24.0" />
                </padding>
             </VBox>
          </content>

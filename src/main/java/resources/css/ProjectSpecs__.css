@@ -36,7 +36,7 @@
 /* Tree View */
 
 .tree-cell{
-  -fx-padding: 8 0 0 0;
+  -fx-padding: 8;
 }
 
 .tree-cell,
@@ -47,6 +47,16 @@
 .tree-cell:focused:selected .text{
   -fx-fill: black;
 }
+
+.custom-menu-item{
+  -fx-background-color: transparent;
+}
+
+
+.tree-view .tree-cell:filled:hover {
+    -fx-background-color: #07255e11;
+}
+
 
 
 /* Table View */
@@ -318,6 +328,8 @@
 }
 
 /* Combo Box */
+
+.menu-button,
 .combo-box{
   -fx-background-color:#fefefe;
   -fx-border-color: gray;
@@ -325,6 +337,7 @@
   -fx-border-radius: 6;
 }
 
+.menu-button,
 .combo-box .text{
    -fx-font-size:16;
    -fx-fill:#011D2E;
@@ -389,11 +402,18 @@
 
 .list-view{
   -fx-box-border: none;
-  -fx-selection-bar:rgba(248,248,248,.8);
+  -fx-selection-bar:rgba #07255e33;
   -fx-selection-bar-non-focused: rgba(248,248,248,.8);
   -fx-faint-focus-color:none;
   -fx-focus-color: none;
 }
+
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #07255e11;
+}
+
+
 
 .list-view .check-box{
   -fx-translate-x:-2;

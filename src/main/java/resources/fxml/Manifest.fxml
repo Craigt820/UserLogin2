@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="root" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../../../../../../craigt/IdeaProjects/StatusChart/src/main/resources/CSS/jfoenix-components.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idi.sample.Controllers.ManifestController">
+   <children>
+      <HBox VBox.vgrow="ALWAYS">
+         <children>
+            <VBox maxWidth="56.0" minWidth="56.0" prefWidth="56.0" style="-fx-background-color: rgb(6,3,71);" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <ImageView accessibleRole="BUTTON" fitHeight="36.0" fitWidth="34.0" onMouseClicked="#toProjects" pickOnBounds="true" preserveRatio="true" styleClass="top-buttons">
+                           <image>
+                              <Image url="@../../../../../../../../craigt/IdeaProjects/StatusChart/src/main/resources/Images/ic_dashboard_black_24dp_2x.png" />
+                           </image>
+                           <effect>
+                              <ColorAdjust brightness="1.0" />
+                           </effect>
+                        </ImageView>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="40.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+              <VBox minHeight="600.0" minWidth="800.0" HBox.hgrow="ALWAYS">
+                  <children>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="48.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label fx:id="jobID" style="-fx-font-size: 20;" text="JOBID">
+                                       <HBox.margin>
+                                          <Insets left="24.0" top="32.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <VBox alignment="CENTER_RIGHT" prefHeight="120.0" prefWidth="386.0">
+                                 <children>
+                                    <HBox alignment="TOP_RIGHT" fillHeight="false" minHeight="-Infinity" prefHeight="32.0" prefWidth="386.0">
+                                       <children>
+                                          <Label fx:id="projectsLabel" styleClass="text" text="Projects" textFill="#1b1847" underline="true">
+                                             <font>
+                                                <Font name="System Bold" size="13.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets top="2.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label fx:id="workerLabel" styleClass="text" text="Workers" textFill="#1b1847" underline="true">
+                                             <font>
+                                                <Font name="System Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="144.0" right="36.0" />
+                                             </HBox.margin>
+                                             <padding>
+                                                <Insets top="2.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets right="60.0" top="15.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_RIGHT" prefHeight="69.0" prefWidth="465.0">
+                                       <children>
+                                          <Label fx:id="activeLabel" styleClass="text" text="Active:" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="activeCount" prefHeight="20.0" prefWidth="70.0" text="0" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="8.0" />
+                                             </padding>
+                                             <HBox.margin>
+                                                <Insets left="45.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label fx:id="empLabel" styleClass="text" text="Employees:" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="17.0" />
+                                             </padding>
+                                             <HBox.margin>
+                                                <Insets left="20.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label fx:id="empCount" prefHeight="20.0" prefWidth="65.0" text="0" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="9.0" />
+                                             </padding>
+                                             <HBox.margin>
+                                                <Insets left="13.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="4.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_RIGHT" prefHeight="100.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <Label fx:id="compLabel" styleClass="text" text="Completed:" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="compCount" prefHeight="20.0" prefWidth="65.0" text="0" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="10.0" />
+                                             </padding>
+                                             <HBox.margin>
+                                                <Insets left="12.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label fx:id="tempLabel" styleClass="text" text="Temps:" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="25.0" />
+                                             </HBox.margin>
+                                             <padding>
+                                                <Insets left="18.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label fx:id="tempCount" prefHeight="20.0" prefWidth="56.0" text="0" textFill="#1b1847">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="9.0" />
+                                             </padding>
+                                             <HBox.margin>
+                                                <Insets left="40.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets right="8.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
+                      <HBox VBox.vgrow="ALWAYS">
+                          <children>
+                              <JFXTabPane fx:id="tabPane" HBox.hgrow="ALWAYS">
+                           <tabs>
+                              <Tab text="Scanning">
+                                <content>
+                                    <VBox />
+                                </content>
+                              </Tab>
+                              <Tab text="QC">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" />
+                                 </content>
+                              </Tab>
+                              <Tab text="Rescan">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                 </content>
+                              </Tab>
+                           </tabs>
+                        </JFXTabPane>
+                          </children>
+                     <VBox.margin>
+                        <Insets bottom="16.0" left="16.0" right="16.0" />
+                     </VBox.margin>
+                      </HBox>
+                  </children>
+              </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>

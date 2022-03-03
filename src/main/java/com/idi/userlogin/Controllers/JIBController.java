@@ -5,6 +5,7 @@ import com.idi.userlogin.Handlers.ControllerHandler;
 import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
+import com.idi.userlogin.utils.DBUtils;
 import com.idi.userlogin.utils.Utils;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import javafx.application.Platform;
@@ -143,10 +144,10 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.workstation,m.overridden,m.ss,m.doc_type,m.full_name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id  WHERE group_id=" + group.getID() + "");
+            ps = connection.prepareStatement("SELECT m.workstation,m.ss,m.doc_type,m.full_name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + DBUtils.DBTable.M.getTable() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN `" + DBUtils.DBTable.C.getTable() + " c ON m.collection_id = c.id  WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
-                final JIBEntryItem item = new JIBEntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("m.full_name"), set.getString("ss"), set.getString("doc_type"), set.getString("status"), set.getInt("m.total"), set.getInt("m.completed") == 1, "Multi-Paged", null, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"), Utils.intToBoolean(set.getInt("m.overridden")));
+                final JIBEntryItem item = new JIBEntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("m.full_name"), set.getString("ss"), set.getString("doc_type"), set.getString("status"), set.getInt("m.total"), set.getInt("m.completed") == 1, "Multi-Paged", null, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"));
                 String condition = set.getString("m.conditions");
                 if (condition != null && !condition.isEmpty()) {
                     String[] splitConditions = condition.split(", ");
@@ -181,7 +182,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `" + column + "`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND id=?");
+            ps = connection.prepareStatement("Update `" + DBUtils.DBTable.D.getTable() + "` SET `" + column + "`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND id=?");
             ps.setString(1, newValue);
             ps.setInt(2, item.getId());
             ps.executeUpdate();
@@ -200,7 +201,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `full_name`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND full_name=?");
+            ps = connection.prepareStatement("Update `" + DBUtils.DBTable.M.getTable() + "` SET `full_name`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND full_name=?");
             ps.setString(1, newValue);
             ps.setString(2, oldValue);
             ps.executeUpdate();
@@ -414,7 +415,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             public void commitEdit(String newValue) {
                 JIBEntryItem item = getTreeTableRow().getTreeItem().getValue();
                 item.setDocType(newValue);
-                ControllerHandler.updateItem(item, "UPDATE `" + jsonHandler.getSelJobID() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
+                ControllerHandler.updateItem(item, "UPDATE `" + DBUtils.DBTable.D.getTable() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
                 super.commitEdit(newValue);
             }
         });
@@ -587,8 +588,8 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         public JIBEntryItem() {
         }
 
-        public JIBEntryItem(int id, com.idi.userlogin.JavaBeans.Collection collection, Group group, String fullName, String ss, String docType, String status, int total, boolean completed, String type, List<String> condition, String comments, String started_On, String completed_On, String workstation, boolean overridden) {
-            super(id, collection, group, fullName, total, 0, "Multi-Paged", completed, comments, started_On, completed_On, workstation, overridden);
+        public JIBEntryItem(int id, com.idi.userlogin.JavaBeans.Collection collection, Group group, String fullName, String ss, String docType, String status, int total, boolean completed, String type, List<String> condition, String comments, String started_On, String completed_On, String workstation) {
+            super(id, collection, group, fullName, total, 0, "Multi-Paged", completed, comments, started_On, completed_On, workstation);
             super.type.setText("Multi-Paged");
             this.fullName = new SimpleStringProperty(fullName);
             this.ss = new SimpleStringProperty(ss);
@@ -702,7 +703,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
     }
 
     public boolean legalDocument() {
-        return statusCombo.getSelectionModel().getSelectedItem() != null && groupCombo.getSelectionModel().getSelectedItem() != null && firstField.getText() != null && !firstField.getText().isEmpty() && lastField.getText() != null && !lastField.getText().isEmpty() && ss.getText() != null && !ss.getText().isEmpty() && ss.getText().length() >= 9 && dtCombo.getSelectionModel().getSelectedItem() != null;
+        return statusCombo.getSelectionModel().getSelectedItem() != null && groupTree.getSelectionModel().getSelectedItem() != null && firstField.getText() != null && !firstField.getText().isEmpty() && lastField.getText() != null && !lastField.getText().isEmpty() && ss.getText() != null && !ss.getText().isEmpty() && ss.getText().length() >= 9 && dtCombo.getSelectionModel().getSelectedItem() != null;
     }
 
     public void legalDocumentHelper() {
@@ -739,7 +740,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         final List<String> condition = conditCombo.getCheckModel().getCheckedItems();
         final String comments = commentsField.getText();
         final String social = formatVisibleSocial(ssHelper.get()).toString();
-        final Group group = groupCombo.getSelectionModel().getSelectedItem();
+        final Group group = groupTree.getSelectionModel().getSelectedItem().getValue();
         boolean isPresent = tree.getRoot().getChildren().stream().anyMatch(e -> {
             if (e != null) {
                 return e.getValue().getFullName().equals(fullName) && e.getValue().getDocType().equals(docType) && e.getValue().getSs().equals(social) && social.length() >= 9;
@@ -747,7 +748,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             return false;
         });
         if (!isPresent) {
-            final JIBEntryItem item = new JIBEntryItem(0, group.getCollection(), group, fullName, social, docType, status, 0, false, "Multi-Paged", condition, comments, LocalDateTime.now().toString(), "", COMP_NAME, false);
+            final JIBEntryItem item = new JIBEntryItem(0, group.getCollection(), group, fullName, social, docType, status, 0, false, "Multi-Paged", condition, comments, LocalDateTime.now().toString(), "", COMP_NAME);
             insertHelper(item);
             tree.getRoot().getChildren().add(new TreeItem<JIBEntryItem>(item));
             ObservableList<JIBEntryItem> items = (ObservableList<JIBEntryItem>) group.getItemList();
@@ -767,7 +768,6 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
     }
 
-
     @Override
     public int insertHelper(Item<? extends Item> item) {
         JIBEntryItem entryItem = (JIBEntryItem) item;
@@ -777,7 +777,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + DBUtils.DBTable.D.getTable() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
@@ -822,9 +822,6 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         return super.tree;
     }
 
-    public SearchableComboBox<Group> getGroupCombo() {
-        return super.groupCombo;
-    }
 
     public SearchableComboBox<Collection> getColCombo() {
         return super.colCombo;
