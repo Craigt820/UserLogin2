@@ -259,8 +259,10 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
                     tree.getPlaceholder().autosize();
                     CompletableFuture.runAsync(() -> {
                         ObservableList<EntryItem> comboItems = getItemsForCombo(ControllerHandler.selGroup);
-                        sortItems(comboItems);
-                        itemCombo.getItems().setAll(comboItems);
+                        if (!comboItems.isEmpty()) {
+                            sortItems(comboItems);
+                            itemCombo.getItems().setAll(comboItems);
+                        }
                     }).supplyAsync(() -> {
                         ObservableList<?> entryItems = getGroupItems(ControllerHandler.selGroup);
                         return entryItems;
