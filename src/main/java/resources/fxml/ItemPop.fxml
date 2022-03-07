@@ -141,24 +141,6 @@
                                     <AnchorPane opacity="0.79" prefHeight="0.1" prefWidth="200.0" style="-fx-background-color: RGB(242,242,242);" />
                                  </children>
                               </VBox>
-                              <VBox spacing="8.0">
-                                 <children>
-                                    <Label style="-fx-font-size: 1em; -fx-font-weight: bold;" styleClass="labels" text="Overridden" textFill="#07255c">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="overridden" style="-fx-text-fill: #072550; -fx-font-size: 1.1em;" textFill="#07255eed">
-                                       <font>
-                                          <Font name="Segoe UI" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <AnchorPane opacity="0.79" prefHeight="0.1" prefWidth="200.0" style="-fx-background-color: RGB(242,242,242);" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets left="16.0" />
-                                 </VBox.margin>
-                              </VBox>
                            </children>
                            <padding>
                               <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />

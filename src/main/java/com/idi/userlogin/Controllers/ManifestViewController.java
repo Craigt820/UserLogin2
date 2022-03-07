@@ -2,11 +2,13 @@ package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.Main;
 import com.idi.userlogin.utils.DBUtils;
 import com.idi.userlogin.utils.DailyLog;
+import com.idi.userlogin.utils.ImgFactory;
 import com.idi.userlogin.utils.Utils;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
@@ -18,6 +20,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import org.apache.commons.dbutils.DbUtils;
@@ -148,6 +152,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
     @Override
     public void afterInitialize() {
         super.afterInitialize();
+        super.nameColumn.setEditable(false);
         itemInfo.setCellFactory(e -> {
             return new TreeCell<String>() {
                 @Override
@@ -178,7 +183,9 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         tree.setEditable(false); //The View shouldn't be editable for Manifest Mode
         itemInfo.setRoot(new TreeItem<String>());
         groupTree.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
-            groupSelectTask(nv.getValue(), tree);
+            if (nv != null) {
+                groupSelectTask(nv.getValue(), tree);
+            }
         });
 
         itemCombo.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
@@ -337,10 +344,10 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT d.workstation,d.id,g.id as group_id, g.name as group_name, TRIM(m.`" + uid + "`) as item,d.non_feeder, d.completed, e.name as employee, d.total, t.name as type,d.conditions,d.comments,d.started_On,d.completed_On FROM `" + DBUtils.DBTable.D.getTable() + "` d INNER JOIN employees e ON d.employee_id = e.id INNER JOIN `" + DBUtils.DBTable.G.getTable() + "` g ON d.group_id = g.id INNER JOIN item_types t ON d.type_id = t.id INNER JOIN `" + DBUtils.DBTable.M.getTable() + "` m ON m.id=d.manifest_id  WHERE d.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
+            ps = connection.prepareStatement("SELECT w.name,d.id,g.id as group_id, g.name as group_name, TRIM(m.`" + uid + "`) as item,d.non_feeder, d.completed, e.name as employee, d.total, t.name as type,d.conditions,d.comments,d.started_On,d.completed_On FROM `" + DBUtils.DBTable.D.getTable() + "` d INNER JOIN employees e ON d.employee_id = e.id INNER JOIN `" + DBUtils.DBTable.G.getTable() + "` g ON d.group_id = g.id INNER JOIN item_types t ON d.type_id = t.id INNER JOIN `" + DBUtils.DBTable.M.getTable() + "` m ON m.id=d.manifest_id INNER JOIN workstation w ON w.id=d.workstation WHERE d.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
             set = ps.executeQuery();
             while (set.next()) {
-                final EntryItem item = new EntryItem(set.getInt("d.id"), group.getCollection(), group, set.getString("item"), set.getInt("d.total"), set.getInt("d.non_feeder"), set.getString("type"), set.getInt("d.completed") == 1, set.getString("d.comments"), set.getString("d.started_On"), set.getString("d.completed_On"), set.getString("d.workstation"));
+                final EntryItem item = new EntryItem(set.getInt("d.id"), group.getCollection(), group, set.getString("item"), set.getInt("d.total"), set.getInt("d.non_feeder"), set.getString("type"), set.getInt("d.completed") == 1, set.getString("d.comments"), set.getString("d.started_On"), set.getString("d.completed_On"), set.getString("w.name"));
                 final String condition = set.getString("d.conditions");
                 if (condition != null && !condition.isEmpty()) {
                     final String[] splitConditions = condition.split(", ");

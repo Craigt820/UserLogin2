@@ -289,12 +289,12 @@
                                                         </HBox>
                                                         <JFXTreeTableView fx:id="tree" editable="true" fixedCellSize="56.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                             <columns>
-                                                                <JFXTreeTableColumn fx:id="existColumn" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: Center;" />
-                                                                <JFXTreeTableColumn fx:id="compColumn" maxWidth="90.0" minWidth="70.0" prefWidth="90.0" text="Complete" />
-                                                                <JFXTreeTableColumn fx:id="nameColumn" maxWidth="600.0" minWidth="40.0" prefWidth="300.0" text="Name" />
+                                                                <JFXTreeTableColumn fx:id="existColumn" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" style="-fx-alignment: Center;" text="Exists" />
+                                                                <JFXTreeTableColumn fx:id="compColumn" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" text="Complete" />
+                                                                <JFXTreeTableColumn fx:id="nameColumn" maxWidth="600.0" minWidth="40.0" prefWidth="250.0" text="Name" />
                                                                 <JFXTreeTableColumn fx:id="typeColumn" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" text="Type" />
-                                                                <JFXTreeTableColumn fx:id="countColumn" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" text="Count" />
-                                                                <JFXTreeTableColumn fx:id="nonFeederCol" maxWidth="80.0" minWidth="80.0" text="Non-Feed" />
+                                                                <JFXTreeTableColumn fx:id="countColumn" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" text="Count" />
+                                                                <JFXTreeTableColumn fx:id="nonFeederCol" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" text="Non-Feed" />
                                                                 <JFXTreeTableColumn fx:id="detailsColumn" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: Center;" />
                                                                 <JFXTreeTableColumn fx:id="delColumn" maxWidth="72.0" minWidth="72.0" prefWidth="72.0" style="-fx-alignment: Center;" />
                                                             </columns>

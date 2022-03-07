@@ -79,7 +79,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.collection = collection;
         this.name.set(name);
         this.total.set(total);
-        this.nonFeeder.set(non_feeder);
+        this.nonFeeder.set(Integer.parseInt(String.valueOf(non_feeder)));
         this.type.setText(type);
         setupType(type);
         this.completed.setSelected(completed);
@@ -309,7 +309,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
     }
 
     public void setNonFeeder(int nonFeeder) {
-        this.nonFeeder.set(nonFeeder);
+        this.nonFeeder.set(Integer.parseInt(String.valueOf(nonFeeder)));
     }
 
     public int getTotal() {

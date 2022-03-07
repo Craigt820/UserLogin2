@@ -32,6 +32,9 @@ import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
@@ -190,23 +193,27 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     private void completeGroupTask(JFXTreeTableView<? extends Item> tree) {
         Optional<? extends TreeItem<? extends Item>> items = tree.getRoot().getChildren().stream().filter(e -> !e.getValue().exists.get()).findAny();
         if (!items.isPresent()) {
-            tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
-            groupTree.getSelectionModel().getSelectedItem().getValue().setCompleted_On(LocalDateTime.now().toString());
-            groupTree.getSelectionModel().getSelectedItem().getValue().setComplete(true);
-            CompletableFuture.runAsync(() -> {
-                updateAllHelper(true);
-            }).thenRunAsync(() -> DailyLog.updateLog(ControllerHandler.selGroup)).thenRunAsync(() -> DailyLog.endDailyLog()).thenRunAsync(() -> {
-                fxTrayIcon.showInfoMessage("Group '" + ControllerHandler.selGroup.getName() + "' has been completed!");
-                Platform.runLater(() -> {
-                    tree.getRoot().getChildren().clear();
-                    selCol.setText("");
-                    selGroup.setText("");
-                    groupCountProp.setValue(0);
-                    groupTree.getSelectionModel().clearSelection();
-                    ControllerHandler.selGroup = null;
+            Group selGroup = groupTree.getSelectionModel().getSelectedItem().getValue();
+            if (!selGroup.isComplete()) {
+                tree.getRoot().getChildren().forEach(e2 -> e2.getValue().getCompleted().setSelected(true));
+                selGroup.setCompleted_On(LocalDateTime.now().toString());
+                selGroup.setComplete(true);
+                CompletableFuture.runAsync(() -> {
+                    updateAllHelper(true);
+                }).thenRunAsync(() -> DailyLog.updateLog(ControllerHandler.selGroup)).thenRunAsync(() -> DailyLog.endDailyLog()).thenRunAsync(() -> {
+                    fxTrayIcon.showInfoMessage("Group '" + ControllerHandler.selGroup.getName() + "' has been completed!");
+                    Platform.runLater(() -> {
+                        tree.getRoot().getChildren().clear();
+                        selCol.setText("");
+                        selGroup.setText("");
+                        groupCountProp.setValue(0);
+                        groupTree.getSelectionModel().clearSelection();
+                        ControllerHandler.selGroup = null;
+                    });
                 });
-            });
-
+            } else {
+                selGroup.setComplete(false);
+            }
         } else {
             tree.getSortOrder().add((TreeTableColumn) existColumn);
             tree.sort();
@@ -392,7 +399,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             item.details.setVisible(false);
         }
 
-        final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DetailsPop.fxml"));
+        final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ItemPop.fxml"));
         Parent root = null;
         try {
             root = loader.load();
@@ -539,7 +546,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 compBtn.setDisable(c.getList().size() <= 0);
             }
         });
-        nameColumn.setStyle("-fx-padding: 0 0 0 16;");
         final ContextMenu treeMenu = new ContextMenu();
         final MenuItem updateAll = new MenuItem("Update All");
 
@@ -551,7 +557,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
         treeMenu.getItems().add(updateAll);
         tree.setContextMenu(treeMenu);
-
 
         if (colCombo != null) {
             colCombo.getSelectionModel().selectFirst();
@@ -596,9 +601,10 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
             });
         }
+        nameColumn.setStyle("-fx-padding: 0 0 0 16;");
         nameColumn.setPrefWidth(190);
         nameColumn.setEditable(true);
-        this.nameColumn.setCellFactory(e -> new TextFieldTreeTableCell<T, String>(new StringConverter<String>() {
+        nameColumn.setCellFactory(e -> new TextFieldTreeTableCell<T, String>(new StringConverter<String>() {
             public String toString(String object) {
                 return object;
             }
@@ -611,27 +617,42 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
             String oldValue;
 
+            @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item != null && !item.isEmpty()) {
                     setText(item);
+                    this.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+                        startEdit();
+                        e.consume();
+                    });
                 } else {
                     setText("");
                 }
             }
 
+            @Override
             public void startEdit() {
                 this.oldValue = getText();
                 this.ctf.setText(this.oldValue);
+                this.ctf.requestFocus();
                 setGraphic(this.ctf);
+                setText(null);
                 super.startEdit();
+                this.ctf.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+                    if (e.getCode().equals(KeyCode.ENTER)) {
+                        commitEdit(ctf.getText());
+                    }
+                });
             }
 
+            @Override
             public void commitEdit(String newValue) {
                 if (Utils.legalText(newValue)) {
                     super.commitEdit(newValue);
                     Item item = getTreeTableRow().getTreeItem().getValue();
-                    item.setName(getText());
+                    item.setName(newValue);
+                    setText(newValue);
                     setGraphic(null);
                     updateName(this.oldValue, newValue, item);
                 } else {
@@ -671,7 +692,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
             });
             typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("type"));
         }
-
         delColumn.setPrefWidth(100);
         delColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("delete"));
         countColumn.setPrefWidth(190);
@@ -683,25 +703,24 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                     if (item != null) {
                         setGraphic(item);
                         item.setOnAction(e -> {
-                            CompletableFuture.runAsync(() -> {
-                                if (item.isSelected()) {
+                            if (item.isSelected()) {
+                                CompletableFuture.runAsync(() -> {
                                     getTreeTableRow().getTreeItem().getValue().completed_On.set(LocalDateTime.now().toString());
-                                } else {
-                                    getTreeTableRow().getTreeItem().getValue().completed_On.set(null);
-                                }
-                                BaseEntryController.updateSelected(getTreeTableRow().getItem());
-                            }).thenApply(e2 -> {
-                                int gTotal = ControllerHandler.getGroupTotal(ControllerHandler.selGroup);
-                                ControllerHandler.selGroup.setTotal(gTotal);
-                                return ControllerHandler.selGroup;
-                            }).thenAccept(group -> {
-                                Platform.runLater(() -> {
-                                    groupCountProp.set(group.getTotal());
+                                    BaseEntryController.updateSelected(getTreeTableRow().getItem());
+                                    int gTotal = getTreeTableView().getRoot().getChildren().stream().mapToInt(e2 -> e2.getValue().getTotal()).sum();
+                                    ControllerHandler.selGroup.setTotal(gTotal);
+                                }).thenRunAsync(() -> {
+                                    Platform.runLater(() -> {
+                                        groupCountProp.set(ControllerHandler.selGroup.getTotal());
+                                    });
+                                    updateGroup(ControllerHandler.selGroup, false);
+                                }).thenRunAsync(() -> {
+                                    tree.refresh();
                                 });
-                                updateGroup(group, false);
-                            }).thenRunAsync(() -> {
-                                tree.refresh();
-                            });
+                            } else {
+                                getTreeTableRow().getTreeItem().getValue().completed_On.set(null);
+
+                            }
                         });
                     } else {
                         setGraphic(null);
@@ -734,50 +753,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 //        });
 
         if (nonFeederCol != null) {
-            nonFeederCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("nonFeeder"));
-            nonFeederCol.setCellFactory(e -> new TextFieldTreeTableCell<T, Integer>(new IntegerStringConverter() {
-                @Override
-                public String toString(Integer object) {
-                    return object.toString();
-                }
-
-                @Override
-                public Integer fromString(String string) {
-                    return Integer.valueOf(string);
-                }
-            }) {
-                public final CustomTextField ctf = new CustomTextField();
-
-                @Override
-                public void updateItem(Integer item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item != null) {
-                        setText(item.toString());
-                    }
-                }
-
-                @Override
-                public void startEdit() {
-                    ctf.setText(getText());
-                    ctf.setMaxWidth(90);
-                    ctf.setMinWidth(90);
-                    ctf.setAlignment(Pos.CENTER);
-                    setGraphic(ctf);
-                    super.startEdit();
-                }
-
-                @Override
-                public void commitEdit(Integer newValue) {
-                    super.commitEdit(newValue);
-                    getTreeTableRow().getTreeItem().getValue().nonFeederProperty().set(newValue);
-                    setGraphic(null);
-                }
-            });
-
-            nonFeederCol.setOnEditCommit(e -> {
-                e.getRowValue().getValue().setNonFeeder(e.getNewValue());
-                updateNonFeeder(e.getRowValue().getValue());
-            });
 
             nonFeederCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("nonFeeder"));
             nonFeederCol.setCellFactory(e -> new TextFieldTreeTableCell<T, Integer>(new IntegerStringConverter() {
@@ -791,13 +766,19 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                     return Integer.valueOf(string);
                 }
             }) {
-                public final CustomTextField ctf = new CustomTextField();
+                public final TextField ctf = new TextField();
 
                 @Override
                 public void updateItem(Integer item, boolean empty) {
                     super.updateItem(item, empty);
                     if (item != null) {
+                        this.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+                            startEdit();
+                            e.consume();
+                        });
                         setText(item.toString());
+                    } else {
+                        setGraphic(null);
                     }
                 }
 
@@ -809,20 +790,24 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                     ctf.setAlignment(Pos.CENTER);
                     setGraphic(ctf);
                     super.startEdit();
+                    this.ctf.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+                        if (e.getCode().equals(KeyCode.ENTER)) {
+                            commitEdit(Integer.valueOf(ctf.getText()));
+                        }
+                    });
                 }
 
                 @Override
                 public void commitEdit(Integer newValue) {
                     super.commitEdit(newValue);
                     getTreeTableRow().getTreeItem().getValue().nonFeederProperty().set(newValue);
+                    updateNonFeeder(getTreeTableRow().getItem());
                     setGraphic(null);
+                    setText(String.valueOf(newValue));
                 }
             });
 
-            nonFeederCol.setOnEditCommit(e -> {
-                e.getRowValue().getValue().setNonFeeder(e.getNewValue());
-                updateNonFeeder(e.getRowValue().getValue());
-            });
+            nonFeederCol.setEditable(true);
         }
         groupTree.setEditable(true);
 
@@ -985,15 +970,17 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         groupTree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Group>>() {
             @Override
             public void changed(ObservableValue<? extends TreeItem<Group>> observable, TreeItem<Group> oldValue, TreeItem<Group> newValue) {
-                if (newValue.isLeaf() && newValue.getChildren().isEmpty()) {
-                    StringBuilder sbHelper = new StringBuilder();
-                    sbHelper.append(newValue.getValue().getName() + "\\");
-                    getSubGroup(newValue, sbHelper);
-                    List<String> split = Arrays.asList(sbHelper.toString().split("\\\\"));
-                    Collections.reverse(split);
-                    System.out.println(split.toString());
-                    groupMB.setText(split.stream().reduce("", (i, e) -> i + " \\ " + e));
-                    groupMB.hide();
+                if (newValue != null) {
+                    if (newValue.isLeaf() && newValue.getChildren().isEmpty()) {
+                        StringBuilder sbHelper = new StringBuilder();
+                        sbHelper.append(newValue.getValue().getName() + "\\");
+                        getSubGroup(newValue, sbHelper);
+                        List<String> split = Arrays.asList(sbHelper.toString().split("\\\\"));
+                        Collections.reverse(split);
+//                        System.out.println(split.toString());
+                        groupMB.setText(split.stream().reduce("", (i, e) -> i + " \\ " + e));
+                        groupMB.hide();
+                    }
                 }
             }
         });

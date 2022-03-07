@@ -389,7 +389,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             return cell;
         });
 
-        nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fullName"));
+//        nameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fullName"));
         idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"));
         dtColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("docType"));
 

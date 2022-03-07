@@ -3,7 +3,10 @@ package com.idi.userlogin.Controllers;
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
 import com.idi.userlogin.Handlers.JsonHandler;
+import com.idi.userlogin.Handlers.ProjectHandler;
 import com.idi.userlogin.JavaBeans.User;
+import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.DBUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -22,7 +25,9 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
+import static com.idi.userlogin.Handlers.JsonHandler.HOST_NAME;
 import static com.idi.userlogin.Main.jsonHandler;
 
 public class MainMenuController implements Initializable {
@@ -107,12 +112,34 @@ public class MainMenuController implements Initializable {
             try {
                 if (task.get()) {
                     FXUtils.fadeOut(statusLbl, Duration.seconds(2));
+                    workstation();
                     ControllerHandler.sceneTransition(root, getClass().getResource("/fxml/JobSelect.fxml"), false);
                 }
             } catch (InterruptedException | ExecutionException ex) {
                 ex.printStackTrace();
             }
         });
+    }
+
+    private void workstation() {
+
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = ConnectionHandler.createDBConnection();
+            ps = connection.prepareStatement("Insert into workstation(`name`) SELECT * FROM (SELECT ? as ws) AS temp WHERE NOT EXISTS(SELECT ws FROM workstation WHERE name = ?) LIMIT 1");
+            ps.setString(1, HOST_NAME);
+            ps.setString(2, HOST_NAME);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.LOGGER.log(Level.SEVERE, "There was an error updating a non-feeder field!", e);
+
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(connection);
+        }
     }
 
     @FXML

@@ -7,6 +7,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +18,16 @@ public class JsonHandler {
 
     public static final String USER_DIR = System.getProperty("user.dir");
     public static final String USER_HOME = System.getProperty("user.home");
+    public static String HOST_NAME;
+
+    static {
+        try {
+            HOST_NAME = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String selJobID;
     public String selJobDesc;
     public static String trackPath;

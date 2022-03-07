@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 //import sun.util.logging.PlatformLogger;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -42,7 +43,7 @@ public class Main extends Application {
         primaryStage.show();
         primaryStage.setMaximized(true);
         Platform.setImplicitExit(true);
-        primaryStage.setOnCloseRequest(e -> System.exit(0));
+        primaryStage.setOnCloseRequest(e -> e.consume());
 
         //Logging
         File dir = new File(JsonHandler.USER_DIR + "\\Logs");
