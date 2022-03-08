@@ -94,7 +94,10 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
                 try {
                     itemCombo.getItems().removeIf(e -> e.equals(item));
                     itemCombo.getSelectionModel().clearSelection();
-                } catch (IndexOutOfBoundsException e) {
+                    if (!itemCombo.getItems().isEmpty()) {
+                        itemCombo.getSelectionModel().selectFirst();
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });

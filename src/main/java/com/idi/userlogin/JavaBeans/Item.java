@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.idi.userlogin.Handlers.ControllerHandler.updateSelected;
 
@@ -142,6 +143,19 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         this.completed_On = new SimpleStringProperty();
         this.workstation = new SimpleStringProperty();
         this.previews = new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item<?> item = (Item<?>) o;
+        return Objects.equals(exists, item.exists) && Objects.equals(id, item.id) && Objects.equals(started_On, item.started_On) && Objects.equals(completed_On, item.completed_On) && Objects.equals(delete, item.delete) && Objects.equals(name, item.name) && Objects.equals(type, item.type) && Objects.equals(completed, item.completed) && Objects.equals(details, item.details) && Objects.equals(comments, item.comments) && Objects.equals(conditions, item.conditions) && Objects.equals(scanners, item.scanners) && Objects.equals(collection, item.collection) && Objects.equals(group, item.group) && Objects.equals(nonFeeder, item.nonFeeder) && Objects.equals(total, item.total) && Objects.equals(location, item.location) && Objects.equals(previews, item.previews) && Objects.equals(projColumns, item.projColumns) && Objects.equals(workstation, item.workstation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(exists, id, started_On, completed_On, delete, name, type, completed, details, comments, conditions, scanners, collection, group, nonFeeder, total, location, previews, projColumns, workstation);
     }
 
     public boolean isExists() {
