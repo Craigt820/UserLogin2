@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Handlers.JsonHandler.HOST_NAME;
-import static com.idi.userlogin.Main.jsonHandler;
+import static com.idi.userlogin.Handlers.JsonHandler.trackPath;
 
 public class MainMenuController implements Initializable {
 
@@ -98,7 +98,7 @@ public class MainMenuController implements Initializable {
     @FXML
     void login() throws ExecutionException, InterruptedException {
         FXUtils.fadeIn(statusLbl, Duration.seconds(.5));
-        statusLbl.setStyle("-fx-text-fill:#108c23; -fx-font-weight: bold;");
+        statusLbl.setStyle("-fx-text-fill:#3660a3; -fx-font-weight: bold;");
         statusLbl.setText("Logging In...");
         final Task<Boolean> task = new Task<Boolean>() {
             @Override
@@ -111,6 +111,7 @@ public class MainMenuController implements Initializable {
         task.setOnSucceeded(e -> {
             try {
                 if (task.get()) {
+                    Main.consumeStage = true;
                     FXUtils.fadeOut(statusLbl, Duration.seconds(2));
                     workstation();
                     ControllerHandler.sceneTransition(root, getClass().getResource("/fxml/JobSelect.fxml"), false);

@@ -1,7 +1,7 @@
 package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
-import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,36 +9,32 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import org.apache.commons.dbutils.DbUtils;
-import com.idi.userlogin.Handlers.JsonHandler;
 
 import java.net.URL;
 import java.sql.*;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import static com.idi.userlogin.Main.jsonHandler;
-
 public class SpecsController implements Initializable {
 
     @FXML
-    private Label close;
+    public Label close;
 
     @FXML
-    private Label fileType;
+    public Label fileType;
 
     @FXML
-    private Label dpi;
+    public Label dpi;
 
     @FXML
-    private Label compress;
+    public Label compress;
 
     @FXML
-    private Label mode;
+    public Label mode;
 
     @FXML
-    private TextArea comments;
+    public TextArea comments;
 
     public class Specs {
         private String type;
@@ -76,7 +72,7 @@ public class SpecsController implements Initializable {
         }
     }
 
-    private ObservableList<Specs> getSpecs() {
+    public ObservableList<Specs> getSpecs() {
         Connection connection = null;
         ResultSet set = null;
         PreparedStatement ps = null;
@@ -84,7 +80,7 @@ public class SpecsController implements Initializable {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT a.id,a.comments, sf.name, st.name, p.job_id FROM tracking.job_specs a INNER JOIN projects p ON a.job_id=p.id INNER JOIN spec_types st ON a.type_id = st.id INNER JOIN spec_fields sf ON a.field_id = sf.id  WHERE p.job_id='" + jsonHandler.getSelJobID() + "'");
+            ps = connection.prepareStatement("SELECT a.id,a.comments, sf.name, st.name, p.job_id FROM tracking.job_specs a INNER JOIN projects p ON a.job_id=p.id INNER JOIN spec_types st ON a.type_id = st.id INNER JOIN spec_fields sf ON a.field_id = sf.id  WHERE p.job_id='" + JsonHandler.getSelJob().getJob_id() + "'");
             set = ps.executeQuery();
             while (set.next()) {
                 Specs specs = new Specs(set.getString("sf.name"), set.getString("st.name"), set.getString("a.comments"));
@@ -114,9 +110,6 @@ public class SpecsController implements Initializable {
         fileType.setText(fileTypes);
         Optional<Specs> commentSpec = specList.stream().filter(e -> e.getType().equals("Comments")).findFirst();
         commentSpec.ifPresent(specs -> comments.setText(specs.getComments()));
-//        specList.forEach(e -> {
-//            System.out.println(e.getType() + " " + e.getField() + " " + e.getComments());
-//        });
     }
 
     public Label getClose() {

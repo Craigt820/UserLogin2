@@ -2,6 +2,7 @@ package com.idi.userlogin.utils;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
@@ -22,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import static com.idi.userlogin.Main.jsonHandler;
 
 public class Utils {
 
@@ -49,7 +49,7 @@ public class Utils {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT id,name FROM " + DBUtils.DBTable.C.getTable());
+            ps = connection.prepareStatement("SELECT id,name FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.C.getTable() + "`");
             set = ps.executeQuery();
             while (set.next()) {
                 Collection collection = new Collection(set.getInt("id"), set.getString("name"));
@@ -73,7 +73,7 @@ public class Utils {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT name FROM `" + DBUtils.DBTable.H.getTable() + "`");
+            ps = connection.prepareStatement("SELECT name FROM `" + JsonHandler.getSelJob().getJob_id() + "" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.H.getTable() + "`");
             set = ps.executeQuery();
 
             while (set.next()) {
@@ -100,7 +100,7 @@ public class Utils {
         ObservableList<TreeItem<String>> treeItems = FXCollections.observableArrayList();
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT * FROM `" + DBUtils.DBTable.M.getTable() + "` m WHERE " + query + " LIMIT 1");
+            ps = connection.prepareStatement("SELECT * FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` m WHERE " + query + " LIMIT 1");
             set = ps.executeQuery();
             List<String> headers = getHeadersInfo();
 
@@ -152,7 +152,7 @@ public class Utils {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT g.id, g.name as groupName,g.employee,c.id as Collection_id,c.name as colName,g.scanned as completed,g.started_on,g.completed_on FROM `" + DBUtils.DBTable.G.getTable() + "` g INNER JOIN `" + DBUtils.DBTable.C.getTable() + "` c ON g.collection_id = c.id  WHERE c.name='" + collection.getName() + "' AND g.employee=" + ConnectionHandler.user.getId() + " OR c.name='" + collection.getName() + "' AND g.employee IS NULL");
+            ps = connection.prepareStatement("SELECT g.id, g.name as groupName,g.employee,c.id as Collection_id,c.name as colName,g.scanned as completed,g.started_on,g.completed_on FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.G.getTable() + "` g INNER JOIN `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.C.getTable() + "` c ON g.collection_id = c.id  WHERE c.name='" + collection.getName() + "' AND g.employee=" + ConnectionHandler.user.getId() + " OR c.name='" + collection.getName() + "' AND g.employee IS NULL");
             set = ps.executeQuery();
             while (set.next()) {
                 final String started_On = (set.getString("g.started_on")) != null ? set.getString("g.started_on") : "";
@@ -180,7 +180,7 @@ public class Utils {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT g.id, g.name as groupName,g.s_groups as subGroups,g.employee,c.id as Collection_id,c.name as colName,g.scanned as completed,g.started_on,g.completed_on FROM `" + DBUtils.DBTable.G.getTable() + "` g INNER JOIN `" + DBUtils.DBTable.C.getTable() + "` c ON g.collection_id = c.id  WHERE c.name='" + collection.getName() + "' AND g.employee=" + ConnectionHandler.user.getId() + " OR c.name='" + collection.getName() + "' AND g.employee IS NULL");
+            ps = connection.prepareStatement("SELECT g.id, g.name as groupName,g.s_groups as subGroups,g.employee,c.id as Collection_id,c.name as colName,g.scanned as completed,g.started_on,g.completed_on FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.G.getTable() + "` g INNER JOIN `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.C.getTable() + "` c ON g.collection_id = c.id  WHERE c.name='" + collection.getName() + "' AND g.employee=" + ConnectionHandler.user.getId() + " OR c.name='" + collection.getName() + "' AND g.employee IS NULL");
             set = ps.executeQuery();
             while (set.next()) {
                 final String started_On = (set.getString("g.started_on")) != null ? set.getString("g.started_on") : "";

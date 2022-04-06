@@ -1,8 +1,7 @@
 package com.idi.userlogin.utils;
 
-import com.idi.userlogin.Handlers.ConnectionHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 
-import static com.idi.userlogin.Main.jsonHandler;
 
 public abstract class DBUtils<T> {
 
@@ -10,7 +9,7 @@ public abstract class DBUtils<T> {
 
     public enum DBTable {
 
-        M(jsonHandler.getSelJobID() + "_M"), C(jsonHandler.getSelJobID() + "_C"), H(jsonHandler.getSelJobID() + "_H"), D(jsonHandler.getSelJobID() + "_D"), G(jsonHandler.getSelJobID() + "_G");
+        M("_M"), C("_C"), H("_H"), D("_D"), G("_G");
 
         private String table;
 
@@ -25,5 +24,6 @@ public abstract class DBUtils<T> {
         public void setTable(String table) {
             this.table = table;
         }
+
     }
 }

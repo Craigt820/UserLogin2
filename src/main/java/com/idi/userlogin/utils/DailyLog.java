@@ -2,6 +2,7 @@ package com.idi.userlogin.utils;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.Main;
 
@@ -30,7 +31,7 @@ public abstract class DailyLog {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `ul_scan2` (u_id,job_id,start_time,total,rescan,group_id) VALUES((SELECT id FROM employees WHERE employees.name='" + ConnectionHandler.user.getName() + "'),(SELECT id FROM projects WHERE projects.job_id='" + Main.jsonHandler.getSelJobID() + "'),?,?,?,?)", 1);
+            ps = connection.prepareStatement("INSERT INTO `ul_scan2` (u_id,job_id,start_time,total,rescan,group_id) VALUES((SELECT id FROM employees WHERE employees.name='" + ConnectionHandler.user.getName() + "'),(SELECT id FROM projects WHERE projects.job_id='" + JsonHandler.getSelJob().getJob_id() + "'),?,?,?,?)", 1);
             Date now = ControllerHandler.formatDateTime(LocalDateTime.now().toString());
             ps.setTimestamp(1, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setInt(2, 0);

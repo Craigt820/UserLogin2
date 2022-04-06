@@ -2,6 +2,7 @@ package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
@@ -256,7 +257,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 setupDelete(this, tree);
             });
 
-            super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(this.id.get(), this) + "\\" + this.name.get().trim());
+            super.location = Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getJob_id() + "\\" + buildFolderStruct(this.id.get(), this) + "\\" + this.name.get().trim());
 
         }
 
@@ -293,7 +294,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
         yes.setOnMousePressed(e3 -> {
             if (item != null) {
-                if (selJob.isUserEntry()) {
+                if (JsonHandler.getSelJob().isUserEntry()) {
                     Item.removeItem(item);
                     fxTrayIcon.showInfoMessage("Item: '" + item.getName().trim() + "' Has Been Removed");
                     //Remove from group item list
@@ -309,7 +310,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
 
 
                 //Remove from Tree View
-                boolean remove = tree.getRoot().getChildren().removeIf(e -> e.getValue().id.get() == item.getId());
+                boolean remove = tree.getRoot().getChildren().removeIf(e -> Objects.equals(e.getValue().getName(), item.getName()));
                 if (remove) {
                     CompletableFuture.supplyAsync(() -> {
                         int gTotal = ControllerHandler.getGroupTotal(ControllerHandler.selGroup);
@@ -332,7 +333,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     @Override
     public void groupSelectTask(Group nv, JFXTreeTableView<? extends Item> tree) {
         boolean sameVal = false;
-        if (nv.getSubGroup() == null && nv != null && !nv.getName().isEmpty()) {
+        if (!nv.getName().isEmpty()) {
             if (!nv.getName().equals(addGroupLabel)) {
                 if (ControllerHandler.selGroup != null && nv == ControllerHandler.selGroup) {
                     sameVal = true;
@@ -501,7 +502,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + DBUtils.DBTable.D.getTable() + "` SET non_feeder=? WHERE id=?");
+            ps = connection.prepareStatement("Update `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` SET non_feeder=? WHERE id=?");
             ps.setInt(1, item.getNonFeeder());
             ps.setInt(2, item.getId());
             ps.executeUpdate();
@@ -530,6 +531,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
     public void afterInitialize() {
         //For Main Menu
         // Create the tree
+        colCombo.getItems().clear();
         TreeItem<Group> rootItem = new TreeItem<Group>(new Group(null, ""));
         rootItem.setExpanded(true);
         groupTree.setShowRoot(false);
@@ -831,11 +833,11 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         detailsColumn.setPrefWidth(100);
         detailsColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("details"));
         conditCombo.setManaged(true);
-
         groupTree.setCellFactory(e -> {
             TreeCell<Group> cell = new TreeCell<Group>() {
                 @Override
                 protected void updateItem(Group item, boolean empty) {
+
                     super.updateItem(item, empty);
                     if (item != null && !item.getName().isEmpty()) {
                         setText(item.getName());
@@ -966,7 +968,6 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                 }
             });
         }
-
         groupTree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Group>>() {
             @Override
             public void changed(ObservableValue<? extends TreeItem<Group>> observable, TreeItem<Group> oldValue, TreeItem<Group> newValue) {
@@ -979,6 +980,19 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
                         Collections.reverse(split);
 //                        System.out.println(split.toString());
                         groupMB.setText(split.stream().reduce("", (i, e) -> i + " \\ " + e));
+                        if (newValue.getValue().isComplete()) {
+                            groupMB.setGraphic(ImgFactory.createView(CHECKMARK));
+                            groupMB.setGraphicTextGap(8);
+                            groupMB.setContentDisplay(ContentDisplay.LEFT);
+                            String completed_On = newValue.getValue().getCompleted_On();
+                            if (completed_On != null && !completed_On.isEmpty()) {
+                                groupMB.setTooltip(new Tooltip("Completed: " + LocalDateTime.parse(completed_On).format(DATE_FORMAT)));
+                                groupMB.getTooltip().setStyle("-fx-text-fill:white;");
+                            }
+                        } else {
+                            groupMB.setGraphic(null);
+                            groupMB.setTooltip(null);
+                        }
                         groupMB.hide();
                     }
                 }
@@ -1096,7 +1110,7 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + DBUtils.DBTable.M.getTable() + "` (name,collection_id,job_id,started_on,employees,status_id) VALUES(?,?,(SELECT id FROM projects WHERE job_id='" + jsonHandler.getSelJobID() + "'),?,?,(SELECT id FROM `sc_group_status` WHERE name=?))", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` (name,collection_id,job_id,started_on,employees,status_id) VALUES(?,?,(SELECT id FROM projects WHERE job_id='" + JsonHandler.getSelJob().getJob_id() + "'),?,?,(SELECT id FROM `sc_group_status` WHERE name=?))", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, group.getName());
             ps.setInt(2, group.getCollection().getID());
             Date now = formatDateTime(group.getStarted_On());
@@ -1130,7 +1144,9 @@ public abstract class BaseEntryController<T extends Item> extends ControllerHand
         compColumn.getContextMenu().getItems().add(compAll);
         compAll.setOnAction(e -> {
             CompletableFuture.runAsync(() -> {
-                ControllerHandler.selGroup.getItemList().forEach(e2 -> e2.getCompleted().setSelected(true));
+                Platform.runLater(() -> {
+                    ControllerHandler.selGroup.getItemList().forEach(e2 -> e2.getCompleted().setSelected(true));
+                });
             }).thenRunAsync(() -> updateAllHelper(false));
         });
 

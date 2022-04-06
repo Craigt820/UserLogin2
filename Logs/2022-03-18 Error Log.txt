@@ -1,0 +1,19 @@
+Mar 18, 2022 11:49:21 AM com.idi.userlogin.Controllers.ManifestViewController getItemsForCombo
+SEVERE: There was an error getting the groups from the db!
+java.nio.file.InvalidPathException: Illegal char <*> at index 25: E:\projects\TEST001\TEST\*EMFG3*\\Th4398
+	at sun.nio.fs.WindowsPathParser.normalize(WindowsPathParser.java:182)
+	at sun.nio.fs.WindowsPathParser.parse(WindowsPathParser.java:153)
+	at sun.nio.fs.WindowsPathParser.parse(WindowsPathParser.java:77)
+	at sun.nio.fs.WindowsPath.parse(WindowsPath.java:94)
+	at sun.nio.fs.WindowsFileSystem.getPath(WindowsFileSystem.java:255)
+	at java.nio.file.Paths.get(Paths.java:84)
+	at com.idi.userlogin.Controllers.BaseEntryController$EntryItem.<init>(BaseEntryController.java:259)
+	at com.idi.userlogin.Controllers.ManifestViewController.getItemsForCombo(ManifestViewController.java:324)
+	at com.idi.userlogin.Controllers.ManifestViewController.lambda$groupSelectTask$7(ManifestViewController.java:271)
+	at java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1640)
+	at java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1632)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1067)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1703)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:172)
+

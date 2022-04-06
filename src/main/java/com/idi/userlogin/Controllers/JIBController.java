@@ -2,11 +2,11 @@ package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Item;
 import com.idi.userlogin.utils.DBUtils;
-import com.idi.userlogin.utils.Utils;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -144,7 +144,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.workstation,m.ss,m.doc_type,m.full_name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + DBUtils.DBTable.M.getTable() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN `" + DBUtils.DBTable.C.getTable() + " c ON m.collection_id = c.id  WHERE group_id=" + group.getID() + "");
+            ps = connection.prepareStatement("SELECT m.workstation,m.ss,m.doc_type,m.full_name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + JsonHandler.getSelJob().getJob_id() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.C.getTable() + " c ON m.collection_id = c.id  WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
                 final JIBEntryItem item = new JIBEntryItem(set.getInt("m.id"), group.getCollection(), group, set.getString("m.full_name"), set.getString("ss"), set.getString("doc_type"), set.getString("status"), set.getInt("m.total"), set.getInt("m.completed") == 1, "Multi-Paged", null, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"));
@@ -182,7 +182,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + DBUtils.DBTable.D.getTable() + "` SET `" + column + "`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND id=?");
+            ps = connection.prepareStatement("Update `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` SET `" + column + "`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND id=?");
             ps.setString(1, newValue);
             ps.setInt(2, item.getId());
             ps.executeUpdate();
@@ -201,7 +201,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + DBUtils.DBTable.M.getTable() + "` SET `full_name`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND full_name=?");
+            ps = connection.prepareStatement("Update `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` SET `full_name`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND full_name=?");
             ps.setString(1, newValue);
             ps.setString(2, oldValue);
             ps.executeUpdate();
@@ -415,7 +415,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             public void commitEdit(String newValue) {
                 JIBEntryItem item = getTreeTableRow().getTreeItem().getValue();
                 item.setDocType(newValue);
-                ControllerHandler.updateItem(item, "UPDATE `" + DBUtils.DBTable.D.getTable() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
+                ControllerHandler.updateItem(item, "UPDATE `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
                 super.commitEdit(newValue);
             }
         });
@@ -608,17 +608,17 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
             });
 
 
-            super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
+            super.location = Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getJob_id() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
 
 
             if (super.id.get() > 0) {
-                super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
+                super.location = Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getJob_id() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
             }
             //This is required for newly inserted items -- The id is updated to the new row id once the new item is inserted into the db. For this project, the file name
             // is the id. The id would be "0" if it's not updated after inserting.
             super.idProperty().addListener((ob, ov, nv) -> {
                 if (!ov.equals(nv)) {
-                    super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
+                    super.location = Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getJob_id() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
                 }
             });
         }
@@ -777,7 +777,7 @@ public class JIBController extends BaseEntryController<JIBController.JIBEntryIte
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + DBUtils.DBTable.D.getTable() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` (name,started_on,employee_id,collection_id,group_id,comments,full_name,ss,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getName());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));

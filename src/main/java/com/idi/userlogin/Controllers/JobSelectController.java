@@ -2,10 +2,12 @@ package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.JavaBeans.Collection;
 import com.idi.userlogin.JavaBeans.Group;
 import com.idi.userlogin.JavaBeans.Job;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.DBUtils;
 import com.idi.userlogin.utils.Utils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -29,7 +31,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Handlers.ControllerHandler.groupCountProp;
-import static com.idi.userlogin.Main.jsonHandler;
 import static com.idi.userlogin.utils.Utils.*;
 
 public class JobSelectController implements Initializable {
@@ -42,52 +43,56 @@ public class JobSelectController implements Initializable {
     private SearchableComboBox<Job> jobID;
 
     @FXML
-    private void toMain() throws IOException {
-        ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/MainMenu.fxml"), false);
+    private void back() throws IOException, SQLException {
+        if (JsonHandler.getSelJob() != null) { //User is logged in, just go back to current project
+            jobID.getSelectionModel().select(JsonHandler.getSelJob());
+            confirm();
+        } else {
+            Main.consumeStage = false;
+            ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/MainMenu.fxml"), false);
+        }
     }
 
     @FXML
     private void confirm() throws IOException, SQLException {
-
         if (jobID.getSelectionModel().getSelectedItem() != null) {
-            jsonHandler.setSelJobID(jobID.getSelectionModel().getSelectedItem().getName());
-            jsonHandler.setSelJobDesc(jobID.getSelectionModel().getSelectedItem().getProject());
-//            ControllerHandler.checkListScene = FXMLLoader.load(BaseEntryController.class.getResource("/fxml/CheckListView.fxml"));
-
             final Stage stage = (Stage) ControllerHandler.mainMenuController.root.getScene().getWindow();
             stage.setMaximized(true);
+            final Job selJob = jobID.getSelectionModel().getSelectedItem();
+            JsonHandler.setSelJob(selJob);
             ObservableList<Collection> collections = getCollections();
             //Add the corresponding groups to the right collection and set complete datetime
 
-            final Job selJob = jobID.getSelectionModel().getSelectedItem();
-            ControllerHandler.selJob = selJob;
-
-            if (selJob.getName().contains("JIB")) {
+            if (selJob.getJob_id().contains("JIB")) {
                 ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/JIB.fxml"), true);
                 ControllerHandler.jibController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
                 ControllerHandler.jibController.getCollectionList().addAll(collections);
                 ControllerHandler.jibController.getColCombo().getItems().addAll(collections);
             } else {
                 if (selJob.isUserEntry()) {
-                    collections.forEach(e -> {
-                        ObservableList<Group> groups = getGroups_(e);
-                        e.getGroupList().addAll(groups);
-                    });
-                    ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/UserEntry.fxml"), true);
-                    ControllerHandler.entryController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
-                    ControllerHandler.entryController.getCollectionList().addAll(collections);
-                    ControllerHandler.entryController.getColCombo().getItems().addAll(collections);
-                    ControllerHandler.entryController.setGroupCol(selJob.getGroupCol());
+                    CompletableFuture.runAsync(() -> {
+                        collections.forEach(e -> {
+                            ObservableList<Group> groups = getGroups(e);
+                            e.getGroupList().addAll(groups);
+                        });
+                    }).thenRunAsync(() -> {
+                        Platform.runLater(() -> {
+                            ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/UserEntry.fxml"), true);
+                            ControllerHandler.entryController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
+                            ControllerHandler.entryController.getCollectionList().addAll(collections);
+                            ControllerHandler.entryController.getColCombo().getItems().addAll(collections);
+                            ControllerHandler.entryController.setGroupCol(selJob.getGroupCol());
+                        });
+                    }).join();
                 } else {
                     CompletableFuture.runAsync(() -> {
                         collections.forEach(e -> {
-                                ObservableList<Group> groups = getGroups(e);
-                                e.getGroupList().addAll(groups);
+                            ObservableList<Group> groups = getGroups(e);
+                            e.getGroupList().addAll(groups);
                         });
                     }).thenRunAsync(() -> {
                         Platform.runLater(() -> {
                             ControllerHandler.sceneTransition(ControllerHandler.mainMenuController.root, getClass().getResource("/fxml/ManifestView.fxml"), true);
-                            ControllerHandler.maniViewController.setGroupCol(selJob.getGroupCol());
                             ControllerHandler.maniViewController.getRoot().setPrefSize(ControllerHandler.mainMenuController.root.getWidth(), ControllerHandler.mainMenuController.root.getHeight());
                             ControllerHandler.maniViewController.getCollectionList().addAll(collections);
                             ControllerHandler.maniViewController.getColCombo().getItems().addAll(collections);
@@ -99,9 +104,9 @@ public class JobSelectController implements Initializable {
                 }
             }
 
-            ControllerHandler.loggedInController.getDesc().setText(jsonHandler.getSelJobDesc());
+            ControllerHandler.loggedInController.getDesc().setText(JsonHandler.getSelJob().getDescription());
             ControllerHandler.loggedInController.getName().setText(ConnectionHandler.user.getName());
-            ControllerHandler.loggedInController.getJobID().setText(jsonHandler.getSelJobID());
+            ControllerHandler.loggedInController.getJobID().setText(JsonHandler.getSelJob().getJob_id());
             LoggedInController.updateStatus("Online");
         }
         groupCountProp.setValue(0);
@@ -143,7 +148,7 @@ public class JobSelectController implements Initializable {
         FXCollections.sort(jobID.getItems(), new Comparator<Job>() {
             @Override
             public int compare(Job o1, Job o2) {
-                return o1.getName().compareTo(o2.getName());
+                return o1.getJob_id().compareTo(o2.getJob_id());
             }
         });
         jobID.setButtonCell(new JobListCell());
@@ -152,7 +157,7 @@ public class JobSelectController implements Initializable {
             @Override
             public String toString(Job object) {
                 if (object != null) {
-                    return object.getName();
+                    return object.getJob_id();
                 }
                 return "";
             }
@@ -171,7 +176,7 @@ public class JobSelectController implements Initializable {
             @Override
             public String toString(Job object) {
                 if (object != null) {
-                    return object.getName();
+                    return object.getJob_id();
                 }
                 return "";
             }
@@ -193,8 +198,8 @@ public class JobSelectController implements Initializable {
         @Override
         protected void updateItem(Job item, boolean empty) {
             super.updateItem(item, empty);
-            if (item != null && !item.getName().isEmpty()) {
-                setText(item.getName() + " (" + item.getProject().trim() + ")");
+            if (item != null && !item.getJob_id().isEmpty()) {
+                setText(item.getJob_id() + " (" + item.getProject().trim() + ")");
             } else {
                 setText("");
                 setGraphic(null);

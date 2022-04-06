@@ -29,8 +29,8 @@ public class Main extends Application {
 
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     public final static ObservableList<String> DEVICE_LIST = FXCollections.observableArrayList();
-    public static JsonHandler jsonHandler;
     public static FXTrayIcon fxTrayIcon;
+    public static boolean consumeStage; //Flag to block closing the window ONLY if on the main menu window
     public static FileHandler logHandler;
     private static SimpleFormatter formatter;
 
@@ -42,8 +42,14 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setMaximized(true);
-        Platform.setImplicitExit(true);
-        primaryStage.setOnCloseRequest(e -> e.consume());
+        primaryStage.setOnCloseRequest(e -> {
+            if (consumeStage) {
+                e.consume();
+            }else{
+                fxTrayIcon.hide();
+                Platform.exit();
+            }
+        });
 
         //Logging
         File dir = new File(JsonHandler.USER_DIR + "\\Logs");
@@ -56,14 +62,12 @@ public class Main extends Application {
         Main.logHandler.setFormatter(formatter);
         Main.LOGGER.addHandler(logHandler);
         LOGGER.setLevel(Level.ALL);
-
         if (fxTrayIcon == null) {
             fxTrayIcon = new FXTrayIcon((Stage) root.getScene().getWindow(), new URL(ImgFactory.IMGS.CHECKMARK.getLoc()));
             fxTrayIcon.show();
             fxTrayIcon.setApplicationTitle("User Login");
         }
-        //Init & Read Json Properties File
-        jsonHandler = new JsonHandler();
+
 
         //Get any connect USB Devices that may be scanners
         final Task<ArrayList<String>> task = new Task<ArrayList<String>>() {

@@ -1,5 +1,6 @@
 package com.idi.userlogin.JavaBeans;
 
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.utils.DBUtils;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.*;
@@ -62,7 +63,7 @@ public abstract class Item<K> extends RecursiveTreeObject<K> {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("DELETE FROM `" + DBUtils.DBTable.D.getTable() + "` WHERE id=" + item.getId() + "");
+            ps = connection.prepareStatement("DELETE FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` WHERE id=" + item.getId() + "");
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

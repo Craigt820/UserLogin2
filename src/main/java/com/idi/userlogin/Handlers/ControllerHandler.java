@@ -7,7 +7,6 @@ import com.idi.userlogin.JavaBeans.Job;
 import com.idi.userlogin.Main;
 import com.idi.userlogin.utils.DBUtils;
 import com.idi.userlogin.utils.DailyLog;
-import com.idi.userlogin.utils.Utils;
 import com.itextpdf.text.pdf.PdfReader;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.animation.FadeTransition;
@@ -50,7 +49,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 import static com.idi.userlogin.Main.fxTrayIcon;
-import static com.idi.userlogin.Main.jsonHandler;
 import static com.idi.userlogin.utils.Utils.booleanToInt;
 
 public abstract class ControllerHandler {
@@ -62,8 +60,7 @@ public abstract class ControllerHandler {
     public static UserEntryViewController entryController;
     public static ManifestViewController maniViewController;
     public static LoggedInController loggedInController;
-    public static Group selGroup = null;
-    public static Job selJob;
+    public static Group selGroup;
     public com.idi.userlogin.JavaBeans.Collection selColItem = null;
     public static PopOver mainMenuPop;
     public static SimpleIntegerProperty totalCountProp = new SimpleIntegerProperty(0); //For Total Count
@@ -103,7 +100,7 @@ public abstract class ControllerHandler {
         PreparedStatement ps = null;
         ResultSet set = null;
         try {
-            String sql = "SELECT folder_structure FROM projects WHERE job_id='" + jsonHandler.getSelJobID() + "'";
+            String sql = "SELECT folder_structure FROM projects WHERE job_id='" + JsonHandler.getSelJob().getJob_id() + "'";
             connection = ConnectionHandler.createDBConnection();
             ps = connection.prepareStatement(sql);
             set = ps.executeQuery(sql);
@@ -204,14 +201,14 @@ public abstract class ControllerHandler {
         return builder.toString();
     }
 
-    public static Object getDataByCol(int id, String colName) throws SQLException {
+    public static Object getDataByCol(int id, String colName) {
         Connection connection = null;
         ResultSet set = null;
         PreparedStatement ps = null;
         Object data = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT `" + colName + "` FROM `" + DBUtils.DBTable.M.getTable() + "` WHERE id=? LIMIT 1");
+            ps = connection.prepareStatement("SELECT `" + colName + "` FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` WHERE id=? LIMIT 1");
             ps.setInt(1, id);
             set = ps.executeQuery();
             if (set.next()) {
@@ -282,7 +279,7 @@ public abstract class ControllerHandler {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `" + DBUtils.DBTable.D.getTable() + "` SET conditions=?, comments=? WHERE id=?");
+            ps = connection.prepareStatement("UPDATE `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` SET conditions=?, comments=? WHERE id=?");
             ps.setString(1, item.getConditions().toString().replaceAll("[\\[|\\]]", ""));
             ps.setString(2, item.getComments());
             ps.setInt(3, item.getId());
@@ -447,7 +444,7 @@ public abstract class ControllerHandler {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + DBUtils.DBTable.D.getTable() + "` SET total=?, completed=?, completed_On=? WHERE id=?");
+            ps = connection.prepareStatement("Update `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` SET total=?, completed=?, completed_On=? WHERE id=?");
             ps.setInt(1, item.getTotal());
             ps.setInt(2, booleanToInt(item.getCompleted().isSelected()));
             if (item.getCompleted().isSelected()) {
@@ -504,7 +501,7 @@ public abstract class ControllerHandler {
             connection = ConnectionHandler.createDBConnection();
 
             if (completed) {
-                ps = connection.prepareStatement("Update `" + DBUtils.DBTable.G.getTable() + "` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Completed') WHERE id=?");
+                ps = connection.prepareStatement("Update `" + DBUtils.DBTable.G.getTable() + "` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Scanned') WHERE id=?");
                 ps.setInt(1, group.getTotal());
                 ps.setInt(2, booleanToInt(completed));
                 final Date now = formatDateTime(LocalDateTime.now().toString());
@@ -552,7 +549,7 @@ public abstract class ControllerHandler {
         int gTotal = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT SUM(total) as gTotal FROM `" + DBUtils.DBTable.G.getTable() + "` WHERE id=?");
+            ps = connection.prepareStatement("SELECT SUM(total) as gTotal FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.G.getTable() + "` WHERE id=?");
             ps.setInt(1, group.getID());
             set = ps.executeQuery();
             while (set.next()) {
@@ -575,7 +572,7 @@ public abstract class ControllerHandler {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("Update `" + DBUtils.DBTable.D.getTable() + "` SET total=?, completed=?, completed_On=? WHERE id=?");
+            ps = connection.prepareStatement("Update `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` SET total=?, completed=?, completed_On=? WHERE id=?");
             ps.setInt(1, item.getTotal());
             ps.setInt(2, booleanToInt(item.getCompleted().isSelected()));
             if (item.getCompleted_On() != null && item.getCompleted().isSelected()) {

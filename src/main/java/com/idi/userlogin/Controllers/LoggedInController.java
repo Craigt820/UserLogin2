@@ -2,9 +2,11 @@ package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
 import com.idi.userlogin.Handlers.ControllerHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.utils.DailyLog;
 import com.jfoenix.controls.JFXDrawer;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,7 +19,6 @@ import com.idi.userlogin.Main;
 import com.idi.userlogin.utils.CustomAlert;
 import org.apache.commons.dbutils.DbUtils;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -31,7 +32,7 @@ import java.util.logging.Level;
 
 import static com.idi.userlogin.Controllers.BaseEntryController.updateGroup;
 import static com.idi.userlogin.Handlers.ControllerHandler.*;
-import static com.idi.userlogin.Main.jsonHandler;
+import static com.idi.userlogin.Main.fxTrayIcon;
 
 public class LoggedInController implements Initializable {
 
@@ -83,6 +84,11 @@ public class LoggedInController implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Specs.fxml"));
         AnchorPane content = loader.load();
         SpecsController controller = loader.getController();
+//        fxTrayIcon.showInfoMessage("File Type: " + controller.fileType.getText() +
+//                "\n" + "DPI: " + controller.dpi.getText() +
+//                "\n" + "Mode: " + controller.mode.getText() +
+//                "\n" + "Compression: " + controller.compress.getText());
+
         controller.getClose().setOnMouseClicked(e -> {
             specsDrawer.close();
             specsDrawer.setOnDrawerClosed(e4 -> {
@@ -129,6 +135,7 @@ public class LoggedInController implements Initializable {
         alert.setHeaderText("Sign Out");
         final Optional<ButtonType> wait = alert.showAndWait();
         if (wait.isPresent()) {
+            Main.consumeStage = false;
             final String elapsed = hour.getText() + " : " + min.getText() + " : " + sec.getText();
             if (wait.get().equals(ButtonType.YES)) {
                 updateStatus("Offline");
@@ -150,7 +157,7 @@ public class LoggedInController implements Initializable {
                         DailyLog.endDailyLog();
                     }).join();
 
-                    Main.fxTrayIcon.showInfoMessage("Time Elapsed: " + elapsed + "\nToday's Total: " + jsonHandler.getSelJobID() + ": " + getJob1Total().getText());
+                    Main.fxTrayIcon.showInfoMessage("Time Elapsed: " + elapsed + "\nToday's Total: " + JsonHandler.getSelJob().getJob_id() + ": " + getJob1Total().getText());
                 }
             }
             ControllerHandler.getOpaqueOverlay().setVisible(false);

@@ -1,9 +1,9 @@
 package com.idi.userlogin.Controllers;
 
 import com.idi.userlogin.Handlers.ConnectionHandler;
+import com.idi.userlogin.Handlers.JsonHandler;
 import com.idi.userlogin.utils.DBUtils;
 import com.idi.userlogin.utils.ImgFactory;
-import com.idi.userlogin.utils.Utils;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
@@ -13,7 +13,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.SearchableComboBox;
@@ -29,7 +28,6 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.*;
@@ -39,7 +37,6 @@ import java.util.logging.Level;
 import static com.idi.userlogin.Handlers.JsonHandler.trackPath;
 import static com.idi.userlogin.JavaBeans.User.COMP_NAME;
 import static com.idi.userlogin.Main.fxTrayIcon;
-import static com.idi.userlogin.Main.jsonHandler;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.CHECKMARK;
 import static com.idi.userlogin.utils.ImgFactory.IMGS.EXMARK;
 
@@ -151,6 +148,7 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
                 final TreeItem newItem = new TreeItem<>(item);
                 item.setComments(commentsField.getText());
                 item.getConditions().setAll(conditions);
+                item.setGroup(group);
                 int id = insertHelper(item); //Insert Data into DB
                 if (id > 0) { //if insert successful
                     item.setId(id);
@@ -160,7 +158,7 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
                         initSelGroup(group);
                     }
 
-                    item.setLocation(Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(item.id.get(), item) + "\\" + name.trim()));
+                    item.setLocation(Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getJob_id() + "\\" + buildFolderStruct(item.id.get(), item) + "\\" + name.trim()));
                     tree.getRoot().getChildren().add(newItem);
                     nameField.clear();
                     typeCombo.getSelectionModel().selectFirst();
@@ -181,6 +179,7 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
         nameField.getRight().setStyle("-fx-translate-x:-8;");
     }
 
+
     @Override
     public int insertHelper(Item<? extends Item> item) {
         Connection connection = null;
@@ -189,12 +188,14 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + DBUtils.DBTable.D.getTable() + "` (name,group_id,started_on,employee_id,type_id,comments) VALUES(?,?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),(SELECT id FROM item_types WHERE item_types.name='" + item.getType().getText() + "'),?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = connection.prepareStatement("INSERT INTO `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` (item,group_id,started_on,employee_id,type_id,comments,conditions,location,workstation) VALUES(?,?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),(SELECT id FROM item_types WHERE item_types.name='" + item.getType().getText() + "'),?,?,1,(SELECT id FROM workstation WHERE name='" + COMP_NAME + "'))", PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, item.getName());
             ps.setInt(2, item.getGroup().getID());
             Date now = formatDateTime(item.getStarted_On());
             ps.setTimestamp(3, new Timestamp(now.toInstant().toEpochMilli()));
             ps.setString(4, item.getComments());
+            ps.setString(5, item.getConditions().toString().replaceAll("[\\[|\\]]", ""));
+
             ps.executeUpdate();
             set = ps.getGeneratedKeys();
 
@@ -229,11 +230,11 @@ public class UserEntryViewController extends BaseEntryController<BaseEntryContro
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT d.workstation,d.id,d.id as group_id, d.name as group_name, d.name as item,d.non_feeder, d.completed, e.name as employee, d.total, t.name as type,d.conditions,d.comments,d.started_On,d.completed_On FROM `" +DBUtils.DBTable.D.getTable() + "` d INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + DBUtils.DBTable.G.getTable() + "` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id WHERE group_id=" + group.getID() + "");
+            ps = connection.prepareStatement("SELECT d.workstation,d.item,d.id,d.group_id as group_id,d.non_feeder, d.completed, e.name as employee, d.total, t.name as type,d.conditions,d.comments,d.started_On,d.completed_On FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` d INNER JOIN employees e ON d.employee_id = e.id INNER JOIN `" + DBUtils.DBTable.G.getTable() + "` g ON d.group_id = g.id INNER JOIN item_types t ON d.type_id = t.id WHERE group_id=" + group.getID() + "");
             set = ps.executeQuery();
             while (set.next()) {
-                final EntryItem item = new EntryItem(set.getInt("m.id"),group.getCollection(), group, set.getString("item"), set.getInt("m.total"), set.getInt("m.non_feeder"), set.getString("type"), set.getInt("m.completed") == 1, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"));
-                String condition = set.getString("m.conditions");
+                final EntryItem item = new EntryItem(set.getInt("d.id"), group.getCollection(), group, set.getString("item"), set.getInt("d.total"), set.getInt("d.non_feeder"), set.getString("type"), set.getInt("d.completed") == 1, set.getString("d.comments"), set.getString("d.started_On"), set.getString("d.completed_On"), set.getString("d.workstation"));
+                String condition = set.getString("d.conditions");
                 if (condition != null && !condition.isEmpty()) {
                     String[] splitConditions = condition.split(", ");
                     item.getConditions().setAll(Arrays.asList(splitConditions));

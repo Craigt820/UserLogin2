@@ -1,6 +1,8 @@
 package com.idi.userlogin.Handlers;
 
+import com.idi.userlogin.JavaBeans.Job;
 import com.idi.userlogin.Main;
+import com.idi.userlogin.utils.DBUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -14,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
-public class JsonHandler {
+public abstract class JsonHandler {
 
     public static final String USER_DIR = System.getProperty("user.dir");
     public static final String USER_HOME = System.getProperty("user.home");
@@ -28,8 +30,7 @@ public class JsonHandler {
         }
     }
 
-    public String selJobID;
-    public String selJobDesc;
+    public static Job selJob;
     public static String trackPath;
     public static String hostName;
     public static String user;
@@ -39,14 +40,11 @@ public class JsonHandler {
 
     //Initializes properties
     static {
-
         final File file = new File(USER_DIR + "\\properties.json");
-        if (file.exists()) {
-            exists = true;
-        } else {
+        if (!file.exists()) {
             property = new JSONObject();
             property.put("User", "User");
-            property.put("Pass", "idi8tangos88admin");
+            property.put("Pass", "idi8@tangos88admin");
             property.put("TrackPath", "F:\\projects");
             property.put("HostName", "192.168.1.147");
             writeJson();
@@ -115,19 +113,11 @@ public class JsonHandler {
         JsonHandler.trackPath = trackPath;
     }
 
-    public String getSelJobID() {
-        return selJobID;
+    public static Job getSelJob() {
+        return selJob;
     }
 
-    public void setSelJobID(String selJobID) {
-        this.selJobID = selJobID;
-    }
-
-    public String getSelJobDesc() {
-        return selJobDesc;
-    }
-
-    public void setSelJobDesc(String selJobDesc) {
-        this.selJobDesc = selJobDesc;
+    public static void setSelJob(Job selJob) {
+        JsonHandler.selJob = selJob;
     }
 }

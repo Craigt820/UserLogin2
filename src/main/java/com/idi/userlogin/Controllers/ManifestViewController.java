@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 
 import static com.idi.userlogin.JavaBeans.User.COMP_NAME;
 import static com.idi.userlogin.Main.fxTrayIcon;
-import static com.idi.userlogin.Main.jsonHandler;
 import static com.idi.userlogin.utils.DailyLog.scanLogID;
 
 public class ManifestViewController extends BaseEntryController<BaseEntryController.EntryItem> implements Initializable {
@@ -56,9 +55,6 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
 
     @FXML
     private TreeView<String> itemInfo;
-
-    @FXML
-    private SearchableComboBox<Group> groupCombo;
 
     @FXML
     private SearchableComboBox<EntryItem> itemCombo;
@@ -92,7 +88,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
             fxTrayIcon.showInfoMessage("Item: " + item.getName() + " Inserted");
             Platform.runLater(() -> {
                 try {
-                    itemCombo.getItems().removeIf(e -> e.equals(item));
+                    itemCombo.getItems().removeIf(e -> e != null && e.equals(item));
                     itemCombo.getSelectionModel().clearSelection();
                     if (!itemCombo.getItems().isEmpty()) {
                         itemCombo.getSelectionModel().selectFirst();
@@ -113,7 +109,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         int key = 0;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("INSERT INTO `" + DBUtils.DBTable.D.getTable() + "` (manifest_id,type_id,employee_id,started_On,group_id,comments,workstation,location,conditions) VALUES((SELECT id FROM `" + DBUtils.DBTable.M.getTable() + "` WHERE `" + uid + "`='" + itemCombo.getSelectionModel().getSelectedItem().getName() + "'),(SELECT id FROM item_types WHERE name='" + item.getType().getText() + "'),?,?,?,?,(SELECT id FROM workstation WHERE name='" + COMP_NAME + "'),1,?)");
+            ps = connection.prepareStatement("INSERT INTO `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` (manifest_id,type_id,employee_id,started_On,group_id,comments,workstation,location,conditions) VALUES((SELECT id FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` WHERE `" + uid + "`='" + itemCombo.getSelectionModel().getSelectedItem().getName() + "'),(SELECT id FROM item_types WHERE name='" + item.getType().getText() + "'),?,?,?,?,(SELECT id FROM workstation WHERE name='" + COMP_NAME + "'),1,?)");
             Date now = formatDateTime(item.getStarted_On());
             ps.setInt(1, ConnectionHandler.user.getId());
             ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
@@ -268,7 +264,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
                     tree.setPlaceholder(indicator);
                     tree.getPlaceholder().autosize();
                     CompletableFuture.runAsync(() -> {
-                        ObservableList<EntryItem> comboItems = getItemsForCombo(ControllerHandler.selGroup);
+                        ObservableList<EntryItem> comboItems = getItemsForCombo(nv);
                         if (!comboItems.isEmpty()) {
                             sortItems(comboItems);
                             itemCombo.getItems().setAll(comboItems);
@@ -317,7 +313,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         ObservableList<EntryItem> group_items = FXCollections.observableArrayList();
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT m.id, TRIM(m.`" + uid + "`) as item FROM  `" + DBUtils.DBTable.M.getTable() + "` m LEFT JOIN `" + DBUtils.DBTable.D.getTable() + "` d ON m.id = d.manifest_id WHERE d.employee_id IS NULL AND m.group_id=" + group.getID());
+            ps = connection.prepareStatement("SELECT m.id, TRIM(m.`" + uid + "`) as item FROM  `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` m LEFT JOIN `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` d ON m.id = d.manifest_id WHERE d.employee_id IS NULL AND m.group_id=" + group.getID());
 
             set = ps.executeQuery();
             while (set.next()) {
@@ -325,14 +321,15 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
                 group_items.add(item);
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Main.LOGGER.log(Level.SEVERE, "There was an error getting the groups from the db!", e);
 
         } finally {
             DbUtils.closeQuietly(set);
-            DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(connection);
+            DbUtils.closeQuietly(ps);
+
         }
 
         return group_items;
@@ -347,7 +344,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         AtomicInteger progress = new AtomicInteger(0);
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT w.name,d.id,g.id as group_id, g.name as group_name, TRIM(m.`" + uid + "`) as item,d.non_feeder, d.completed, e.name as employee, d.total, t.name as type,d.conditions,d.comments,d.started_On,d.completed_On FROM `" + DBUtils.DBTable.D.getTable() + "` d INNER JOIN employees e ON d.employee_id = e.id INNER JOIN `" + DBUtils.DBTable.G.getTable() + "` g ON d.group_id = g.id INNER JOIN item_types t ON d.type_id = t.id INNER JOIN `" + DBUtils.DBTable.M.getTable() + "` m ON m.id=d.manifest_id INNER JOIN workstation w ON w.id=d.workstation WHERE d.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
+            ps = connection.prepareStatement("SELECT w.name,d.id,g.id as group_id, g.name as group_name, TRIM(m.`" + uid + "`) as item,d.non_feeder, d.completed, e.name as employee, d.total, t.name as type,d.conditions,d.comments,d.started_On,d.completed_On FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` d INNER JOIN employees e ON d.employee_id = e.id INNER JOIN `" + DBUtils.DBTable.G.getTable() + "` g ON d.group_id = g.id INNER JOIN item_types t ON d.type_id = t.id INNER JOIN `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.M.getTable() + "` m ON m.id=d.manifest_id INNER JOIN workstation w ON w.id=d.workstation WHERE d.group_id=" + group.getID() + " AND employee_id=" + ConnectionHandler.user.getId());
             set = ps.executeQuery();
             while (set.next()) {
                 final EntryItem item = new EntryItem(set.getInt("d.id"), group.getCollection(), group, set.getString("item"), set.getInt("d.total"), set.getInt("d.non_feeder"), set.getString("type"), set.getInt("d.completed") == 1, set.getString("d.comments"), set.getString("d.started_On"), set.getString("d.completed_On"), set.getString("w.name"));
@@ -388,7 +385,7 @@ public class ManifestViewController extends BaseEntryController<BaseEntryControl
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("DELETE FROM `" + DBUtils.DBTable.D.getTable() + "` WHERE id=?");
+            ps = connection.prepareStatement("DELETE FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.D.getTable() + "` WHERE id=?");
             ps.setInt(1, item.getId());
             ps.executeUpdate();
 

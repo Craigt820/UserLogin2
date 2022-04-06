@@ -46,7 +46,7 @@
 //import static com.idi.userlogin.Handlers.JsonHandler.trackPath;
 //import static com.idi.userlogin.JavaBeans.User.COMP_NAME;
 //import static com.idi.userlogin.Main.fxTrayIcon;
-//import static com.idi.userlogin.Main.jsonHandler;
+//import static com.idi.userlogin.Main.JsonHandler;
 //import static com.idi.userlogin.utils.DailyLog.scanLogID;
 //
 //public class GileadController extends BaseEntryController<GileadController.GileadItem> implements Initializable {
@@ -88,7 +88,7 @@
 //
 //        try {
 //            connection = ConnectionHandler.createDBConnection();
-//            ps = connection.prepareStatement("SELECT g_dt.id,g_dt.name,g_dt.mcn,m.workstation,m.overridden,m.mcn,m.pc,m.doc_type,m.name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + Main.jsonHandler.getSelJobID() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + jsonHandler.getSelJobID() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id INNER JOIN gilead_dt g_dt ON m.doc_type = g_dt.name WHERE group_id=" + group.getID() + "");
+//            ps = connection.prepareStatement("SELECT g_dt.id,g_dt.name,g_dt.mcn,m.workstation,m.overridden,m.mcn,m.pc,m.doc_type,m.name,m.status, m.id,g.id as group_id, g.name as group_name, m.completed, e.name as employee, c.name as collection, m.total,t.name as type,m.conditions,m.started_On,m.completed_On,m.comments FROM `" + Main.JsonHandler.getSelJob().getName() + "` m INNER JOIN employees e ON m.employee_id = e.id INNER JOIN `" + JsonHandler.getSelJob().getName() + "_g` g ON m.group_id = g.id INNER JOIN item_types t ON m.type_id = t.id INNER JOIN sc_collections c ON m.collection_id = c.id INNER JOIN gilead_dt g_dt ON m.doc_type = g_dt.name WHERE group_id=" + group.getID() + "");
 //            set = ps.executeQuery();
 //            while (set.next()) {
 //                final GileadItem item = new GileadItem(set.getInt("m.id"), group.getCollection(), group, set.getString("m.name"), set.getString("pc"), set.getString("mcn"), new DocType(set.getInt("g_dt.id"), set.getString("g_dt.name"), Utils.intToBoolean(set.getInt("g_dt.mcn"))), set.getString("status"), set.getInt("m.total"), set.getInt("m.completed") == 1, "Multi-Paged", null, set.getString("m.comments"), set.getString("m.started_On"), set.getString("m.completed_On"), set.getString("m.workstation"), Utils.intToBoolean(set.getInt("m.overridden")));
@@ -127,7 +127,7 @@
 //        PreparedStatement ps = null;
 //        try {
 //            connection = ConnectionHandler.createDBConnection();
-//            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `" + column + "`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND id=?");
+//            ps = connection.prepareStatement("Update `" + Main.JsonHandler.getSelJob().getName() + "` SET `" + column + "`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND id=?");
 //            ps.setString(1, newValue);
 //            ps.setInt(2, item.getId());
 //            ps.executeUpdate();
@@ -146,7 +146,7 @@
 //        PreparedStatement ps = null;
 //        try {
 //            connection = ConnectionHandler.createDBConnection();
-//            ps = connection.prepareStatement("Update `" + Main.jsonHandler.getSelJobID() + "` SET `name`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND full_name=?");
+//            ps = connection.prepareStatement("Update `" + Main.JsonHandler.getSelJob().getName() + "` SET `name`=? WHERE employee_id=" + ConnectionHandler.user.getId() + " AND full_name=?");
 //            ps.setString(1, newValue);
 //            ps.setString(2, oldValue);
 //            ps.executeUpdate();
@@ -393,7 +393,7 @@
 //            public void commitEdit(DocType newValue) {
 //                GileadItem item = getTreeTableRow().getTreeItem().getValue();
 //                item.setDocType(newValue);
-//                ControllerHandler.updateItem(item, "UPDATE `" + jsonHandler.getSelJobID() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
+//                ControllerHandler.updateItem(item, "UPDATE `" + JsonHandler.getSelJob().getName() + "` SET doc_type='" + item.getDocType() + "' WHERE id=" + item.id.get() + "");
 //                super.commitEdit(newValue);
 //            }
 //        });
@@ -510,16 +510,16 @@
 //            });
 //
 //
-//            super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
+//            super.location = Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getName() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
 //
 //            if (super.id.get() > 0) {
-//                super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
+//                super.location = Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getName() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
 //            }
 //            //This is required for newly inserted items -- The id is updated to the new row id once the new item is inserted into the db. For this project, the file name
 //            // is the id. The id would be "0" if it's not updated after inserting.
 //            super.idProperty().addListener((ob, ov, nv) -> {
 //                if (!ov.equals(nv)) {
-//                    super.location = Paths.get(trackPath + "\\" + jsonHandler.getSelJobID() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
+//                    super.location = Paths.get(trackPath + "\\" + JsonHandler.getSelJob().getName() + "\\" + buildFolderStruct(super.id.get(), this) + "\\" + super.id.get());
 //                }
 //            });
 //        }
@@ -729,7 +729,7 @@
 //        int key = 0;
 //        try {
 //            connection = ConnectionHandler.createDBConnection();
-//            ps = connection.prepareStatement("INSERT INTO `" + Main.jsonHandler.getSelJobID() + "` (name,started_on,employee_id,collection_id,group_id,comments,name,pc,mcn,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),?,?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+//            ps = connection.prepareStatement("INSERT INTO `" + Main.JsonHandler.getSelJob().getName() + "` (name,started_on,employee_id,collection_id,group_id,comments,name,pc,mcn,doc_type,status,workstation) VALUES(?,?,(SELECT id FROM employees WHERE employees.name= '" + ConnectionHandler.user.getName() + "'),?,?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 //            ps.setString(1, item.getName());
 //            Date now = formatDateTime(item.getStarted_On());
 //            ps.setTimestamp(2, new Timestamp(now.toInstant().toEpochMilli()));
