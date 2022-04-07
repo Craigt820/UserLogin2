@@ -1,20 +1,10 @@
 
-
 FriendlyName                                                  
-FriendlyName                                                  ------------                                                  
-
-USB Composite Device                                          ------------                                                  
-
-Intel(R) USB 3.1 eXtensible Host Controller - 1.10 (Microsoft)USB Composite Device                                          
-
-USB Root Hub (USB 3.0)                                        Intel(R) USB 3.1 eXtensible Host Controller - 1.10 (Microsoft)
-
-Synology Virtual USB Hub                                      USB Root Hub (USB 3.0)                                        
-
-Realtek USB 2.0 Card Reader                                   Synology Virtual USB Hub                                      
-
-
-
+------------                                                  
+USB Composite Device                                          
+Intel(R) USB 3.1 eXtensible Host Controller - 1.10 (Microsoft)
+USB Root Hub (USB 3.0)                                        
+Synology Virtual USB Hub                                      
 Realtek USB 2.0 Card Reader                                   
 
 

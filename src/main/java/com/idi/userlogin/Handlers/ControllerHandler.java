@@ -129,7 +129,7 @@ public abstract class ControllerHandler {
 
         try {
             connection = ConnectionHandler.createDBConnection();
-            String sql = "SELECT name FROM `" + DBUtils.DBTable.H.getTable() + "`";
+            String sql = "SELECT name FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.H.getTable() + "`";
             ps = connection.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.TYPE_SCROLL_SENSITIVE);
             set = ps.executeQuery(sql);
             while (set.next()) {
@@ -477,7 +477,7 @@ public abstract class ControllerHandler {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("UPDATE `" + DBUtils.DBTable.G.getTable() + "` SET employee=" + ConnectionHandler.user.getId() + ", started_on='" + LocalDateTime.now().toString() + "',status_id=(SELECT id FROM `sc_group_status` WHERE name='Scanning') WHERE id=?");
+            ps = connection.prepareStatement("UPDATE `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.G.getTable() + "` SET employee=" + ConnectionHandler.user.getId() + ", started_on='" + LocalDateTime.now().toString() + "',status_id=(SELECT id FROM `sc_group_status` WHERE name='Scanning') WHERE id=?");
             ps.setInt(1, group.getID());
             ps.executeUpdate();
 
@@ -501,14 +501,14 @@ public abstract class ControllerHandler {
             connection = ConnectionHandler.createDBConnection();
 
             if (completed) {
-                ps = connection.prepareStatement("Update `" + DBUtils.DBTable.G.getTable() + "` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Scanned') WHERE id=?");
+                ps = connection.prepareStatement("Update `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.G.getTable() + "` SET total=?, scanned=?, completed_On=?, status_id=(SELECT id from `sc_group_status` WHERE name='Scanned') WHERE id=?");
                 ps.setInt(1, group.getTotal());
                 ps.setInt(2, booleanToInt(completed));
                 final Date now = formatDateTime(LocalDateTime.now().toString());
                 ps.setTimestamp(3, new Timestamp(now.toInstant().toEpochMilli()));
                 ps.setInt(4, group.getID());
             } else {
-                ps = connection.prepareStatement("Update `" + DBUtils.DBTable.G.getTable() + "` SET employee=?, total=? WHERE id=?");
+                ps = connection.prepareStatement("Update `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.G.getTable() + "` SET employee=?, total=? WHERE id=?");
                 ps.setInt(1, ConnectionHandler.user.getId());
                 ps.setInt(2, group.getTotal());
                 ps.setInt(3, group.getID());

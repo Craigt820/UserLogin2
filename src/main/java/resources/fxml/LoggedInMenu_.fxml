@@ -121,7 +121,7 @@
                                 </AnchorPane>
                         <StackPane alignment="CENTER_LEFT">
                            <VBox.margin>
-                              <Insets right="16.0" top="8.0" />
+                              <Insets right="8.0" top="8.0" />
                            </VBox.margin>
                            <children>
                               <HBox>
@@ -150,7 +150,7 @@
                                  <children>
                                     <StackPane alignment="CENTER_LEFT">
                                        <children>
-                                          <HBox>
+                                          <HBox alignment="CENTER_LEFT">
                                              <children>
                                                         <Label fx:id="jobID" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.2em;" text="JOB001" textFill="#07265c">
                                                             <font>
@@ -162,7 +162,7 @@
                                                 <Insets />
                                              </StackPane.margin>
                                           </HBox>
-                                          <HBox alignment="BOTTOM_RIGHT">
+                                          <HBox alignment="CENTER_RIGHT">
                                              <children>
                                                 <Label fx:id="job1Total" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.2em;" text="0" textFill="#07265c">
                                                    <font>
@@ -171,19 +171,7 @@
                                                 </Label>
                                              </children>
                                              <StackPane.margin>
-                                                <Insets right="16.0" />
-                                             </StackPane.margin>
-                                          </HBox>
-                                          <HBox alignment="BOTTOM_LEFT">
-                                             <children>
-                                                        <Label fx:id="desc" alignment="CENTER" prefHeight="25.0" style="-fx-font-size: 1.2em;" text="Job 1" textFill="#07265c">
-                                                            <font>
-                                                                <Font name="Segoe UI" size="15.0" />
-                                                            </font>
-                                                        </Label>
-                                             </children>
-                                             <StackPane.margin>
-                                                <Insets top="24.0" />
+                                                <Insets right="8.0" />
                                              </StackPane.margin>
                                           </HBox>
                                                   <AnchorPane maxHeight="1.0" minHeight="1.0" opacity="0.3" prefHeight="1.0" prefWidth="260.0" style="-fx-background-color: #07255e44;" translateY="12.0">
@@ -197,7 +185,7 @@
                               </VBox>
                            </content>
                            <padding>
-                              <Insets bottom="8.0" top="8.0" />
+                              <Insets bottom="8.0" />
                            </padding>
                            <VBox.margin>
                               <Insets />

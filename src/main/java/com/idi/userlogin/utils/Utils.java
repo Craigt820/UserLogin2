@@ -73,7 +73,7 @@ public class Utils {
         PreparedStatement ps = null;
         try {
             connection = ConnectionHandler.createDBConnection();
-            ps = connection.prepareStatement("SELECT name FROM `" + JsonHandler.getSelJob().getJob_id() + "" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.H.getTable() + "`");
+            ps = connection.prepareStatement("SELECT name FROM `" + JsonHandler.getSelJob().getJob_id() + "" + DBUtils.DBTable.H.getTable() + "`");
             set = ps.executeQuery();
 
             while (set.next()) {

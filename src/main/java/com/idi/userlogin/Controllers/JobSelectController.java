@@ -104,7 +104,6 @@ public class JobSelectController implements Initializable {
                 }
             }
 
-            ControllerHandler.loggedInController.getDesc().setText(JsonHandler.getSelJob().getDescription());
             ControllerHandler.loggedInController.getName().setText(ConnectionHandler.user.getName());
             ControllerHandler.loggedInController.getJobID().setText(JsonHandler.getSelJob().getJob_id());
             LoggedInController.updateStatus("Online");
